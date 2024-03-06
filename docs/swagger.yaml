@@ -1,0 +1,101 @@
+basePath: /
+definitions:
+  model.ProductsFillable:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
+info:
+  contact: {}
+  title: Open POS API
+paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: string
+      - description: page size
+        in: query
+        name: pagesize
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: list of products
+      tags:
+      - Products
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductsFillable'
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new product
+      tags:
+      - Products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: delete product by id
+      tags:
+      - Products
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: find product by id
+      tags:
+      - Products
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Product Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.ProductsFillable'
+      produces:
+      - application/json
+      responses: {}
+      summary: update product
+      tags:
+      - Products
+swagger: "2.0"
