@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"open-pos/controller"
 	_ "open-pos/docs"
 	utils "open-pos/utils"
@@ -31,16 +30,12 @@ func main() {
 	dbClient := utils.DB.DbClient
 	defer utils.DB.DisconnectDB()
 
-	utils.ImplementValidator(e)
+	utils.SetupValidator(e)
 
 	jwtUtils := utils.NewJwt()
 	jwtMiddleware := jwtUtils.SetupMiddleware()
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
-
-	e.GET("/", func(c echo.Context) error {
-		return c.String(http.StatusOK, "hello world")
-	})
 
 	auth := e.Group("/auth")
 	auth.POST("/login", utils.RegisterController(dbClient, controller.AuthLogin))

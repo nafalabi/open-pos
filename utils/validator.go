@@ -19,6 +19,6 @@ func (cv *customValidator) Validate(i interface{}) error {
 	return nil
 }
 
-func ImplementValidator(e *echo.Echo) {
+func SetupValidator(e *echo.Echo) {
 	e.Validator = &customValidator{validator: validator.New()}
 }
