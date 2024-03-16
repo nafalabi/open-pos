@@ -1,16 +1,69 @@
 basePath: /
 definitions:
-  model.ProductsFillable:
+  controller.LoginParams:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  enum.UserLevel:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - Admin
+    - Owner
+    - Manager
+    - Worker
+  model.ProductFillable:
     properties:
       name:
         type: string
     required:
     - name
     type: object
+  model.UserFillable:
+    properties:
+      email:
+        type: string
+      level:
+        $ref: '#/definitions/enum.UserLevel'
+      name:
+        type: string
+      password:
+        type: string
+      phone:
+        description: '`json:"phone" validate:"e164"`'
+        type: string
+    required:
+    - level
+    - name
+    type: object
 info:
   contact: {}
   title: Open POS API
 paths:
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login Params
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.LoginParams'
+      produces:
+      - application/json
+      responses: {}
+      summary: Login into the app
+      tags:
+      - Auth
   /products:
     get:
       consumes:
@@ -27,6 +80,8 @@ paths:
       produces:
       - application/json
       responses: {}
+      security:
+      - ApiKeyAuth: []
       summary: list of products
       tags:
       - Products
@@ -39,10 +94,12 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.ProductsFillable'
+          $ref: '#/definitions/model.ProductFillable'
       produces:
       - application/json
       responses: {}
+      security:
+      - ApiKeyAuth: []
       summary: Create a new product
       tags:
       - Products
@@ -59,6 +116,8 @@ paths:
       produces:
       - application/json
       responses: {}
+      security:
+      - ApiKeyAuth: []
       summary: delete product by id
       tags:
       - Products
@@ -74,6 +133,8 @@ paths:
       produces:
       - application/json
       responses: {}
+      security:
+      - ApiKeyAuth: []
       summary: find product by id
       tags:
       - Products
@@ -91,11 +152,116 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.ProductsFillable'
+          $ref: '#/definitions/model.ProductFillable'
       produces:
       - application/json
       responses: {}
+      security:
+      - ApiKeyAuth: []
       summary: update product
       tags:
       - Products
+  /users:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: string
+      - description: page size
+        in: query
+        name: pagesize
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: list of users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserFillable'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Register a new user
+      tags:
+      - Users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: delete user by id
+      tags:
+      - Users
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: find user by id
+      tags:
+      - Users
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserFillable'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: update user
+      tags:
+      - Users
+securityDefinitions:
+  ApiKeyAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

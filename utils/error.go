@@ -24,3 +24,15 @@ func TranslateGormError(error error) (int, string) {
 	return httpCode, errorMessage
 }
 
+type CustomError struct{
+  ErrorMessage string
+}
+
+func (this *CustomError) Error() string {
+  return this.ErrorMessage
+}
+
+func ConstructError(message string) error {
+  return &CustomError{ErrorMessage: message}
+}
+

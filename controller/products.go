@@ -9,13 +9,12 @@ import (
 	model "open-pos/model"
 )
 
-// CreateProduct
-//
 //	@Summary	Create a new product
+//	@Security	ApiKeyAuth
 //	@Tags		Products
 //	@Accept		json
 //	@Produce	json
-//	@Param		body	body	model.ProductsFillable	true	"Product Data"
+//	@Param		body	body	model.ProductFillable	true	"Product Data"
 //	@Router		/products [post]
 func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -33,9 +32,8 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// ListProduct
-//
 //	@Summary	list of products
+//	@Security	ApiKeyAuth
 //	@Tags		Products
 //	@Accept		json
 //	@Produce	json
@@ -56,9 +54,8 @@ func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// FindProduct
-//
 //	@Summary	find product by id
+//	@Security	ApiKeyAuth
 //	@Tags		Products
 //	@Accept		json
 //	@Produce	json
@@ -72,21 +69,20 @@ func FindProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", productId).First(&product).Error
 		if err != nil {
-      return utils.SendError(c, err)
+			return utils.SendError(c, err)
 		}
 
-    return utils.SendSuccess(c, product)
+		return utils.SendSuccess(c, product)
 	}
 }
 
-// UpdateProduct
-//
 //	@Summary	update product
+//	@Security	ApiKeyAuth
 //	@Tags		Products
 //	@Accept		json
 //	@Produce	json
 //	@Param		id		path	string					true	"Product ID"
-//	@Param		body	body	model.ProductsFillable	true	"Product Data"
+//	@Param		body	body	model.ProductFillable	true	"Product Data"
 //	@Router		/products/{id} [patch]
 func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -94,26 +90,25 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		reqBody := model.ProductFillable{}
 		product := model.Product{}
 
-    err := utils.BindAndValidate(c, &reqBody)
-    if err != nil {
-      return utils.SendError(c, err)
-    }
+		err := utils.BindAndValidate(c, &reqBody)
+		if err != nil {
+			return utils.SendError(c, err)
+		}
 
 		err = dbClient.Where("id = ? ", productId).First(&product).Error
 		if err != nil {
-      return utils.SendError(c, err)
+			return utils.SendError(c, err)
 		}
 
 		reqBody.Combine(&product)
 		dbClient.Save(&product)
 
-    return utils.SendSuccess(c, product)
+		return utils.SendSuccess(c, product)
 	}
 }
 
-// DeleteProduct
-//
 //	@Summary	delete product by id
+//	@Security	ApiKeyAuth
 //	@Tags		Products
 //	@Accept		json
 //	@Produce	json
@@ -125,11 +120,11 @@ func DeleteProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", productId).Delete(&model.Product{}).Error
 		if err != nil {
-      return utils.SendError(c, err)
+			return utils.SendError(c, err)
 		}
 
-    return utils.SendSuccess(c, map[string]interface{}{
-      "id": productId,
-    })
+		return utils.SendSuccess(c, map[string]interface{}{
+			"id": productId,
+		})
 	}
 }

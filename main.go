@@ -6,6 +6,7 @@ import (
 	_ "open-pos/docs"
 	utils "open-pos/utils"
 
+	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
 	"github.com/swaggo/echo-swagger"
 )
@@ -13,15 +14,27 @@ import (
 //	@title		Open POS API
 //	@BasePath	/
 
+//	@securityDefinitions.apikey	ApiKeyAuth
+//	@in							header
+//	@name						Authorization
+//	@description    Type "Bearer" followed by a space and JWT token.
+
 func main() {
+	if err := godotenv.Load(); err != nil {
+		panic("Error loading .env file")
+	}
+
 	e := echo.New()
 
-  utils.DB.ConnectDB()
+	utils.DB.ConnectDB()
 	utils.DB.AutoMigrate()
-  dbClient := utils.DB.DbClient
-  defer utils.DB.DisconnectDB()
+	dbClient := utils.DB.DbClient
+	defer utils.DB.DisconnectDB()
 
-  utils.ImplementValidator(e)
+	utils.ImplementValidator(e)
+
+	jwtUtils := utils.NewJwt()
+	jwtMiddleware := jwtUtils.SetupMiddleware()
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
@@ -29,12 +42,24 @@ func main() {
 		return c.String(http.StatusOK, "hello world")
 	})
 
-	product := e.Group("/products")
-	product.GET("", utils.RegisterController(dbClient, controller.ListProduct))
-	product.POST("", utils.RegisterController(dbClient, controller.CreateProduct))
-	product.GET("/:id", utils.RegisterController(dbClient, controller.FindProduct))
-	product.PATCH("/:id", utils.RegisterController(dbClient, controller.UpdateProduct))
-	product.DELETE("/:id", utils.RegisterController(dbClient, controller.DeleteProduct))
+	auth := e.Group("/auth")
+	auth.POST("/login", utils.RegisterController(dbClient, controller.AuthLogin))
+
+	products := e.Group("/products")
+	products.Use(jwtMiddleware)
+	products.GET("", utils.RegisterController(dbClient, controller.ListProduct))
+	products.POST("", utils.RegisterController(dbClient, controller.CreateProduct))
+	products.GET("/:id", utils.RegisterController(dbClient, controller.FindProduct))
+	products.PATCH("/:id", utils.RegisterController(dbClient, controller.UpdateProduct))
+	products.DELETE("/:id", utils.RegisterController(dbClient, controller.DeleteProduct))
+
+	users := e.Group("/users")
+	products.Use(jwtMiddleware)
+	users.POST("", utils.RegisterController(dbClient, controller.Register))
+	users.GET("", utils.RegisterController(dbClient, controller.ListUsers))
+	users.GET("/:id", utils.RegisterController(dbClient, controller.FindUser))
+	users.PATCH("/:id", utils.RegisterController(dbClient, controller.UpdateUser))
+	users.DELETE("/:id", utils.RegisterController(dbClient, controller.DeleteUser))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

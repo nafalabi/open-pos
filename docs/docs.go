@@ -15,8 +15,39 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/auth/login": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login into the app",
+                "parameters": [
+                    {
+                        "description": "Login Params",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.LoginParams"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/products": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -44,6 +75,11 @@ const docTemplate = `{
                 "responses": {}
             },
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -61,7 +97,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProductsFillable"
+                            "$ref": "#/definitions/model.ProductFillable"
                         }
                     }
                 ],
@@ -70,6 +106,11 @@ const docTemplate = `{
         },
         "/products/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -92,6 +133,11 @@ const docTemplate = `{
                 "responses": {}
             },
             "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -114,6 +160,11 @@ const docTemplate = `{
                 "responses": {}
             },
             "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -138,7 +189,162 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProductsFillable"
+                            "$ref": "#/definitions/model.ProductFillable"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "list of users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "page size",
+                        "name": "pagesize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "User Data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserFillable"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "find user by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "delete user by id",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "update user",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User Data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.UserFillable"
                         }
                     }
                 ],
@@ -147,7 +353,33 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "model.ProductsFillable": {
+        "controller.LoginParams": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "enum.UserLevel": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Admin",
+                "Owner",
+                "Manager",
+                "Worker"
+            ]
+        },
+        "model.ProductFillable": {
             "type": "object",
             "required": [
                 "name"
@@ -157,6 +389,39 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        },
+        "model.UserFillable": {
+            "type": "object",
+            "required": [
+                "level",
+                "name"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "level": {
+                    "$ref": "#/definitions/enum.UserLevel"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "description": "` + "`" + `json:\"phone\" validate:\"e164\"` + "`" + `",
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "description": "Type \"Bearer\" followed by a space and JWT token.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
