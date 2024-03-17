@@ -5,6 +5,7 @@ import (
 	"open-pos/utils"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -31,6 +32,10 @@ func AuthLogin(dbClient *gorm.DB) echo.HandlerFunc {
 		err := dbClient.Where("email = ?", reqBody.Email).First(&user).Error
 		if err != nil {
 			return utils.SendError(c, err)
+		}
+
+		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.Password)); err != nil {
+			return utils.SendError(c, utils.ConstructError("Invalid credentials"))
 		}
 
 		jwtUtils := utils.NewJwt()
