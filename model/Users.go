@@ -1,6 +1,10 @@
 package model
 
-import enum "open-pos/enum"
+import (
+	enum "open-pos/enum"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type UserBase struct {
 	Name  string         `json:"name" validate:"required"`
@@ -14,11 +18,19 @@ type UserFillable struct {
 	Password string `json:"password"`
 }
 
-func (this UserFillable) Combine(user *User) {
+func (this UserFillable) Fill(user *User) error {
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(this.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
 	user.Name = this.Name
 	user.Email = this.Email
 	user.Phone = this.Phone
 	user.Level = this.Level
+  user.Password = string(hashedPwd)
+
+  return nil
 }
 
 type User struct {

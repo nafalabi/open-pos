@@ -6,7 +6,6 @@ import (
 	"open-pos/utils"
 
 	"github.com/labstack/echo/v4"
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -35,14 +34,12 @@ func Register(dbClient *gorm.DB) echo.HandlerFunc {
 			return utils.SendError(c, err)
 		}
 
-		hashedPwd, err := bcrypt.GenerateFromPassword([]byte(reqBody.Password), bcrypt.DefaultCost)
-		if err != nil {
-			return utils.SendError(c, err)
-		}
-
 		var user model.User
-		reqBody.Combine(&user)
-		user.Password = string(hashedPwd)
+
+    err := reqBody.Fill(&user)
+    if err != nil {
+      return utils.SendError(c, err)
+    }
 
 		dbClient.Create(&user)
 
@@ -118,7 +115,7 @@ func UpdateUser(dbClient *gorm.DB) echo.HandlerFunc {
 			return utils.SendError(c, err)
 		}
 
-		reqBody.Combine(&user)
+		reqBody.Fill(&user)
 		dbClient.Save(&user)
 
 		return utils.SendSuccess(c, user)
