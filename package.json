@@ -6,6 +6,7 @@
   "scripts": {
     "dev:maindesk": "vite --config vite.config.maindesk.ts",
     "build:maindesk": "tsc && vite build --config vite.config.maindesk.ts",
+    "gen:types": "go run ./cmd/cli generate-ts-types && prettier ./frontend/generated --write",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
@@ -31,6 +32,7 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
     "postcss": "^8.4.38",
+    "prettier": "^3.2.5",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"

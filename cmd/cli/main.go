@@ -2,18 +2,12 @@ package main
 
 import (
 	"fmt"
-	"open-pos/enum"
-	"open-pos/model"
-	"open-pos/utils"
 	"os"
 	"path/filepath"
-
-	"golang.org/x/term"
 )
 
 func main() {
-	var command string
-	getArgs(&command, 1)
+	var command string = getArgs(1)
 
 	if command == "" {
 		printHelp()
@@ -22,7 +16,11 @@ func main() {
 
 	switch command {
 	case "generate-admin":
-		generateAdmin()
+		username := getArgs(2)
+		password := getArgs(3)
+		generateAdmin(username, password)
+  case "generate-ts-types":
+    generateToTS()
 	default:
 		printHelp()
 	}
@@ -36,62 +34,14 @@ func printHelp() {
 	fmt.Println()
 	fmt.Println("  generate-admin - Create and replace the admin user")
 	fmt.Println()
+	fmt.Println("  generate-ts-types - Generate types for typescript frontend")
+	fmt.Println()
 }
 
-func getArgs(targetVar *string, index int) {
+func getArgs(index int) string {
 	if len(os.Args) >= index+1 {
-		*targetVar = os.Args[index]
+		return os.Args[index]
 	} else {
-		*targetVar = ""
+		return ""
 	}
-}
-
-func generateAdmin() {
-	var (
-		email    string
-		password string
-	)
-
-	getArgs(&email, 2)
-	getArgs(&password, 3)
-
-	if email == "" {
-		fmt.Print("Admin email: ")
-		fmt.Scanln(&email)
-	}
-
-	if password == "" {
-		fmt.Print("Admin password: ")
-		pwBytes, _ := term.ReadPassword(int(os.Stdin.Fd()))
-		password = string(pwBytes)
-		fmt.Println()
-	}
-
-	utils.DB.ConnectDB()
-	utils.DB.AutoMigrate()
-	dbClient := utils.DB.DbClient
-	defer utils.DB.DisconnectDB()
-
-	var user model.User
-	var userData model.UserFillable
-
-	dbClient.Where("level = ?", enum.Admin).Find(&user)
-
-	userData.Name = "Admin"
-	userData.Email = email
-	userData.Password = password
-
-	if err := userData.Fill(&user); err != nil {
-		fmt.Println(err)
-		os.Exit(0)
-	}
-
-	err := dbClient.Save(&user).Error
-	if err != nil {
-		fmt.Println("Failed to generate admin user")
-		fmt.Println(err)
-		os.Exit(0)
-	}
-
-	fmt.Println("Success generating admin user")
 }
