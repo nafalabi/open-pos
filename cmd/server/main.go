@@ -39,6 +39,7 @@ func main() {
 
 	auth := e.Group("/auth")
 	auth.POST("/login", utils.RegisterController(dbClient, controller.AuthLogin))
+	auth.GET("/userinfo", utils.RegisterController(dbClient, controller.UserInfo), jwtMiddleware)
 
 	products := e.Group("/products")
 	products.Use(jwtMiddleware)

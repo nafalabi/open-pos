@@ -47,3 +47,16 @@ func AuthLogin(dbClient *gorm.DB) echo.HandlerFunc {
 		return utils.SendSuccess(c, tokens)
 	}
 }
+
+// @Summary	Get user logged info
+// @Security ApiKeyAuth
+// @Tags		Auth
+// @Accept		json
+// @Produce	json
+// @Router		/auth/userinfo [get]
+func UserInfo(dbClient *gorm.DB) echo.HandlerFunc {
+  return func(c echo.Context) error {
+    userClaims := utils.GetUserClaims(c)
+    return utils.SendSuccess(c, userClaims)
+  }
+}

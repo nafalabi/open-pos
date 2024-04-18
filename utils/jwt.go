@@ -100,3 +100,9 @@ func (this *Jwt) SetupMiddleware() echo.MiddlewareFunc {
 	}
 	return echojwt.WithConfig(config)
 }
+
+func GetUserClaims(c echo.Context) JwtClaims {
+  user := c.Get("user").(*jwt.Token)
+  claims := user.Claims.(*JwtClaims)
+  return *claims 
+}

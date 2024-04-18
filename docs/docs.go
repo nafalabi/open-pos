@@ -41,6 +41,26 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/auth/userinfo": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get user logged info",
+                "responses": {}
+            }
+        },
         "/products": {
             "get": {
                 "security": [

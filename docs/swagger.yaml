@@ -64,6 +64,18 @@ paths:
       summary: Login into the app
       tags:
       - Auth
+  /auth/userinfo:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get user logged info
+      tags:
+      - Auth
   /products:
     get:
       consumes:
