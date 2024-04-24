@@ -8,43 +8,57 @@ import (
 
 	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 
+	"github.com/hypersequent/zen"
+
 	"github.com/anc95/golang-enum-to-ts/src/ast"
 	"github.com/anc95/golang-enum-to-ts/src/generator"
 	"github.com/anc95/golang-enum-to-ts/src/token"
 )
 
+var (
+	workingdir string
+	entities   = []interface{}{
+		model.User{},
+		model.UserFillable{},
+		model.Product{},
+		model.ProductFillable{},
+	}
+)
+
 func generateToTS() {
-	typesToTS()
-  println("")
-	enumToTS()
-  println("Done.")
-  println("")
+	cwd, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+	workingdir = cwd
+
+	generateTypes()
+	println("")
+	generateEnums()
+	println("")
+	generateSchema()
+	println("Done.")
+	println("")
 }
 
-func typesToTS() {
-	converter := typescriptify.New().
-		Add(model.User{}).
-		Add(model.UserBase{}).
-		Add(model.UserFillable{}).
-		Add(model.Product{}).
-		Add(model.ProductFillable{})
+func generateTypes() {
+	converter := typescriptify.New()
 
-	converter.Prefix = "Gen_"
+  for _, entity := range entities {
+    converter.Add(entity)
+  }
+
+	converter.Prefix = "Model_"
 	converter.WithInterface(true)
-  converter.BackupDir = ""
+	converter.BackupDir = ""
 
-	err := converter.ConvertToFile("frontend/generated/types.ts")
+	err := converter.ConvertToFile("frontend/generated/models.ts")
 	if err != nil {
 		panic(err.Error())
 	}
 }
 
-func enumToTS() {
-	workingdir, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-
+func generateEnums() {
 	enumfolder := workingdir + "/enum/"
 
 	files, err := os.ReadDir(enumfolder)
@@ -58,7 +72,7 @@ func enumToTS() {
 		if file.IsDir() {
 			continue
 		}
-    fmt.Println("Converting " + file.Name())
+		fmt.Println("Converting " + file.Name())
 
 		rawContent, err := os.ReadFile(enumfolder + file.Name())
 		if err != nil {
@@ -83,6 +97,22 @@ func enumToTS() {
 
 	outFile := workingdir + "/frontend/generated/enums.ts"
 	err = os.WriteFile(outFile, []byte(finalContent), 0644)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func generateSchema() {
+	converter := zen.NewConverter(make(map[string]zen.CustomFn))
+	for _, entity := range entities {
+		converter.AddType(entity)
+	}
+
+	dump := "import { z } from 'zod'\n\n"
+	dump += converter.Export()
+
+	outFile := workingdir + "/frontend/generated/schema.ts"
+	err := os.WriteFile(outFile, []byte(dump), 0644)
 	if err != nil {
 		panic(err)
 	}

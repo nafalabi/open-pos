@@ -57,6 +57,14 @@ func AuthLogin(dbClient *gorm.DB) echo.HandlerFunc {
 func UserInfo(dbClient *gorm.DB) echo.HandlerFunc {
   return func(c echo.Context) error {
     userClaims := utils.GetUserClaims(c)
-    return utils.SendSuccess(c, userClaims)
+
+    user := model.User{}
+    err := dbClient.Where("id = ?", userClaims.UserId).First(&user).Error
+
+    if err != nil {
+      return utils.SendError(c, err)
+    }
+
+    return utils.SendSuccess(c, user)
   }
 }

@@ -57,8 +57,8 @@ type Response_error struct {
 }
 
 type Response_success struct {
-	Code int `json:"code" example:"200"`
-	Data interface{}
+	Code int         `json:"code" example:"200"`
+	Data interface{} `json:"data"`
 }
 
 type Response_success_paginated struct {

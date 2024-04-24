@@ -1,11 +1,13 @@
-import { Button } from '@/shared/components/ui/button'
+import { RouterProvider } from "react-router-dom";
+import { router } from "./routes";
+import { AuthProvider } from "./guard/AuthProvider";
 
 function App() {
   return (
-    <>
-      <Button>Click me</Button>
-    </>
-  )
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 }
 
-export default App
+export default App;
