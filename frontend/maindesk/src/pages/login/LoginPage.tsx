@@ -38,7 +38,6 @@ export const LoginPage = () => {
       toast.error("Login failed", {
         description: error.message,
         dismissible: true,
-        closeButton: true,
       });
     if (result) handleUpdateAuthToken(result.data.access_token);
   });
