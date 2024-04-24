@@ -31,7 +31,7 @@ func AuthLogin(dbClient *gorm.DB) echo.HandlerFunc {
 		user := model.User{}
 		err := dbClient.Where("email = ?", reqBody.Email).First(&user).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return utils.SendError(c, utils.ConstructError("Invalid credentials"))
 		}
 
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.Password)); err != nil {

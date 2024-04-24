@@ -13,6 +13,7 @@ import { doLogin } from "../../api/auth";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 const schema = z.object({
   email: z.string(),
@@ -29,11 +30,17 @@ export const LoginPage = () => {
   });
 
   const handleLogin = handleSubmit(async (data) => {
-    const result = await doLogin({
+    const [result, error] = await doLogin({
       email: data.email,
       password: data.password,
     });
-    handleUpdateAuthToken(result.access_token);
+    if (error)
+      toast.error("Login failed", {
+        description: error.message,
+        dismissible: true,
+        closeButton: true,
+      });
+    if (result) handleUpdateAuthToken(result.data.access_token);
   });
 
   return (
