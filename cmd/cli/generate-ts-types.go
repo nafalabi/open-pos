@@ -44,9 +44,9 @@ func generateToTS() {
 func generateTypes() {
 	converter := typescriptify.New()
 
-  for _, entity := range entities {
-    converter.Add(entity)
-  }
+	for _, entity := range entities {
+		converter.Add(entity)
+	}
 
 	converter.Prefix = "Model_"
 	converter.WithInterface(true)

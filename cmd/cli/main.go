@@ -19,8 +19,8 @@ func main() {
 		username := getArgs(2)
 		password := getArgs(3)
 		generateAdmin(username, password)
-  case "generate-ts-types":
-    generateToTS()
+	case "generate-ts-types":
+		generateToTS()
 	default:
 		printHelp()
 	}

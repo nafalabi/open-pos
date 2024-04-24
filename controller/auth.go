@@ -55,16 +55,15 @@ func AuthLogin(dbClient *gorm.DB) echo.HandlerFunc {
 // @Produce	json
 // @Router		/auth/userinfo [get]
 func UserInfo(dbClient *gorm.DB) echo.HandlerFunc {
-  return func(c echo.Context) error {
-    userClaims := utils.GetUserClaims(c)
+	return func(c echo.Context) error {
+		userClaims := utils.GetUserClaims(c)
 
-    user := model.User{}
-    err := dbClient.Where("id = ?", userClaims.UserId).First(&user).Error
+		user := model.User{}
+		err := dbClient.Where("id = ?", userClaims.UserId).First(&user).Error
+		if err != nil {
+			return utils.SendError(c, err)
+		}
 
-    if err != nil {
-      return utils.SendError(c, err)
-    }
-
-    return utils.SendSuccess(c, user)
-  }
+		return utils.SendSuccess(c, user)
+	}
 }

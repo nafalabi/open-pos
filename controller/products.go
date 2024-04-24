@@ -9,13 +9,13 @@ import (
 	model "open-pos/model"
 )
 
-//	@Summary	Create a new product
-//	@Security	ApiKeyAuth
-//	@Tags		Products
-//	@Accept		json
-//	@Produce	json
-//	@Param		body	body	model.ProductFillable	true	"Product Data"
-//	@Router		/products [post]
+// @Summary	Create a new product
+// @Security	ApiKeyAuth
+// @Tags		Products
+// @Accept		json
+// @Produce	json
+// @Param		body	body	model.ProductFillable	true	"Product Data"
+// @Router		/products [post]
 func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reqBody := model.ProductFillable{}
@@ -32,14 +32,14 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	list of products
-//	@Security	ApiKeyAuth
-//	@Tags		Products
-//	@Accept		json
-//	@Produce	json
-//	@Param		page		query	string	false	"page"
-//	@Param		pagesize	query	string	false	"page size"
-//	@Router		/products [get]
+// @Summary	list of products
+// @Security	ApiKeyAuth
+// @Tags		Products
+// @Accept		json
+// @Produce	json
+// @Param		page		query	string	false	"page"
+// @Param		pagesize	query	string	false	"page size"
+// @Router		/products [get]
 func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		limit, offset, page, pageSize := utils.DefinePaginationParam(c)
@@ -54,13 +54,13 @@ func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	find product by id
-//	@Security	ApiKeyAuth
-//	@Tags		Products
-//	@Accept		json
-//	@Produce	json
-//	@Param		id	path	string	true	"Product ID"
-//	@Router		/products/{id} [get]
+// @Summary	find product by id
+// @Security	ApiKeyAuth
+// @Tags		Products
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"Product ID"
+// @Router		/products/{id} [get]
 func FindProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		productId := c.Param("id")
@@ -76,14 +76,14 @@ func FindProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	update product
-//	@Security	ApiKeyAuth
-//	@Tags		Products
-//	@Accept		json
-//	@Produce	json
-//	@Param		id		path	string					true	"Product ID"
-//	@Param		body	body	model.ProductFillable	true	"Product Data"
-//	@Router		/products/{id} [patch]
+// @Summary	update product
+// @Security	ApiKeyAuth
+// @Tags		Products
+// @Accept		json
+// @Produce	json
+// @Param		id		path	string					true	"Product ID"
+// @Param		body	body	model.ProductFillable	true	"Product Data"
+// @Router		/products/{id} [patch]
 func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		productId := c.Param("id")
@@ -107,13 +107,13 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	delete product by id
-//	@Security	ApiKeyAuth
-//	@Tags		Products
-//	@Accept		json
-//	@Produce	json
-//	@Param		id	path	string	true	"Product ID"
-//	@Router		/products/{id} [delete]
+// @Summary	delete product by id
+// @Security	ApiKeyAuth
+// @Tags		Products
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"Product ID"
+// @Router		/products/{id} [delete]
 func DeleteProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		productId := c.Param("id")

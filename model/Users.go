@@ -28,9 +28,9 @@ func (this UserFillable) Fill(user *User) error {
 	user.Email = this.Email
 	user.Phone = this.Phone
 	user.Level = this.Level
-  user.Password = string(hashedPwd)
+	user.Password = string(hashedPwd)
 
-  return nil
+	return nil
 }
 
 type User struct {

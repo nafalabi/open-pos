@@ -3,10 +3,8 @@ package enum
 type UserLevel int
 
 const (
-  Admin UserLevel = iota
-  Owner
-  Manager
-  Worker
+	Admin UserLevel = iota
+	Owner
+	Manager
+	Worker
 )
-
-

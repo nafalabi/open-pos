@@ -102,7 +102,7 @@ func (this *Jwt) SetupMiddleware() echo.MiddlewareFunc {
 }
 
 func GetUserClaims(c echo.Context) JwtClaims {
-  user := c.Get("user").(*jwt.Token)
-  claims := user.Claims.(*JwtClaims)
-  return *claims 
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*JwtClaims)
+	return *claims
 }

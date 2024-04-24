@@ -36,10 +36,10 @@ func Register(dbClient *gorm.DB) echo.HandlerFunc {
 
 		var user model.User
 
-    err := reqBody.Fill(&user)
-    if err != nil {
-      return utils.SendError(c, err)
-    }
+		err := reqBody.Fill(&user)
+		if err != nil {
+			return utils.SendError(c, err)
+		}
 
 		dbClient.Create(&user)
 

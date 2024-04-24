@@ -31,9 +31,9 @@ func (this *db_utils) DisconnectDB() {
 
 func (this *db_utils) AutoMigrate() {
 	err := this.DbClient.AutoMigrate(
-    &model.Product{},
-    &model.User{},
-  )
+		&model.Product{},
+		&model.User{},
+	)
 	if err != nil {
 		panic(err)
 	}

@@ -9,8 +9,8 @@ import (
 
 type Base struct {
 	ID        string         `sql:"type:uuid;primary_key;default:uuid_generate_v4()" json:"id"`
-  CreatedAt time.Time      `json:"created_at" ts_type:"string"`
-  UpdatedAt time.Time      `json:"updated_at" ts_type:"string"`
+	CreatedAt time.Time      `json:"created_at" ts_type:"string"`
+	UpdatedAt time.Time      `json:"updated_at" ts_type:"string"`
 	DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
 }
 
