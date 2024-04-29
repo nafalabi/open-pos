@@ -44,9 +44,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLogged(!!authToken);
     setIsLoading(true);
     if (authToken) {
-      getUserInfo().then((_userInfo) => {
-        setUserInfo(_userInfo);
-        setIsLoading(false);
+      getUserInfo().then(([respData, error]) => {
+        if (error) {
+          location.replace("/login");
+        }
+        if (respData) {
+          setUserInfo(respData.data);
+          setIsLoading(false);
+        }
       });
     }
   }, [authToken]);

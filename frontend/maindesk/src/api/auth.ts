@@ -13,8 +13,7 @@ export const getAuthToken = () => {
 
 export const getUserInfo = async () => {
   const { requestor } = apiSingleton;
-  const [, UserData] = await requestor.GET<Model_User>("/auth/userinfo");
-  return UserData;
+  return await requestor.GET<Model_User>("/auth/userinfo");
 };
 
 export const doLogin = async (payload: { email: string; password: string }) => {
