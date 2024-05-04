@@ -7,7 +7,39 @@
     <title>Open POS - Main Desk</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loading-container">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="circular-loader"
+        >
+          <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+        </svg>
+      </div>
+      <style>
+        .loading-container {
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          display: flex;
+        }
+
+        .circular-loader {
+          border-color: hsl(var(--foreground));
+          animation: spin 1s linear infinite;
+          width: 4rem;
+          height: 4rem;
+        }
+      </style>
+    </div>
     <script type="module" src="./src/main.tsx"></script>
   </body>
 </html>

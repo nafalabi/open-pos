@@ -46,7 +46,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (authToken) {
       getUserInfo().then(([respData, error]) => {
         if (error) {
-          location.replace("/login");
+          handleResetAuthToken();
+          return;
         }
         if (respData) {
           setUserInfo(respData.data);
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       });
     }
-  }, [authToken]);
+  }, [authToken, handleResetAuthToken]);
 
   useEffect(() => {
     const _authToken = getAuthToken();

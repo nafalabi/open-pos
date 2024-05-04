@@ -6,26 +6,33 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shared/components/ui/breadcrumb";
+import { Link, useMatches } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
 
 export const BreadcrumbMain = () => {
+  const matches = useMatches();
+
   return (
     <Breadcrumb className="hidden md:flex">
       <BreadcrumbList>
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <a href="#">Dashboard</a>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbLink asChild>
-            <a href="#">Orders</a>
-          </BreadcrumbLink>
-        </BreadcrumbItem>
-        <BreadcrumbSeparator />
-        <BreadcrumbItem>
-          <BreadcrumbPage>Recent Orders</BreadcrumbPage>
-        </BreadcrumbItem>
+        {matches.map((entry, index) => (
+          <Fragment key={entry.id}>
+            {index != matches.length - 1 ? (
+              <>
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to={entry.pathname}>{entry.id}</Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+              </>
+            ) : (
+              <BreadcrumbItem>
+                <BreadcrumbPage>{entry.id}</BreadcrumbPage>
+              </BreadcrumbItem>
+            )}
+          </Fragment>
+        ))}
       </BreadcrumbList>
     </Breadcrumb>
   );
