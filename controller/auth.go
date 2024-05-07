@@ -10,8 +10,8 @@ import (
 )
 
 type LoginParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+  Email    string `json:"email" example:"admin@admin.com"`
+	Password string `json:"password" example:"admin"`
 }
 
 // @Summary	Login into the app

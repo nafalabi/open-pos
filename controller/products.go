@@ -25,7 +25,7 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		}
 
 		product := model.Product{}
-		reqBody.Combine(&product)
+		reqBody.Fill(&product)
 		dbClient.Create(&product)
 
 		return utils.SendSuccess(c, product)
@@ -100,7 +100,7 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 			return utils.SendError(c, err)
 		}
 
-		reqBody.Combine(&product)
+		reqBody.Fill(&product)
 		dbClient.Save(&product)
 
 		return utils.SendSuccess(c, product)

@@ -50,12 +50,16 @@ func main() {
 	products.DELETE("/:id", utils.RegisterController(dbClient, controller.DeleteProduct))
 
 	users := e.Group("/users")
-	products.Use(jwtMiddleware)
+	users.Use(jwtMiddleware)
 	users.POST("", utils.RegisterController(dbClient, controller.Register))
 	users.GET("", utils.RegisterController(dbClient, controller.ListUsers))
 	users.GET("/:id", utils.RegisterController(dbClient, controller.FindUser))
 	users.PATCH("/:id", utils.RegisterController(dbClient, controller.UpdateUser))
 	users.DELETE("/:id", utils.RegisterController(dbClient, controller.DeleteUser))
+
+	images := e.Group("/images")
+	images.POST("", utils.RegisterController(dbClient, controller.UploadImage), jwtMiddleware)
+	images.Static("", "./storage/images")
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
