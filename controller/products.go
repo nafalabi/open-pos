@@ -26,7 +26,36 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		product := model.Product{}
 		reqBody.Fill(&product)
-		dbClient.Create(&product)
+
+		err := dbClient.Transaction(func(tx *gorm.DB) error {
+			var err error
+
+			err = tx.Create(&product).Error
+			if err != nil {
+				return err
+			}
+
+			categoryIDs := *reqBody.Categories
+			if len(categoryIDs) < 1 {
+				return nil
+			}
+
+			var categories []model.Category
+			err = tx.Where("ID in ?", categoryIDs).Find(&categories).Error
+			if err != nil {
+				return err
+			}
+
+			err = tx.Model(&product).Association("Categories").Replace(categories)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+		if err != nil {
+			return utils.SendError(c, err)
+		}
 
 		return utils.SendSuccess(c, product)
 	}
@@ -47,7 +76,7 @@ func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		var products []model.Product
 		var totalRecords int64
 
-		dbClient.Offset(offset).Limit(limit).Find(&products)
+		dbClient.Offset(offset).Limit(limit).Preload("Categories").Find(&products)
 		dbClient.Model(&model.Product{}).Count(&totalRecords)
 
 		return utils.SendSuccessPaginated(c, products, page, pageSize, int(totalRecords))
@@ -67,7 +96,7 @@ func FindProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		var product model.Product
 
-		err := dbClient.Where("id = ? ", productId).First(&product).Error
+		err := dbClient.Where("id = ? ", productId).Preload("Categories").First(&product).Error
 		if err != nil {
 			return utils.SendError(c, err)
 		}
@@ -100,8 +129,34 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 			return utils.SendError(c, err)
 		}
 
-		reqBody.Fill(&product)
-		dbClient.Save(&product)
+		err = dbClient.Transaction(func(tx *gorm.DB) error {
+			var err error
+
+			reqBody.Fill(&product)
+			tx.Save(&product)
+
+			categoryIDs := *reqBody.Categories
+			if len(categoryIDs) < 1 {
+				return nil
+			}
+
+			var categories []model.Category
+			err = tx.Where("ID in ?", categoryIDs).Find(&categories).Error
+			if err != nil {
+				return err
+			}
+
+			err = tx.Model(&product).Association("Categories").Replace(categories)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+
+		if err != nil {
+			return utils.SendError(c, err)
+		}
 
 		return utils.SendSuccess(c, product)
 	}

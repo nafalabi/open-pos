@@ -3,8 +3,10 @@ definitions:
   controller.LoginParams:
     properties:
       email:
+        example: admin@admin.com
         type: string
       password:
+        example: admin
         type: string
     type: object
   enum.UserLevel:
@@ -21,9 +23,24 @@ definitions:
     - Worker
   model.ProductFillable:
     properties:
+      categories:
+        items:
+          type: string
+        type: array
+      description:
+        type: string
+      image:
+        type: string
       name:
         type: string
+      price:
+        minimum: 0
+        type: integer
+      stock:
+        minimum: 0
+        type: integer
     required:
+    - description
     - name
     type: object
   model.UserFillable:
@@ -76,6 +93,24 @@ paths:
       summary: Get user logged info
       tags:
       - Auth
+  /images:
+    post:
+      consumes:
+      - multipart/form-data
+      parameters:
+      - description: Image File
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: upload image
+      tags:
+      - Images
   /products:
     get:
       consumes:

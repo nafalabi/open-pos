@@ -33,6 +33,7 @@ func (this *db_utils) AutoMigrate() {
 	err := this.DbClient.AutoMigrate(
 		&model.Product{},
 		&model.User{},
+		&model.Category{},
 	)
 	if err != nil {
 		panic(err)
