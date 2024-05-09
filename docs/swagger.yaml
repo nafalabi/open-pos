@@ -21,6 +21,13 @@ definitions:
     - Owner
     - Manager
     - Worker
+  model.CategoryFillable:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   model.ProductFillable:
     properties:
       categories:
@@ -93,6 +100,103 @@ paths:
       summary: Get user logged info
       tags:
       - Auth
+  /categories:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: string
+      - description: page size
+        in: query
+        name: pagesize
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: list of categories
+      tags:
+      - Categories
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.CategoryFillable'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new category
+      tags:
+      - Categories
+  /categories/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: delete category by id
+      tags:
+      - Categories
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: find category by id
+      tags:
+      - Categories
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: Category ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Category Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/model.CategoryFillable'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: update category
+      tags:
+      - Categories
   /images:
     post:
       consumes:

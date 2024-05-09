@@ -4,7 +4,7 @@ type CategoryFillable struct {
 	Name        string `json:"name" validate:"required"`
 }
 
-func (this CategoryFillable) Fill(product *Product) {
+func (this CategoryFillable) Fill(product *Category) {
 	product.Name = this.Name
 }
 
