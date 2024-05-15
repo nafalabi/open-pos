@@ -10,6 +10,10 @@ import PageNotFound from "./pages/404-not-found/PageNotFound.tsx";
 
 const DashboardPage = lazy(() => import("./pages/dashboard/DashboardPage.tsx"));
 const BaseLayout = lazy(() => import("./layout/base.tsx"));
+const CategoriesPage = lazy(
+  () => import("./pages/categories/CategoriesPage.tsx"),
+);
+const ProductsPage = lazy(() => import("./pages/products/ProductsPage.tsx"));
 
 const Layout = ({ children }: ComponentProps<typeof BaseLayout>) => (
   <GuardedRoute>
@@ -49,6 +53,32 @@ export const router = createBrowserRouter([
             component={<DashboardPage />}
           />
         ),
+      },
+      {
+        id: "Products",
+        path: "products",
+        children: [
+          {
+            index: true,
+            id: "All Products",
+            element: (
+              <LazyLoader
+                fallback={<LoadingPage />}
+                component={<ProductsPage />}
+              />
+            ),
+          },
+          {
+            id: "Categories",
+            path: "categories",
+            element: (
+              <LazyLoader
+                fallback={<LoadingPage />}
+                component={<CategoriesPage />}
+              />
+            ),
+          },
+        ],
       },
     ],
   },

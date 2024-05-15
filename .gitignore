@@ -1,6 +1,8 @@
 .env
 app.db
 
+storage/*
+
 # Logs
 logs
 *.log

@@ -7,6 +7,7 @@ import {
   PanelLeft,
   Settings,
   ShoppingCart,
+  Tags,
   Users2,
 } from "lucide-react";
 
@@ -23,11 +24,18 @@ import {
 } from "@/shared/components/ui/tooltip";
 import { Link, useLocation } from "react-router-dom";
 import { cn } from "@/shared/utils/shadcn.ts";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/shared/components/ui/collapsible";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 
 type Menuitem = {
   name: string;
   icon: LucideIcon;
-  link: string;
+  link?: string;
+  children?: Menuitem[];
 };
 
 const menus: Menuitem[] = [
@@ -47,6 +55,11 @@ const menus: Menuitem[] = [
     link: "/products",
   },
   {
+    name: "Categories",
+    icon: Tags,
+    link: "/products/categories",
+  },
+  {
     name: "Customers",
     icon: Users2,
     link: "/customers",
@@ -60,6 +73,41 @@ const menus: Menuitem[] = [
 
 export const Navbar = () => {
   const { pathname } = useLocation();
+
+  const renderMenu = (menuList: Menuitem[]) => {
+    return menuList.map((menu) => (
+      <Tooltip key={menu.name}>
+        <TooltipTrigger asChild>
+          {menu.children ? (
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center">
+                <menu.icon />
+                <CaretSortIcon className="-mr-3" />
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                {renderMenu(menu.children)}
+              </CollapsibleContent>
+            </Collapsible>
+          ) : (
+            <Link
+              to={menu.link ?? "#"}
+              className={cn(
+                pathname === menu.link
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground",
+                "flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8",
+              )}
+            >
+              <menu.icon className="h-5 w-5" />
+              <span className="sr-only">{menu.name}</span>
+            </Link>
+          )}
+        </TooltipTrigger>
+        <TooltipContent side="right">{menu.name}</TooltipContent>
+      </Tooltip>
+    ));
+  };
+
   return (
     <aside className="fixed inset-y-0 left-0 z-10 hidden w-14 flex-col border-r bg-background sm:flex">
       <nav className="flex flex-col items-center gap-4 px-2 sm:py-4">
@@ -70,25 +118,7 @@ export const Navbar = () => {
           <Package2 className="h-4 w-4 transition-all group-hover:scale-110" />
           <span className="sr-only">Acme Inc</span>
         </Link>
-        {menus.map((menu) => (
-          <Tooltip key={menu.name}>
-            <TooltipTrigger asChild>
-              <Link
-                to={menu.link}
-                className={cn(
-                  pathname === menu.link
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground",
-                  "flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8",
-                )}
-              >
-                <menu.icon className="h-5 w-5" />
-                <span className="sr-only">{menu.name}</span>
-              </Link>
-            </TooltipTrigger>
-            <TooltipContent side="right">{menu.name}</TooltipContent>
-          </Tooltip>
-        ))}
+        {renderMenu(menus)}
       </nav>
       <nav className="mt-auto flex flex-col items-center gap-4 px-2 sm:py-4">
         <Tooltip>
@@ -130,7 +160,7 @@ export const MobileNavbar = () => {
           {menus.map((menu) => (
             <Link
               key={menu.name}
-              to={menu.link}
+              to={menu.link ?? "#"}
               className={cn(
                 pathname === menu.link
                   ? "text-foreground"

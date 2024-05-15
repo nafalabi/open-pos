@@ -1,4 +1,5 @@
 import { LOCALSTORAGE_PREFIX } from "../constant/common";
+import { RequestorReturnType, ResponseData, ResponseError } from "./types";
 
 type FetchArgs = Parameters<typeof fetch>;
 
@@ -43,20 +44,6 @@ export class ApiSingleton {
   }
 }
 
-type Pagination = {
-  current_page: number;
-  page_size: number;
-  total_items: number;
-  total_page: number;
-};
-type ResponseData<T> = { code: number; data: T; pagination?: Pagination };
-type ResponseError = { code: number; message: string };
-type RequestorReturnType<T> = [
-  result: ResponseData<T> | undefined,
-  error: ResponseError | undefined,
-  response: Response,
-];
-
 export class Requestor {
   fetch = fetch;
 
@@ -83,7 +70,9 @@ export class Requestor {
     url: string,
     params?: TParams,
   ): Promise<RequestorReturnType<TData>> {
-    const urlParams = params ? new URLSearchParams(params).toString() : "";
+    const urlParams = params
+      ? "?" + new URLSearchParams(params).toString()
+      : "";
     const response = await this.fetch(API_URL + url + urlParams);
 
     const error = await this._getErrorMessage(response);

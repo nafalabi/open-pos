@@ -15,7 +15,7 @@ export const BaseLayout = ({ children }: BaseLayoutProps) => {
         <Navbar />
         <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
           <Header />
-          <main className="p-4 sm:px-6 sm:py-0 ">
+          <main className="p-4 sm:px-6 sm:py-0 max-w-[1700px] w-full self-center flex">
             {children}
           </main>
         </div>

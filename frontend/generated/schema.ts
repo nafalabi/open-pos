@@ -27,11 +27,29 @@ export type UserFillable = z.infer<typeof UserFillableSchema>;
 
 export const ProductFillableSchema = z.object({
   name: z.string().min(1),
+  description: z.string().min(1),
+  price: z.number().gte(0),
+  image: z.string(),
+  stock: z.number().gte(0),
+  categories: z.string().array().nullable(),
 });
 export type ProductFillable = z.infer<typeof ProductFillableSchema>;
 
-export const ProductSchema = z
+export const CategoryFillableSchema = z.object({
+  name: z.string().min(1),
+});
+export type CategoryFillable = z.infer<typeof CategoryFillableSchema>;
+
+export const CategorySchema = z
   .object({})
+  .merge(CategoryFillableSchema)
+  .merge(BaseSchema);
+export type Category = z.infer<typeof CategorySchema>;
+
+export const ProductSchema = z
+  .object({
+    categories: CategorySchema.array().nullable(),
+  })
   .merge(ProductFillableSchema)
   .merge(BaseSchema);
 export type Product = z.infer<typeof ProductSchema>;

@@ -35,7 +35,7 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 				return err
 			}
 
-			categoryIDs := *reqBody.Categories
+			categoryIDs := reqBody.Categories
 			if len(categoryIDs) < 1 {
 				return nil
 			}
@@ -135,7 +135,7 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 			reqBody.Fill(&product)
 			tx.Save(&product)
 
-			categoryIDs := *reqBody.Categories
+			categoryIDs := reqBody.Categories
 			if len(categoryIDs) < 1 {
 				return nil
 			}
