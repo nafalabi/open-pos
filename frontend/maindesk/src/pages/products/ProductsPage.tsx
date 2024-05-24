@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import useQueryParams from "../../hooks/useQueryParams";
 import Pagination from "../../layout/pagination";
 import { PaginationData } from "../../api/types";
+import { useNavigate } from "react-router-dom";
 
 const columns: ColumnDef<Product>[] = [
   {
@@ -81,6 +82,7 @@ const columns: ColumnDef<Product>[] = [
 ];
 
 const ProductsPage = () => {
+  const navigate = useNavigate();
   const { queryParams, setPage, setPageSize } = useQueryParams({
     paramkeys: [],
   });
@@ -154,7 +156,11 @@ const ProductsPage = () => {
                   Export
                 </span>
               </Button>
-              <Button size="sm" className="h-7 gap-1">
+              <Button
+                size="sm"
+                className="h-7 gap-1"
+                onClick={() => navigate("/products/add")}
+              >
                 <PlusCircle className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
                   Add Product

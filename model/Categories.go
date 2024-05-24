@@ -1,7 +1,7 @@
 package model
 
 type CategoryFillable struct {
-	Name        string `json:"name" validate:"required"`
+	Name string `json:"name" validate:"required" gorm:"uniqueIndex"`
 }
 
 func (this CategoryFillable) Fill(product *Category) {

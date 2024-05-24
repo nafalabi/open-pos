@@ -14,6 +14,9 @@ const CategoriesPage = lazy(
   () => import("./pages/categories/CategoriesPage.tsx"),
 );
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage.tsx"));
+const ProductCreatePage = lazy(
+  () => import("./pages/products/ProductCreatePage.tsx"),
+);
 
 const Layout = ({ children }: ComponentProps<typeof BaseLayout>) => (
   <GuardedRoute>
@@ -55,8 +58,8 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        id: "Products",
         path: "products",
+        id: "Products",
         children: [
           {
             index: true,
@@ -69,8 +72,18 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            id: "Categories",
+            path: "add",
+            id: "Create Products",
+            element: (
+              <LazyLoader
+                fallback={<LoadingPage />}
+                component={<ProductCreatePage />}
+              />
+            ),
+          },
+          {
             path: "categories",
+            id: "Categories",
             element: (
               <LazyLoader
                 fallback={<LoadingPage />}

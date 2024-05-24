@@ -44,6 +44,8 @@ definitions:
         minimum: 0
         type: integer
       stock:
+        description: Image       string   `json:"image" validate:"omitempty,uri"`
+          // ts types converter cant support uri for now
         minimum: 0
         type: integer
     required:
@@ -112,6 +114,10 @@ paths:
       - description: page size
         in: query
         name: pagesize
+        type: string
+      - description: search query
+        in: query
+        name: q
         type: string
       produces:
       - application/json

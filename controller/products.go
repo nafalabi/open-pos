@@ -30,23 +30,19 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		err := dbClient.Transaction(func(tx *gorm.DB) error {
 			var err error
 
-			err = tx.Create(&product).Error
-			if err != nil {
-				return err
-			}
-
 			categoryIDs := reqBody.Categories
-			if len(categoryIDs) < 1 {
-				return nil
-			}
-
 			var categories []model.Category
-			err = tx.Where("ID in ?", categoryIDs).Find(&categories).Error
-			if err != nil {
-				return err
+
+			if len(categoryIDs) > 0 {
+				err = tx.Where("ID in ?", categoryIDs).Find(&categories).Error
+				if err != nil {
+					return err
+				}
 			}
 
-			err = tx.Model(&product).Association("Categories").Replace(categories)
+			product.Categories = categories
+
+			err = tx.Create(&product).Error
 			if err != nil {
 				return err
 			}

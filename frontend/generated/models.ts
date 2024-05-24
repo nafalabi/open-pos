@@ -29,7 +29,6 @@ export interface Model_Product {
   image: string;
   stock: number;
   categories: string[];
-  categories: Model_Category[];
   id: string;
   created_at: string;
   updated_at: string;

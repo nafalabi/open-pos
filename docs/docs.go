@@ -90,6 +90,12 @@ const docTemplate = `{
                         "description": "page size",
                         "name": "pagesize",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -623,6 +629,7 @@ const docTemplate = `{
                     "minimum": 0
                 },
                 "stock": {
+                    "description": "Image       string   ` + "`" + `json:\"image\" validate:\"omitempty,uri\"` + "`" + ` // ts types converter cant support uri for now",
                     "type": "integer",
                     "minimum": 0
                 }

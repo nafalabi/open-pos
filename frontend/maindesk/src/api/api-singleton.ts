@@ -76,10 +76,10 @@ export class Requestor {
     const response = await this.fetch(API_URL + url + urlParams);
 
     const error = await this._getErrorMessage(response);
-    if (error) return [undefined, error, response];
+    if (error) return [undefined, error, response] as const;
 
     const data: ResponseData<TData> = await response.json();
-    return [data, undefined, response];
+    return [data, undefined, response] as const;
   }
 
   async POST<TData, TPayload = { [key: string]: string }>(
@@ -94,10 +94,23 @@ export class Requestor {
     });
 
     const error = await this._getErrorMessage(response);
-    if (error) return [undefined, error, response];
+    if (error) return [undefined, error, response] as const;
 
     const data: ResponseData<TData> = await response.json();
-    return [data, undefined, response];
+    return [data, undefined, response] as const;
+  }
+
+  async POST_formdata<TData>(url: string, payload: FormData) {
+    const response = await this.fetch(API_URL + url, {
+      method: "POST",
+      body: payload,
+    });
+
+    const error = await this._getErrorMessage(response);
+    if (error) return [undefined, error, response] as const;
+
+    const data: ResponseData<TData> = await response.json();
+    return [data, undefined, response] as const;
   }
 
   async PATCH<TData, TPayload>(
@@ -112,10 +125,10 @@ export class Requestor {
     });
 
     const error = await this._getErrorMessage(response);
-    if (error) return [undefined, error, response];
+    if (error) return [undefined, error, response] as const;
 
     const data: ResponseData<TData> = await response.json();
-    return [data, undefined, response];
+    return [data, undefined, response] as const;
   }
 
   async DELETE<TData, TPayload>(
@@ -130,10 +143,10 @@ export class Requestor {
     });
 
     const error = await this._getErrorMessage(response);
-    if (error) return [undefined, error, response];
+    if (error) return [undefined, error, response] as const;
 
     const data: ResponseData<TData> = await response.json();
-    return [data, undefined, response];
+    return [data, undefined, response] as const;
   }
 }
 
