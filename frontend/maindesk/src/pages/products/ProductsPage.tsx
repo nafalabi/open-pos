@@ -26,6 +26,7 @@ import useQueryParams from "../../hooks/useQueryParams";
 import Pagination from "../../layout/pagination";
 import { PaginationData } from "../../api/types";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "@/shared/components/ui/badge";
 
 const columns: ColumnDef<Product>[] = [
   {
@@ -63,6 +64,21 @@ const columns: ColumnDef<Product>[] = [
         <div>
           <p className="font-bold">{value.name}</p>
           <p className="text-muted-foreground">{value.description}</p>
+        </div>
+      );
+    },
+  },
+  {
+    id: "categories",
+    header: "Categories",
+    accessorFn: (row) => (row.categories ?? []).map((cat) => cat.name),
+    cell: (info) => {
+      const categories = info.getValue() as string[];
+      return (
+        <div className="flex gap-1">
+          {categories.map((cat: string) => (
+            <Badge>{cat}</Badge>
+          ))}
         </div>
       );
     },

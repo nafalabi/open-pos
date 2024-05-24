@@ -50,6 +50,6 @@ export const ProductSchema = z
   .object({
     categories: CategorySchema.array().nullable(),
   })
-  .merge(ProductFillableSchema)
+  .merge(ProductFillableSchema.omit({ categories: true }))
   .merge(BaseSchema);
 export type Product = z.infer<typeof ProductSchema>;
