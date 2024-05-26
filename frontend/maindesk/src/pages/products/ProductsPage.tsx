@@ -293,6 +293,7 @@ const ProductsPage = () => {
                 <Input
                   type="search"
                   placeholder="Search..."
+                  defaultValue={queryParams.q ?? ""}
                   onChange={(e) => handleSearch(e.target.value)}
                   className="w-full rounded-lg bg-background pl-8 md:w-[150px] lg:w-[200px]"
                 />
