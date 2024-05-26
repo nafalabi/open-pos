@@ -60,13 +60,13 @@ func ListCategory(dbClient *gorm.DB) echo.HandlerFunc {
 		var categories []model.Category
 		var totalRecords int64
 
-		query := dbClient.Model(&model.Category{}).Limit(limit).Offset(offset)
+		query := dbClient.Model(&model.Category{})
 		if searchQuery != "" {
 			query.Where("name LIKE ?", "%"+searchQuery+"%")
 		}
 
-		query.Find(&categories)
-		dbClient.Model(&model.Category{}).Count(&totalRecords)
+		query.Count(&totalRecords)
+		query.Limit(limit).Offset(offset).Find(&categories)
 
 		return utils.SendSuccessPaginated(c, categories, page, pageSize, int(totalRecords))
 	}

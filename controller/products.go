@@ -74,14 +74,14 @@ func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		var products []model.Product
 		var totalRecords int64
 
-		query := dbClient.Model(&model.Product{}).Offset(offset).Limit(limit).Preload("Categories")
+		query := dbClient.Model(&model.Product{})
 
 		if searchQuery != "" {
 			query.Where("name like ?", "%"+searchQuery+"%")
 		}
 
-		query.Find(&products)
-		dbClient.Model(&model.Product{}).Count(&totalRecords)
+		query.Count(&totalRecords)
+		query.Offset(offset).Limit(limit).Preload("Categories").Find(&products)
 
 		return utils.SendSuccessPaginated(c, products, page, pageSize, int(totalRecords))
 	}
