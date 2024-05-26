@@ -234,6 +234,10 @@ paths:
         in: query
         name: pagesize
         type: string
+      - description: search query
+        in: query
+        name: q
+        type: string
       produces:
       - application/json
       responses: {}

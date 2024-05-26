@@ -44,7 +44,8 @@ const Pagination = ({
         </DropdownMenu>
         &nbsp;&middot;&nbsp; Showing{" "}
         <strong>
-          {startingRowNum}-{Math.min(startingRowNum + pagesize, totalrecords)}
+          {startingRowNum}-
+          {Math.min(startingRowNum + pagesize - 1, totalrecords)}
         </strong>{" "}
         of&nbsp;
         <strong>{totalrecords}</strong> products

@@ -7,22 +7,41 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { File, ImageOff, PlusCircle, Search, Trash2Icon } from "lucide-react";
+import {
+  File,
+  ImageOff,
+  PlusCircle,
+  Search,
+  SquarePenIcon,
+  Trash2Icon,
+} from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/generated/schema";
 import { DataTable } from "../../layout/data-table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { deleteProduct, getProducts } from "../../api/products";
 import { toast } from "sonner";
 import useQueryParams from "../../hooks/useQueryParams";
 import Pagination from "../../layout/pagination";
-import { PaginationData } from "../../api/types";
+import { defaultPagination } from "../../api/types";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/shared/components/ui/badge";
 import { Input } from "@/shared/components/ui/input";
 import { debounce } from "../../utils/function-utils";
 import { Checkbox } from "@/shared/components/ui/checkbox";
 import { showAlert } from "../../layout/global-alert";
+import {
+  DropdownMenu,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { router } from "../../routes";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { queryClient } from "../../App";
 
 const columns: ColumnDef<Product>[] = [
   {
@@ -118,6 +137,62 @@ const columns: ColumnDef<Product>[] = [
     accessorKey: "stock",
     cell: (info) => info.getValue(),
   },
+  {
+    id: "action",
+    header: "",
+    accessorKey: "id",
+    cell: (info) => {
+      const id = info.getValue() as string;
+
+      const handleDelete = () => {
+        showAlert({
+          title: "Delete Confirmation",
+          message: `Are you sure to delete the product?`,
+          async onConfirm() {
+            toast.promise(
+              async () => {
+                const [, err] = await deleteProduct(id);
+                if (err) throw new Error(err.message);
+                queryClient.invalidateQueries({ queryKey: ["products"] });
+              },
+              {
+                loading: "Deleting row...",
+                success: "Success deleting product",
+                error: "Failed to delete product",
+              },
+            );
+          },
+        });
+      };
+
+      const handleEdit = () => {
+        router.navigate("/edit/" + id);
+      };
+
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Options</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={handleEdit}>
+              <SquarePenIcon className="h-3.5 w-3.5 mr-1" />
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>
+              <Trash2Icon className="h-3.5 w-3.5 mr-1" />
+              Delete
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
 ];
 
 const ProductsPage = () => {
@@ -125,19 +200,10 @@ const ProductsPage = () => {
   const { queryParams, setPage, setPageSize, setQueryParams } = useQueryParams({
     paramkeys: ["q"],
   });
-  const [isLoading, setLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState<Record<number, boolean>>({});
   const isAnyRowSelected = Object.keys(rowSelection).length > 0;
-  const [data, setData] = useState<Product[]>([]);
-  const [paginationData, setPaginationData] = useState<PaginationData>({
-    page_size: 10,
-    total_page: 0,
-    total_items: 0,
-    current_page: 1,
-  });
 
   const fetchData = async (params: typeof queryParams) => {
-    setLoading(true);
     const [result, error] = await getProducts({
       page: params.page,
       pagesize: params.pagesize,
@@ -149,21 +215,26 @@ const ProductsPage = () => {
         description: error.message,
         dismissible: true,
       });
-      return;
+      return { data: [], paginationData: defaultPagination };
     }
-    if (result?.data) {
-      setData(result.data);
-    }
-    if (result?.pagination) {
-      setPaginationData(result.pagination);
-    }
-    setLoading(false);
+    return {
+      data: result.data,
+      paginationData: result.pagination ?? defaultPagination,
+    };
   };
 
-  useEffect(() => {
-    fetchData(queryParams);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryParams]);
+  const {
+    data: { data, paginationData },
+    isFetching,
+  } = useQuery({
+    queryKey: ["products", queryParams],
+    queryFn: () => fetchData(queryParams),
+    initialData: {
+      data: [],
+      paginationData: defaultPagination,
+    },
+    placeholderData: keepPreviousData,
+  });
 
   const handleSearch = useCallback(
     debounce((keyword: string) => {
@@ -197,9 +268,9 @@ const ProductsPage = () => {
               }
               if (successCount > 0) {
                 toast(`Success deleting ${successCount} rows`);
+                queryClient.invalidateQueries({ queryKey: ["products"] });
               }
-              setRowSelection({})
-              fetchData(queryParams);
+              setRowSelection({});
             },
           },
         );
@@ -262,7 +333,7 @@ const ProductsPage = () => {
           <DataTable
             data={data}
             columns={columns}
-            isLoading={isLoading}
+            isLoading={isFetching && data.length === 0}
             paginationState={{
               pageIndex: Number(queryParams.page),
               pageSize: Number(queryParams.pagesize),

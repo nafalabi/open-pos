@@ -6,7 +6,7 @@ import { router } from "./routes";
 import { AuthProvider } from "./guard/AuthProvider";
 import { GlobalAlertParent } from "./layout/global-alert";
 
-const queryClient = new QueryClient();
+export const queryClient = new QueryClient();
 
 function App() {
   return (
