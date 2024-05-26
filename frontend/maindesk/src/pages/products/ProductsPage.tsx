@@ -7,28 +7,49 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
-import { File, ImageOff, ListFilter, PlusCircle } from "lucide-react";
+import { File, ImageOff, PlusCircle, Search, Trash2Icon } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/generated/schema";
 import { DataTable } from "../../layout/data-table";
-import { useEffect, useState } from "react";
-import { getProducts } from "../../api/products";
+import { useCallback, useEffect, useState } from "react";
+import { deleteProduct, getProducts } from "../../api/products";
 import { toast } from "sonner";
 import useQueryParams from "../../hooks/useQueryParams";
 import Pagination from "../../layout/pagination";
 import { PaginationData } from "../../api/types";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/shared/components/ui/badge";
+import { Input } from "@/shared/components/ui/input";
+import { debounce } from "../../utils/function-utils";
+import { Checkbox } from "@/shared/components/ui/checkbox";
+import { showAlert } from "../../layout/global-alert";
 
 const columns: ColumnDef<Product>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <div className="ml-2">
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="ml-2">
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      </div>
+    ),
+    size: 15,
+  },
   {
     id: "image",
     header: "",
@@ -75,9 +96,11 @@ const columns: ColumnDef<Product>[] = [
     cell: (info) => {
       const categories = info.getValue() as string[];
       return (
-        <div className="flex gap-1">
+        <div className="flex flex-wrap gap-1">
           {categories.map((cat: string) => (
-            <Badge>{cat}</Badge>
+            <Badge key={cat} className="max-w-fit truncate">
+              {cat}
+            </Badge>
           ))}
         </div>
       );
@@ -99,10 +122,12 @@ const columns: ColumnDef<Product>[] = [
 
 const ProductsPage = () => {
   const navigate = useNavigate();
-  const { queryParams, setPage, setPageSize } = useQueryParams({
-    paramkeys: [],
+  const { queryParams, setPage, setPageSize, setQueryParams } = useQueryParams({
+    paramkeys: ["q"],
   });
   const [isLoading, setLoading] = useState(true);
+  const [rowSelection, setRowSelection] = useState<Record<number, boolean>>({});
+  const isAnyRowSelected = Object.keys(rowSelection).length > 0;
   const [data, setData] = useState<Product[]>([]);
   const [paginationData, setPaginationData] = useState<PaginationData>({
     page_size: 10,
@@ -111,31 +136,76 @@ const ProductsPage = () => {
     current_page: 1,
   });
 
-  useEffect(() => {
+  const fetchData = async (params: typeof queryParams) => {
     setLoading(true);
-    getProducts({
-      page: queryParams.page,
-      pagesize: queryParams.pagesize,
-    })
-      .then(([result, error]) => {
-        if (error) {
-          toast.error("Error occured", {
-            description: error.message,
-            dismissible: true,
-          });
-          return;
-        }
-        if (result?.data) {
-          setData(result.data);
-        }
-        if (result?.pagination) {
-          setPaginationData(result.pagination);
-        }
-      })
-      .finally(() => {
-        setLoading(false);
+    const [result, error] = await getProducts({
+      page: params.page,
+      pagesize: params.pagesize,
+      q: params.q ?? "",
+    });
+
+    if (error) {
+      toast.error("Error occured", {
+        description: error.message,
+        dismissible: true,
       });
+      return;
+    }
+    if (result?.data) {
+      setData(result.data);
+    }
+    if (result?.pagination) {
+      setPaginationData(result.pagination);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchData(queryParams);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryParams]);
+
+  const handleSearch = useCallback(
+    debounce((keyword: string) => {
+      setQueryParams({ q: keyword });
+    }, 500),
+    [setQueryParams],
+  );
+
+  const handleDeleteSelected = () => {
+    const selectedRows = Object.keys(rowSelection) as unknown[] as number[];
+    showAlert({
+      title: "Delete Confirmation",
+      message: `Are you sure to delete these (${selectedRows.length}) products?`,
+      async onConfirm() {
+        const ids = selectedRows.map((index) => data[index].id);
+        const errors = [];
+        toast.promise(
+          Promise.all(
+            ids.map(async (id) => {
+              const [, err] = await deleteProduct(id);
+              if (err) errors.push(err);
+            }),
+          ),
+          {
+            loading: "Deleting rows...",
+            finally: () => {
+              const errorCount = errors.length;
+              const successCount = selectedRows.length - errors.length;
+              if (errorCount > 0) {
+                toast.error(`Failed to delete ${errorCount} rows`);
+              }
+              if (successCount > 0) {
+                toast(`Success deleting ${successCount} rows`);
+              }
+              setRowSelection({})
+              fetchData(queryParams);
+            },
+          },
+        );
+      },
+    });
+  };
 
   return (
     <div className="grid flex-1 items-start gap-2 p-4 sm:px-6 sm:py-0 md:gap-2">
@@ -147,25 +217,15 @@ const ProductsPage = () => {
               <CardDescription>Manage all your products here.</CardDescription>
             </div>
             <div className="ml-auto flex items-center gap-2">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-7 gap-1">
-                    <ListFilter className="h-3.5 w-3.5" />
-                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                      Filter
-                    </span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuCheckboxItem checked>
-                    Active
-                  </DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                  <DropdownMenuCheckboxItem>Archived</DropdownMenuCheckboxItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <div className="relative ml-auto flex-1 md:grow-0">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  onChange={(e) => handleSearch(e.target.value)}
+                  className="w-full rounded-lg bg-background pl-8 md:w-[150px] lg:w-[200px]"
+                />
+              </div>
               <Button size="sm" variant="outline" className="h-7 gap-1">
                 <File className="h-3.5 w-3.5" />
                 <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
@@ -182,6 +242,19 @@ const ProductsPage = () => {
                   Add Product
                 </span>
               </Button>
+              {isAnyRowSelected && (
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="h-7 gap-1"
+                  onClick={handleDeleteSelected}
+                >
+                  <Trash2Icon className="h-3.5 w-3.5" />
+                  <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                    Delete All
+                  </span>
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
@@ -193,6 +266,12 @@ const ProductsPage = () => {
             paginationState={{
               pageIndex: Number(queryParams.page),
               pageSize: Number(queryParams.pagesize),
+            }}
+            tableOptions={{
+              onRowSelectionChange: setRowSelection,
+              state: {
+                rowSelection,
+              },
             }}
           />
         </CardContent>

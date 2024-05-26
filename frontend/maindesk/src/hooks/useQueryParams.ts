@@ -2,20 +2,18 @@ import { useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { PaginationParams } from "../api/types";
 
-type Args<TParamKeys extends readonly string[]> = {
-  paramkeys: TParamKeys;
-};
-
 type ParamsValue<TParamKeys extends readonly string[]> = {
   [key in TParamKeys[number]]: string | null;
 } & PaginationParams & {
-    sortkey: string | null;
-    sortdirection: "asc" | "desc" | null;
-  };
+  sortkey: string | null;
+  sortdirection: "asc" | "desc" | null;
+};
 
-const useQueryParams = <TParamKeys extends readonly string[]>({
+const useQueryParams = <const TParamKeys extends ReadonlyArray<string>>({
   paramkeys,
-}: Args<TParamKeys>) => {
+}: {
+  paramkeys: TParamKeys;
+}) => {
   const [urlSearchParams, setUrlSearchParams] = useSearchParams();
 
   const queryParams = useMemo(() => {
@@ -70,7 +68,7 @@ const useQueryParams = <TParamKeys extends readonly string[]>({
   }, [urlSearchParams, setUrlSearchParams]);
 
   const setQueryParams = useCallback(
-    (params: typeof queryParams) => {
+    (params: Partial<typeof queryParams>) => {
       Object.entries(params).forEach(([key, val]) => {
         if (val !== null) {
           urlSearchParams.set(key, val);

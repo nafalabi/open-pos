@@ -1,5 +1,6 @@
 import {
   ColumnDef,
+  TableOptions,
   flexRender,
   getCoreRowModel,
   useReactTable,
@@ -24,6 +25,7 @@ type DataTableProps<TData> = {
     pageSize: number;
     pageIndex: number;
   };
+  tableOptions?: Partial<TableOptions<TData>>;
 };
 
 export const DataTable = <TData = object,>({
@@ -32,14 +34,17 @@ export const DataTable = <TData = object,>({
   isLoading,
   rowCount,
   paginationState,
+  tableOptions,
 }: DataTableProps<TData>) => {
   const table = useReactTable({
+    ...tableOptions,
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     rowCount,
     manualPagination: true,
     state: {
+      ...tableOptions?.state,
       pagination: paginationState,
     },
     defaultColumn: {
@@ -68,9 +73,9 @@ export const DataTable = <TData = object,>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   );
                 })}

@@ -131,15 +131,16 @@ export class Requestor {
     return [data, undefined, response] as const;
   }
 
-  async DELETE<TData, TPayload>(
+  async DELETE<TData>(
     url: string,
-    payload?: TPayload,
+    params?: Record<string, string>,
   ): Promise<RequestorReturnType<TData>> {
-    const sPayload = JSON.stringify(payload);
-    const response = await this.fetch(API_URL + url, {
+    const urlParams = params
+      ? "?" + new URLSearchParams(params).toString()
+      : "";
+    const response = await this.fetch(API_URL + url + urlParams, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: sPayload,
     });
 
     const error = await this._getErrorMessage(response);

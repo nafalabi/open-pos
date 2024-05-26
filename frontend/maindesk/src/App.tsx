@@ -4,6 +4,7 @@ import { Toaster } from "@/shared/components/ui/sonner";
 import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
 import { AuthProvider } from "./guard/AuthProvider";
+import { GlobalAlertParent } from "./layout/global-alert";
 
 const queryClient = new QueryClient();
 
@@ -13,6 +14,7 @@ function App() {
       <AuthProvider>
         <RouterProvider router={router} />
         <Toaster theme="light" richColors closeButton />
+        <GlobalAlertParent />
       </AuthProvider>
     </QueryClientProvider>
   );

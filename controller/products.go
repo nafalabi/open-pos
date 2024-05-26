@@ -64,16 +64,27 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 // @Produce	json
 // @Param		page		query	string	false	"page"
 // @Param		pagesize	query	string	false	"page size"
+// @Param		q			query	string	false	"search query"
 // @Router		/products [get]
 func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		limit, offset, page, pageSize := utils.DefinePaginationParam(c)
+		searchQuery := c.QueryParam("q")
 
 		var products []model.Product
 		var totalRecords int64
 
-		dbClient.Offset(offset).Limit(limit).Preload("Categories").Find(&products)
-		dbClient.Model(&model.Product{}).Count(&totalRecords)
+    query := dbClient.Model(&model.Product{}).Offset(offset).Limit(limit).Preload("Categories")
+
+    if searchQuery != "" {
+      query.Where("name like ?", "%"+searchQuery+"%")
+    }
+
+    query.Find(&products)
+    query.Count(&totalRecords)
+
+		// dbClient.Offset(offset).Limit(limit).Preload("Categories").Find(&products)
+		// dbClient.Model(&model.Product{}).Count(&totalRecords)
 
 		return utils.SendSuccessPaginated(c, products, page, pageSize, int(totalRecords))
 	}
