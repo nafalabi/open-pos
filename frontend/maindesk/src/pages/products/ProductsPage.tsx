@@ -18,7 +18,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/generated/schema";
 import { DataTable } from "../../layout/data-table";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { deleteProduct, getProducts } from "../../api/products";
 import { toast } from "sonner";
 import useQueryParams from "../../hooks/useQueryParams";
@@ -177,7 +177,7 @@ const columns: ColumnDef<Product>[] = [
               <DotsHorizontalIcon className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent align="center">
             <DropdownMenuLabel>Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleEdit}>
