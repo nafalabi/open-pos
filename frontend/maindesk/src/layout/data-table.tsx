@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import { useEffect } from "react";
 
 type DataTableProps<TData> = {
   data: TData[];
@@ -51,6 +52,10 @@ export const DataTable = <TData = object,>({
       size: 0,
     },
   });
+
+  useEffect(() => {
+    table.resetRowSelection()
+  }, [data, table]);
 
   return (
     <div className="w-full">
