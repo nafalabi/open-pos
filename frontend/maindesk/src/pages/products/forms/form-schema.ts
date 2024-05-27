@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const ProductFormSchema = ProductFillableSchema.omit({ categories: true }).merge(
   z.object({
+    id: z.string().optional(),
     categories: z
       .object({
         label: z.string(),

@@ -11,11 +11,14 @@ import PageNotFound from "./pages/404-not-found/PageNotFound.tsx";
 const DashboardPage = lazy(() => import("./pages/dashboard/DashboardPage.tsx"));
 const BaseLayout = lazy(() => import("./layout/base.tsx"));
 const CategoriesPage = lazy(
-  () => import("./pages/categories/CategoriesPage.tsx"),
+  () => import("./pages/categories/CategoriesPage.tsx")
 );
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage.tsx"));
 const ProductCreatePage = lazy(
-  () => import("./pages/products/ProductCreatePage.tsx"),
+  () => import("./pages/products/ProductCreatePage.tsx")
+);
+const ProductEditPage = lazy(
+  () => import("./pages/products/ProductEditPage.tsx")
 );
 
 const Layout = ({ children }: ComponentProps<typeof BaseLayout>) => (
@@ -73,11 +76,21 @@ export const router = createBrowserRouter([
           },
           {
             path: "add",
-            id: "Create Products",
+            id: "Create Product",
             element: (
               <LazyLoader
                 fallback={<LoadingPage />}
                 component={<ProductCreatePage />}
+              />
+            ),
+          },
+          {
+            path: "edit/:productId",
+            id: "Edit Product",
+            element: (
+              <LazyLoader
+                fallback={<LoadingPage />}
+                component={<ProductEditPage />}
               />
             ),
           },

@@ -9,7 +9,6 @@ import {
 } from "@/shared/components/ui/card";
 import {
   File,
-  ImageOff,
   PlusCircle,
   Search,
   SquarePenIcon,
@@ -18,7 +17,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { Product } from "@/generated/schema";
 import { DataTable } from "../../layout/data-table";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { deleteProduct, getProducts } from "../../api/products";
 import { toast } from "sonner";
 import useQueryParams from "../../hooks/useQueryParams";
@@ -42,12 +41,13 @@ import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { router } from "../../routes";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
+import GenericImage from "../../layout/generic-image";
 
 const columns: ColumnDef<Product>[] = [
   {
     id: "select",
     header: ({ table }) => (
-      <div className="ml-2">
+      <div className="ml-2 mr-2">
         <Checkbox
           checked={
             table.getIsAllPageRowsSelected() ||
@@ -76,20 +76,13 @@ const columns: ColumnDef<Product>[] = [
     cell: (info) => {
       const src = info.getValue() as string;
       return (
-        <div className="max-w-[80px] max-h-[80px] aspect-square rounded-md relative">
-          <img
-            src={src ?? ""}
-            loading="lazy"
-            className="w-full h-auto aspect-square rounded-md object-cover z-20"
-            onError={(e) => {
-              e.currentTarget.hidden = true;
-              const parentEl = e.currentTarget.parentNode;
-              const imgOffEl = parentEl?.querySelector("svg");
-              imgOffEl?.classList.remove("hidden");
-            }}
-          />
-          <ImageOff className="absolute top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%] z-10 hidden" />
-        </div>
+        <GenericImage
+          src={src}
+          containerProps={{
+            className:
+              "max-w-[80px] max-h-[80px] aspect-square rounded-md relative",
+          }}
+        />
       );
     },
     size: 80,
@@ -159,14 +152,14 @@ const columns: ColumnDef<Product>[] = [
                 loading: "Deleting row...",
                 success: "Success deleting product",
                 error: "Failed to delete product",
-              },
+              }
             );
           },
         });
       };
 
       const handleEdit = () => {
-        router.navigate("/edit/" + id);
+        router.navigate("/products/edit/" + id);
       };
 
       return (
@@ -240,7 +233,7 @@ const ProductsPage = () => {
     debounce((keyword: string) => {
       setQueryParams({ q: keyword });
     }, 500),
-    [setQueryParams],
+    [setQueryParams]
   );
 
   const handleDeleteSelected = () => {
@@ -256,7 +249,7 @@ const ProductsPage = () => {
             ids.map(async (id) => {
               const [, err] = await deleteProduct(id);
               if (err) errors.push(err);
-            }),
+            })
           ),
           {
             loading: "Deleting rows...",
@@ -272,7 +265,7 @@ const ProductsPage = () => {
               }
               setRowSelection({});
             },
-          },
+          }
         );
       },
     });
