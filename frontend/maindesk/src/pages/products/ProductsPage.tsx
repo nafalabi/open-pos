@@ -80,7 +80,7 @@ const columns: ColumnDef<Product>[] = [
           src={src}
           containerProps={{
             className:
-              "max-w-[80px] max-h-[80px] aspect-square rounded-md relative",
+              "max-w-[50px] max-h-[50px] aspect-square rounded-md relative",
           }}
         />
       );
@@ -134,6 +134,7 @@ const columns: ColumnDef<Product>[] = [
     id: "action",
     header: "",
     accessorKey: "id",
+    size: 20,
     cell: (info) => {
       const id = info.getValue() as string;
 
@@ -170,7 +171,7 @@ const columns: ColumnDef<Product>[] = [
               <DotsHorizontalIcon className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="center">
+          <DropdownMenuContent align="end">
             <DropdownMenuLabel>Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleEdit}>

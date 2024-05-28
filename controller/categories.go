@@ -85,7 +85,7 @@ func FindCategory(dbClient *gorm.DB) echo.HandlerFunc {
 
 		var category model.Category
 
-		err := dbClient.Where("id = ? ", categoryId).Preload("Categories").First(&category).Error
+		err := dbClient.Where("id = ? ", categoryId).First(&category).Error
 		if err != nil {
 			return utils.SendError(c, err)
 		}
