@@ -1,20 +1,12 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/shared/components/ui/alert";
-import { BadgeAlert } from "lucide-react";
-
 const PageNotFound = () => {
   return (
-    <div className="flex">
-      <Alert className="w-auto">
-        <BadgeAlert className="h-4 w-4" />
-        <AlertTitle>404 Not Found</AlertTitle>
-        <AlertDescription>
-          The page you are accessing can't be found
-        </AlertDescription>
-      </Alert>
+    <div className="flex flex-col min-h-[80vh] w-full justify-center items-center">
+      <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        404 Not Found
+      </h1>
+      <p className="text-xl text-muted-foreground">
+        The page you are accessing can't be found
+      </p>
     </div>
   );
 };
