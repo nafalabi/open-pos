@@ -7,7 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
-	"github.com/swaggo/echo-swagger"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 //	@title		Open POS API
@@ -35,7 +35,9 @@ func main() {
 	jwtUtils := utils.NewJwt()
 	jwtMiddleware := jwtUtils.SetupMiddleware()
 
-	e.GET("/swagger/*", echoSwagger.WrapHandler)
+	e.GET("/swagger/*", echoSwagger.EchoWrapHandler(func(conf *echoSwagger.Config) {
+		conf.PersistAuthorization = true
+	}))
 
 	auth := e.Group("/auth")
 	auth.POST("/login", utils.RegisterController(dbClient, controller.AuthLogin))
