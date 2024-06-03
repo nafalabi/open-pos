@@ -10,5 +10,5 @@ func (this CategoryFillable) Fill(product *Category) {
 
 type Category struct {
 	CategoryFillable
-	Base
+	BaseModelWithTimestamp
 }

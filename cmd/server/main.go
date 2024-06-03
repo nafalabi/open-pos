@@ -71,5 +71,10 @@ func main() {
 	categories.PATCH("/:id", utils.RegisterController(dbClient, controller.UpdateCategory))
 	categories.DELETE("/:id", utils.RegisterController(dbClient, controller.DeleteCategory))
 
+	orders := e.Group("/orders")
+	orders.Use(jwtMiddleware)
+	orders.POST("", utils.RegisterController(dbClient, controller.CreateOrder))
+	orders.GET("", utils.RegisterController(dbClient, controller.ListOrder))
+
 	e.Logger.Fatal(e.Start(":8080"))
 }

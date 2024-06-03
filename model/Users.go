@@ -36,5 +36,5 @@ func (this UserFillable) Fill(user *User) error {
 type User struct {
 	UserBase
 	Password string `json:"-" validate:"required"`
-	Base
+	BaseModelWithTimestamp
 }

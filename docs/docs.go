@@ -251,6 +251,75 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/orders": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "list of orders",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "page size",
+                        "name": "pagesize",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "search query",
+                        "name": "q",
+                        "in": "query"
+                    }
+                ],
+                "responses": {}
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Create a new order",
+                "parameters": [
+                    {
+                        "description": "Order Data",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.OrderPayload"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/products": {
             "get": {
                 "security": [
@@ -582,6 +651,38 @@ const docTemplate = `{
                 }
             }
         },
+        "controller.OrderItemPayload": {
+            "type": "object",
+            "required": [
+                "quantity"
+            ],
+            "properties": {
+                "product_id": {
+                    "type": "string"
+                },
+                "quantity": {
+                    "type": "integer",
+                    "minimum": 1
+                }
+            }
+        },
+        "controller.OrderPayload": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controller.OrderItemPayload"
+                    }
+                },
+                "payment_method": {
+                    "$ref": "#/definitions/model.PaymentMethod"
+                },
+                "remarks": {
+                    "type": "string"
+                }
+            }
+        },
         "enum.UserLevel": {
             "type": "integer",
             "enum": [
@@ -608,6 +709,19 @@ const docTemplate = `{
                 }
             }
         },
+        "model.PaymentMethod": {
+            "type": "string",
+            "enum": [
+                "cash",
+                "qris",
+                "trans"
+            ],
+            "x-enum-varnames": [
+                "PaymentMethodCash",
+                "PaymentMethodQris",
+                "PaymentMethodTransfer"
+            ]
+        },
         "model.ProductFillable": {
             "type": "object",
             "required": [
@@ -631,7 +745,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "price": {
-                    "type": "integer",
+                    "type": "number",
                     "minimum": 0
                 },
                 "stock": {

@@ -9,6 +9,27 @@ definitions:
         example: admin
         type: string
     type: object
+  controller.OrderItemPayload:
+    properties:
+      product_id:
+        type: string
+      quantity:
+        minimum: 1
+        type: integer
+    required:
+    - quantity
+    type: object
+  controller.OrderPayload:
+    properties:
+      items:
+        items:
+          $ref: '#/definitions/controller.OrderItemPayload'
+        type: array
+      payment_method:
+        $ref: '#/definitions/model.PaymentMethod'
+      remarks:
+        type: string
+    type: object
   enum.UserLevel:
     enum:
     - 0
@@ -28,6 +49,16 @@ definitions:
     required:
     - name
     type: object
+  model.PaymentMethod:
+    enum:
+    - cash
+    - qris
+    - trans
+    type: string
+    x-enum-varnames:
+    - PaymentMethodCash
+    - PaymentMethodQris
+    - PaymentMethodTransfer
   model.ProductFillable:
     properties:
       categories:
@@ -42,7 +73,7 @@ definitions:
         type: string
       price:
         minimum: 0
-        type: integer
+        type: number
       stock:
         description: Image       string   `json:"image" validate:"omitempty,uri"`
           // ts types converter cant support uri for now
@@ -221,6 +252,49 @@ paths:
       summary: upload image
       tags:
       - Images
+  /orders:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: string
+      - description: page size
+        in: query
+        name: pagesize
+        type: string
+      - description: search query
+        in: query
+        name: q
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: list of orders
+      tags:
+      - Orders
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Order Data
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.OrderPayload'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new order
+      tags:
+      - Orders
   /products:
     get:
       consumes:
