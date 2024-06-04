@@ -1,43 +1,29 @@
 /* Do not change, this code is generated from Golang structs */
 
-export interface Model_User {
-  name: string;
-  email: string;
-  phone: string;
-  level: number;
-  id: string;
-  created_at: string;
-  updated_at: string;
-}
-export interface Model_UserFillable {
+export interface Model_UserPayload {
   name: string;
   email: string;
   phone: string;
   level: number;
   password: string;
 }
-export interface Model_Category {
+export interface Model_CategoryPayload {
   name: string;
-  id: string;
-  created_at: string;
-  updated_at: string;
 }
-export interface Model_Product {
+export interface Model_ProductPayload {
   name: string;
   description: string;
   price: number;
   image: string;
   stock: number;
   categories: string[];
-  id: string;
-  created_at: string;
-  updated_at: string;
 }
-export interface Model_ProductFillable {
-  name: string;
-  description: string;
-  price: number;
-  image: string;
-  stock: number;
-  categories: string[];
+export interface Model_OrderItemPayload {
+  product_id: string;
+  quantity: number;
+}
+export interface Model_OrderPayload {
+  items: Model_OrderItemPayload[];
+  payment_method: string;
+  remarks: string;
 }

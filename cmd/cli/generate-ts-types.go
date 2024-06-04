@@ -8,7 +8,7 @@ import (
 
 	"github.com/tkrajina/typescriptify-golang-structs/typescriptify"
 
-	"github.com/hypersequent/zen"
+	"github.com/nafalabi/zen"
 
 	"github.com/anc95/golang-enum-to-ts/src/ast"
 	"github.com/anc95/golang-enum-to-ts/src/generator"
@@ -105,6 +105,7 @@ func generateEnums() {
 
 func generateSchema() {
 	converter := zen.NewConverter(make(map[string]zen.CustomFn))
+	converter.SetIgnores([]string{"custom"})
 	for _, payload := range payloads {
 		converter.AddType(payload)
 	}
