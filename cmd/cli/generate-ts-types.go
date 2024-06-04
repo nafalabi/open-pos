@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"open-pos/model"
+	"open-pos/controller"
 	"os"
 	"regexp"
 
@@ -17,11 +17,12 @@ import (
 
 var (
 	workingdir string
-	entities   = []interface{}{
-		model.User{},
-		model.UserFillable{},
-		model.Product{},
-		model.ProductFillable{},
+	payloads   = []interface{}{
+		controller.UserPayload{},
+		controller.CategoryPayload{},
+		controller.ProductPayload{},
+		controller.OrderPayload{},
+		controller.OrderItemPayload{},
 	}
 )
 
@@ -44,7 +45,7 @@ func generateToTS() {
 func generateTypes() {
 	converter := typescriptify.New()
 
-	for _, entity := range entities {
+	for _, entity := range payloads {
 		converter.Add(entity)
 	}
 
@@ -104,8 +105,8 @@ func generateEnums() {
 
 func generateSchema() {
 	converter := zen.NewConverter(make(map[string]zen.CustomFn))
-	for _, entity := range entities {
-		converter.AddType(entity)
+	for _, payload := range payloads {
+		converter.AddType(payload)
 	}
 
 	dump := "import { z } from 'zod'\n\n"

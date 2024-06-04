@@ -6,8 +6,32 @@ import (
 	"open-pos/utils"
 
 	"github.com/labstack/echo/v4"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
+
+type UserPayload struct {
+	Name     string         `json:"name" validate:"required"`
+	Email    string         `json:"email" validate:"email"`
+	Phone    string         `json:"phone"`
+	Level    enum.UserLevel `json:"level" validate:"custom"`
+	Password string         `json:"password"`
+}
+
+func (payload UserPayload) Fill(user *model.User) error {
+	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(payload.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	user.Name = payload.Name
+	user.Email = payload.Email
+	user.Phone = payload.Phone
+	user.Level = payload.Level
+	user.Password = string(hashedPwd)
+
+	return nil
+}
 
 // @Summary	Register a new user
 // @Security ApiKeyAuth
@@ -18,7 +42,7 @@ import (
 // @Router		/users [post]
 func Register(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		var reqBody model.UserFillable
+		var reqBody UserPayload
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
 			return utils.SendError(c, err)
@@ -102,7 +126,7 @@ func FindUser(dbClient *gorm.DB) echo.HandlerFunc {
 func UpdateUser(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userId := c.Param("id")
-		reqBody := model.UserFillable{}
+		reqBody := UserPayload{}
 		user := model.User{}
 
 		err := utils.BindAndValidate(c, &reqBody)

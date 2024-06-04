@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"open-pos/controller"
 	"open-pos/enum"
 	"open-pos/model"
 	"open-pos/utils"
@@ -37,7 +38,7 @@ func generateAdmin(tmpEmail string, tmpPassword string) {
 	defer utils.DB.DisconnectDB()
 
 	var user model.User
-	var userData model.UserFillable
+	var userData controller.UserPayload
 
 	dbClient.Where("level = ?", enum.Admin).Find(&user)
 

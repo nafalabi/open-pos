@@ -9,6 +9,14 @@ import (
 	model "open-pos/model"
 )
 
+type CategoryPayload struct {
+	Name string `json:"name" validate:"required" gorm:"uniqueIndex"`
+}
+
+func (payload CategoryPayload) Fill(product *model.Category) {
+	product.Name = payload.Name
+}
+
 // @Summary	Create a new category
 // @Security	ApiKeyAuth
 // @Tags		Categories
@@ -18,7 +26,7 @@ import (
 // @Router		/categories [post]
 func CreateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reqBody := model.CategoryFillable{}
+		reqBody := CategoryPayload{}
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
 			return utils.SendError(c, err)
@@ -105,7 +113,7 @@ func FindCategory(dbClient *gorm.DB) echo.HandlerFunc {
 func UpdateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		categoryId := c.Param("id")
-		reqBody := model.CategoryFillable{}
+		reqBody := CategoryPayload{}
 		category := model.Category{}
 
 		err := utils.BindAndValidate(c, &reqBody)

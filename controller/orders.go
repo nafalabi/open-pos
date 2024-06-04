@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"open-pos/enum"
 	"open-pos/model"
 	"open-pos/utils"
 
@@ -10,9 +11,9 @@ import (
 )
 
 type OrderPayload struct {
-	Items         []OrderItemPayload  `json:"items" validate:"dive"`
-	PaymentMethod model.PaymentMethod `json:"payment_method" validate:"custom"`
-	Remarks       string              `json:"remarks"`
+	Items         []OrderItemPayload `json:"items" validate:"dive"`
+	PaymentMethod enum.PaymentMethod `json:"payment_method" validate:"custom"`
+	Remarks       string             `json:"remarks"`
 }
 type OrderItemPayload struct {
 	ProductID string `json:"product_id"`
@@ -68,7 +69,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			items := reqBody.GetItems(tx)
 			order.Items = items
 			order.PaymentMethod = reqBody.PaymentMethod
-			order.Status = model.StatusPending
+			order.Status = enum.StatusPending
 			order.Total = lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
 				return acc + item.SubTotal
 			}, 0)

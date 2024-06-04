@@ -2,6 +2,7 @@ package model
 
 import (
 	"fmt"
+	"open-pos/enum"
 	"strings"
 	"time"
 
@@ -10,14 +11,14 @@ import (
 
 type Order struct {
 	BaseModelWithTimestamp
-	OrderNumber   string        `gorm:"uniqueIndex" json:"order_number"`
-	Recipient     string        `gorm:"index" json:"recipient"`
-	Items         []OrderItem   `gorm:"foreignKey:OrderID" json:"items"`
-	Total         float64       `json:"total"`
-	PaymentMethod PaymentMethod `json:"payment_method"`
-	Status        OrderStatus   `json:"status"`
-	ExternalRef   string        `json:"external_ref"`
-	Remarks       string        `json:"remarks"`
+	OrderNumber   string             `gorm:"uniqueIndex" json:"order_number"`
+	Recipient     string             `gorm:"index" json:"recipient"`
+	Items         []OrderItem        `gorm:"foreignKey:OrderID" json:"items"`
+	Total         float64            `json:"total"`
+	PaymentMethod enum.PaymentMethod `json:"payment_method"`
+	Status        enum.OrderStatus   `json:"status"`
+	ExternalRef   string             `json:"external_ref"`
+	Remarks       string             `json:"remarks"`
 }
 
 func (order *Order) BeforeCreate(tx *gorm.DB) error {
@@ -29,40 +30,6 @@ func (order *Order) BeforeCreate(tx *gorm.DB) error {
 		order.OrderNumber = orderNumber
 	}
 	return nil
-}
-
-type PaymentMethod string
-type OrderStatus string
-
-const (
-	PaymentMethodCash     PaymentMethod = "cash"
-	PaymentMethodQris     PaymentMethod = "qris"
-	PaymentMethodTransfer PaymentMethod = "trans"
-	StatusPending         OrderStatus   = "pending"
-	StatusCanceled        OrderStatus   = "canceled"
-	StatusPaid            OrderStatus   = "paid"
-)
-
-func (pm PaymentMethod) CustomValidate() bool {
-	switch pm {
-	case PaymentMethodCash,
-		PaymentMethodQris,
-		PaymentMethodTransfer:
-		return true
-	default:
-		return false
-	}
-}
-
-func (status OrderStatus) CustomValidate() bool {
-	switch status {
-	case StatusPending,
-		StatusCanceled,
-		StatusPaid:
-		return true
-	default:
-		return false
-	}
 }
 
 type OrderItem struct {

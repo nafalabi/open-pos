@@ -9,6 +9,24 @@ import (
 	model "open-pos/model"
 )
 
+type ProductPayload struct {
+	Name        string  `json:"name" validate:"required"`
+	Description string  `json:"description" validate:"required"`
+	Price       float64 `json:"price" validate:"min=0"`
+	Image       string  `json:"image" validate:"omitempty"`
+	// Image       string   `json:"image" validate:"omitempty,uri"` // ts types converter cant support uri for now
+	Stock      int64    `json:"stock" validate:"min=0"`
+	Categories []string `json:"categories" gorm:"-"`
+}
+
+func (payload ProductPayload) Fill(product *model.Product) {
+	product.Name = payload.Name
+	product.Description = payload.Description
+	product.Price = payload.Price
+	product.Image = payload.Image
+	product.Stock = payload.Stock
+}
+
 // @Summary	Create a new product
 // @Security	ApiKeyAuth
 // @Tags		Products
@@ -18,7 +36,7 @@ import (
 // @Router		/products [post]
 func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		reqBody := model.ProductFillable{}
+		reqBody := ProductPayload{}
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
 			return utils.SendError(c, err)
@@ -120,7 +138,7 @@ func FindProduct(dbClient *gorm.DB) echo.HandlerFunc {
 func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		productId := c.Param("id")
-		reqBody := model.ProductFillable{}
+		reqBody := ProductPayload{}
 		product := model.Product{}
 
 		err := utils.BindAndValidate(c, &reqBody)
