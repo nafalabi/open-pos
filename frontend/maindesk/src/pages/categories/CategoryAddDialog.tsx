@@ -1,4 +1,4 @@
-import { CategoryFillableSchema } from "@/generated/schema";
+import { CategoryPayloadSchema } from "@/generated/schema";
 import CommonDialog from "@/shared/components/custom/common-dialog";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -23,7 +23,7 @@ const CategoryAddDialog = forwardRef<CategoryAddDialogRef>((_, ref) => {
   const queryClient = useQueryClient();
   const form = useForm({
     defaultValues,
-    resolver: zodResolver(CategoryFillableSchema),
+    resolver: zodResolver(CategoryPayloadSchema),
   });
 
   useImperativeHandle(

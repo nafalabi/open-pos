@@ -15,7 +15,7 @@ import ProductStatusForm from "./forms/ProductStatusForm";
 import ProductImageForm from "./forms/ProductImageForm";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { Product } from "@/generated/schema";
+import { Model_Product } from "@/generated/models";
 
 const defaultValues: ProductForm = {
   name: "",
@@ -26,7 +26,7 @@ const defaultValues: ProductForm = {
   categories: [],
 };
 
-const convertData = (product: Product): ProductForm => {
+const convertData = (product: Model_Product): ProductForm => {
   return {
     ...product,
     categories:

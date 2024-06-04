@@ -16,10 +16,11 @@ import { UseFormReturn } from "react-hook-form";
 import { ProductForm } from "./form-schema";
 
 type ProductStatusFormProps = {
-  form: UseFormReturn<ProductForm>
-}
+  form: UseFormReturn<ProductForm>;
+};
 
-const ProductStatusForm = ({ form }: ProductStatusFormProps) => {
+// eslint-disable-next-line no-empty-pattern
+const ProductStatusForm = ({ }: ProductStatusFormProps) => {
   return (
     <Card x-chunk="dashboard-07-chunk-3">
       <CardHeader>

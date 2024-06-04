@@ -1,17 +1,18 @@
-import { Category, CategoryFillable } from "@/generated/schema";
+import { type CategoryPayload } from "@/generated/schema";
 import { apiSingleton } from "./api-singleton";
-import { PaginationParams } from "./types";
+import { type PaginationParams } from "./types";
+import { type Model_Category } from "@/generated/models";
 
 export const getCategories = async (
   params: PaginationParams & { q: string }
 ) => {
   const { requestor } = apiSingleton;
-  return requestor.GET<Category[]>("/categories", params);
+  return requestor.GET<Model_Category[]>("/categories", params);
 };
 
-export const postCategory = async (params: CategoryFillable) => {
+export const postCategory = async (params: CategoryPayload) => {
   const { requestor } = apiSingleton;
-  return requestor.POST<Category>("/categories", params);
+  return requestor.POST<Model_Category>("/categories", params);
 };
 
 export const deleteCategory = async (categoryId: string) => {
@@ -21,7 +22,7 @@ export const deleteCategory = async (categoryId: string) => {
 
 export const patchCategory = async (
   categoryId: string,
-  payload: CategoryFillable
+  payload: CategoryPayload
 ) => {
   const { requestor } = apiSingleton;
   return requestor.PATCH("/categories/" + categoryId, payload);
@@ -29,5 +30,5 @@ export const patchCategory = async (
 
 export const viewCategory = async (categoryId: string) => {
   const { requestor } = apiSingleton;
-  return requestor.GET<Category>("/categories/" + categoryId);
+  return requestor.GET<Model_Category>("/categories/" + categoryId);
 };

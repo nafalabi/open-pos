@@ -1,7 +1,7 @@
-import { ProductFillableSchema } from "@/generated/schema";
+import { ProductPayloadSchema } from "@/generated/schema";
 import { z } from "zod";
 
-export const ProductFormSchema = ProductFillableSchema.omit({ categories: true }).merge(
+export const ProductFormSchema = ProductPayloadSchema.omit({ categories: true }).merge(
   z.object({
     id: z.string().optional(),
     categories: z

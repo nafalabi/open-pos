@@ -36,7 +36,7 @@ import {
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
-import { Category } from "@/generated/schema";
+import { type CategoryPayload } from "@/generated/schema";
 import { deleteCategory, getCategories } from "../../api/categories";
 import CategoryAddDialog, { CategoryAddDialogRef } from "./CategoryAddDialog";
 import CategoryEditDialog, {
@@ -45,7 +45,7 @@ import CategoryEditDialog, {
 
 const generateColumn = (
   handleEdit: (id: string) => void
-): ColumnDef<Category>[] => [
+): ColumnDef<CategoryPayload>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -76,7 +76,7 @@ const generateColumn = (
     header: "Name",
     accessorFn: (row) => row,
     cell: (info) => {
-      const value = info.getValue() as Category;
+      const value = info.getValue() as CategoryPayload;
       return (
         <div>
           <p className="font-bold">{value.name}</p>

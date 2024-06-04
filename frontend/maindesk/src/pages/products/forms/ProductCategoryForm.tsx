@@ -1,4 +1,4 @@
-import { Category } from "@/generated/schema";
+import { Model_Category } from "@/generated/models";
 import { getCategories, postCategory } from "@/maindesk/src/api/categories";
 import MultiSelect from "@/shared/components/custom/multi-select";
 import {
@@ -17,7 +17,7 @@ type ProductCategoryFormProps = {
   form: UseFormReturn<ProductForm>;
 };
 
-const convertCategoryToOption = (category: Category) => {
+const convertCategoryToOption = (category: Model_Category) => {
   return {
     label: category.name,
     value: category.id,

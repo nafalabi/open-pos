@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"open-pos/controller"
+	"open-pos/model"
 	"os"
 	"regexp"
 
@@ -17,7 +18,14 @@ import (
 
 var (
 	workingdir string
-	payloads   = []interface{}{
+	entities   = []interface{}{
+		model.User{},
+		model.Category{},
+		model.Product{},
+		model.Order{},
+		model.OrderItem{},
+	}
+	payloads = []interface{}{
 		controller.UserPayload{},
 		controller.CategoryPayload{},
 		controller.ProductPayload{},
@@ -45,7 +53,7 @@ func generateToTS() {
 func generateTypes() {
 	converter := typescriptify.New()
 
-	for _, entity := range payloads {
+	for _, entity := range entities {
 		converter.Add(entity)
 	}
 

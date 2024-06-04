@@ -1,4 +1,5 @@
-import { Category, CategoryFillableSchema } from "@/generated/schema";
+import { CategoryPayloadSchema } from "@/generated/schema";
+import { type Model_Category } from "@/generated/models";
 import CommonDialog from "@/shared/components/custom/common-dialog";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -15,7 +16,7 @@ const defaultValues = {
   name: "",
 };
 
-const convData = (category: Category) => {
+const convData = (category: Model_Category) => {
   return {
     id: category.id,
     name: category.name,
@@ -32,7 +33,7 @@ const CategoryEditDialog = forwardRef<CategoryEditDialogRef>((_, ref) => {
   const queryClient = useQueryClient();
   const form = useForm({
     defaultValues,
-    resolver: zodResolver(CategoryFillableSchema),
+    resolver: zodResolver(CategoryPayloadSchema),
   });
 
   const { data } = useQuery({

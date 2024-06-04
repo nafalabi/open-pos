@@ -15,7 +15,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
-import { Product } from "@/generated/schema";
+import { type Model_Product } from "@/generated/models";
 import { DataTable } from "../../layout/data-table";
 import { useCallback, useState } from "react";
 import { deleteProduct, getProducts } from "../../api/products";
@@ -43,7 +43,7 @@ import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { queryClient } from "../../App";
 import GenericImage from "../../layout/generic-image";
 
-const columns: ColumnDef<Product>[] = [
+const columns: ColumnDef<Model_Product>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -92,7 +92,7 @@ const columns: ColumnDef<Product>[] = [
     header: "Name",
     accessorFn: (row) => row,
     cell: (info) => {
-      const value = info.getValue() as Product;
+      const value = info.getValue() as Model_Product;
       return (
         <div>
           <p className="font-bold">{value.name}</p>
