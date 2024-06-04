@@ -17,13 +17,13 @@ func (payload CategoryPayload) Fill(product *model.Category) {
 	product.Name = payload.Name
 }
 
-// @Summary	Create a new category
-// @Security	ApiKeyAuth
-// @Tags		Categories
-// @Accept		json
-// @Produce	json
-// @Param		body	body	model.CategoryFillable	true	"Category Data"
-// @Router		/categories [post]
+//	@Summary	Create a new category
+//	@Security	ApiKeyAuth
+//	@Tags		Categories
+//	@Accept		json
+//	@Produce	json
+//	@Param		body	body	CategoryPayload	true	"Category Data"
+//	@Router		/categories [post]
 func CreateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reqBody := CategoryPayload{}
@@ -51,15 +51,15 @@ func CreateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary	list of categories
-// @Security	ApiKeyAuth
-// @Tags		Categories
-// @Accept		json
-// @Produce	json
-// @Param		page		query	string	false	"page"
-// @Param		pagesize	query	string	false	"page size"
-// @Param		q			query	string	false	"search query"
-// @Router		/categories [get]
+//	@Summary	list of categories
+//	@Security	ApiKeyAuth
+//	@Tags		Categories
+//	@Accept		json
+//	@Produce	json
+//	@Param		page		query	string	false	"page"
+//	@Param		pagesize	query	string	false	"page size"
+//	@Param		q			query	string	false	"search query"
+//	@Router		/categories [get]
 func ListCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		limit, offset, page, pageSize := utils.DefinePaginationParam(c)
@@ -80,13 +80,13 @@ func ListCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary	find category by id
-// @Security	ApiKeyAuth
-// @Tags		Categories
-// @Accept		json
-// @Produce	json
-// @Param		id	path	string	true	"Category ID"
-// @Router		/categories/{id} [get]
+//	@Summary	find category by id
+//	@Security	ApiKeyAuth
+//	@Tags		Categories
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path	string	true	"Category ID"
+//	@Router		/categories/{id} [get]
 func FindCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		categoryId := c.Param("id")
@@ -102,14 +102,14 @@ func FindCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary	update category
-// @Security	ApiKeyAuth
-// @Tags		Categories
-// @Accept		json
-// @Produce	json
-// @Param		id		path	string					true	"Category ID"
-// @Param		body	body	model.CategoryFillable	true	"Category Data"
-// @Router		/categories/{id} [patch]
+//	@Summary	update category
+//	@Security	ApiKeyAuth
+//	@Tags		Categories
+//	@Accept		json
+//	@Produce	json
+//	@Param		id		path	string			true	"Category ID"
+//	@Param		body	body	CategoryPayload	true	"Category Data"
+//	@Router		/categories/{id} [patch]
 func UpdateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		categoryId := c.Param("id")
@@ -139,13 +139,13 @@ func UpdateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary	delete category by id
-// @Security	ApiKeyAuth
-// @Tags		Categories
-// @Accept		json
-// @Produce	json
-// @Param		id	path	string	true	"Category ID"
-// @Router		/categories/{id} [delete]
+//	@Summary	delete category by id
+//	@Security	ApiKeyAuth
+//	@Tags		Categories
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path	string	true	"Category ID"
+//	@Router		/categories/{id} [delete]
 func DeleteCategory(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		categoryId := c.Param("id")

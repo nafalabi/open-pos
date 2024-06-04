@@ -1,5 +1,12 @@
 basePath: /
 definitions:
+  controller.CategoryPayload:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   controller.LoginParams:
     properties:
       email:
@@ -26,40 +33,11 @@ definitions:
           $ref: '#/definitions/controller.OrderItemPayload'
         type: array
       payment_method:
-        $ref: '#/definitions/model.PaymentMethod'
+        $ref: '#/definitions/enum.PaymentMethod'
       remarks:
         type: string
     type: object
-  enum.UserLevel:
-    enum:
-    - 0
-    - 1
-    - 2
-    - 3
-    type: integer
-    x-enum-varnames:
-    - Admin
-    - Owner
-    - Manager
-    - Worker
-  model.CategoryFillable:
-    properties:
-      name:
-        type: string
-    required:
-    - name
-    type: object
-  model.PaymentMethod:
-    enum:
-    - cash
-    - qris
-    - trans
-    type: string
-    x-enum-varnames:
-    - PaymentMethodCash
-    - PaymentMethodQris
-    - PaymentMethodTransfer
-  model.ProductFillable:
+  controller.ProductPayload:
     properties:
       categories:
         items:
@@ -83,7 +61,7 @@ definitions:
     - description
     - name
     type: object
-  model.UserFillable:
+  controller.UserPayload:
     properties:
       email:
         type: string
@@ -94,12 +72,32 @@ definitions:
       password:
         type: string
       phone:
-        description: '`json:"phone" validate:"e164"`'
         type: string
     required:
-    - level
     - name
     type: object
+  enum.PaymentMethod:
+    enum:
+    - cash
+    - qris
+    - trans
+    type: string
+    x-enum-varnames:
+    - PaymentMethodCash
+    - PaymentMethodQris
+    - PaymentMethodTransfer
+  enum.UserLevel:
+    enum:
+    - 0
+    - 1
+    - 2
+    - 3
+    type: integer
+    x-enum-varnames:
+    - Admin
+    - Owner
+    - Manager
+    - Worker
 info:
   contact: {}
   title: Open POS API
@@ -167,7 +165,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.CategoryFillable'
+          $ref: '#/definitions/controller.CategoryPayload'
       produces:
       - application/json
       responses: {}
@@ -225,7 +223,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.CategoryFillable'
+          $ref: '#/definitions/controller.CategoryPayload'
       produces:
       - application/json
       responses: {}
@@ -329,7 +327,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.ProductFillable'
+          $ref: '#/definitions/controller.ProductPayload'
       produces:
       - application/json
       responses: {}
@@ -387,7 +385,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.ProductFillable'
+          $ref: '#/definitions/controller.ProductPayload'
       produces:
       - application/json
       responses: {}
@@ -426,7 +424,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.UserFillable'
+          $ref: '#/definitions/controller.UserPayload'
       produces:
       - application/json
       responses: {}
@@ -484,7 +482,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/model.UserFillable'
+          $ref: '#/definitions/controller.UserPayload'
       produces:
       - application/json
       responses: {}

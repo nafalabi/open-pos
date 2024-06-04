@@ -123,7 +123,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CategoryFillable"
+                            "$ref": "#/definitions/controller.CategoryPayload"
                         }
                     }
                 ],
@@ -215,7 +215,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.CategoryFillable"
+                            "$ref": "#/definitions/controller.CategoryPayload"
                         }
                     }
                 ],
@@ -382,7 +382,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProductFillable"
+                            "$ref": "#/definitions/controller.ProductPayload"
                         }
                     }
                 ],
@@ -474,7 +474,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.ProductFillable"
+                            "$ref": "#/definitions/controller.ProductPayload"
                         }
                     }
                 ],
@@ -537,7 +537,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserFillable"
+                            "$ref": "#/definitions/controller.UserPayload"
                         }
                     }
                 ],
@@ -629,7 +629,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.UserFillable"
+                            "$ref": "#/definitions/controller.UserPayload"
                         }
                     }
                 ],
@@ -638,6 +638,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.CategoryPayload": {
+            "type": "object",
+            "required": [
+                "name"
+            ],
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
         "controller.LoginParams": {
             "type": "object",
             "properties": {
@@ -676,53 +687,14 @@ const docTemplate = `{
                     }
                 },
                 "payment_method": {
-                    "$ref": "#/definitions/model.PaymentMethod"
+                    "$ref": "#/definitions/enum.PaymentMethod"
                 },
                 "remarks": {
                     "type": "string"
                 }
             }
         },
-        "enum.UserLevel": {
-            "type": "integer",
-            "enum": [
-                0,
-                1,
-                2,
-                3
-            ],
-            "x-enum-varnames": [
-                "Admin",
-                "Owner",
-                "Manager",
-                "Worker"
-            ]
-        },
-        "model.CategoryFillable": {
-            "type": "object",
-            "required": [
-                "name"
-            ],
-            "properties": {
-                "name": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.PaymentMethod": {
-            "type": "string",
-            "enum": [
-                "cash",
-                "qris",
-                "trans"
-            ],
-            "x-enum-varnames": [
-                "PaymentMethodCash",
-                "PaymentMethodQris",
-                "PaymentMethodTransfer"
-            ]
-        },
-        "model.ProductFillable": {
+        "controller.ProductPayload": {
             "type": "object",
             "required": [
                 "description",
@@ -755,10 +727,9 @@ const docTemplate = `{
                 }
             }
         },
-        "model.UserFillable": {
+        "controller.UserPayload": {
             "type": "object",
             "required": [
-                "level",
                 "name"
             ],
             "properties": {
@@ -775,10 +746,37 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
-                    "description": "` + "`" + `json:\"phone\" validate:\"e164\"` + "`" + `",
                     "type": "string"
                 }
             }
+        },
+        "enum.PaymentMethod": {
+            "type": "string",
+            "enum": [
+                "cash",
+                "qris",
+                "trans"
+            ],
+            "x-enum-varnames": [
+                "PaymentMethodCash",
+                "PaymentMethodQris",
+                "PaymentMethodTransfer"
+            ]
+        },
+        "enum.UserLevel": {
+            "type": "integer",
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ],
+            "x-enum-varnames": [
+                "Admin",
+                "Owner",
+                "Manager",
+                "Worker"
+            ]
         }
     },
     "securityDefinitions": {
