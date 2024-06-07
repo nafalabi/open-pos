@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { ComponentProps, lazy } from "react";
-import { Outlet, createBrowserRouter } from "react-router-dom";
+import { Outlet, createBrowserRouter, redirect } from "react-router-dom";
 
 import LoginPage from "./pages/login/LoginPage";
 import LoadingPage from "./layout/LoadingPage.tsx";
@@ -8,11 +8,9 @@ import LazyLoader from "./layout/lazy-loader";
 import { GuardedRoute } from "./guard/GuardedRoute";
 import PageNotFound from "./pages/404-not-found/PageNotFound.tsx";
 
-const DashboardPage = lazy(() => import("./pages/dashboard/DashboardPage.tsx"));
 const BaseLayout = lazy(() => import("./layout/base.tsx"));
-const CategoriesPage = lazy(
-  () => import("./pages/categories/CategoriesPage.tsx")
-);
+const DashboardPage = lazy(() => import("./pages/dashboard/DashboardPage.tsx"));
+const NewOrderPanel = lazy(() => import("./pages/dashboard/NewOrderPanel.tsx"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage.tsx"));
 const ProductCreatePage = lazy(
   () => import("./pages/products/ProductCreatePage.tsx")
@@ -20,6 +18,10 @@ const ProductCreatePage = lazy(
 const ProductEditPage = lazy(
   () => import("./pages/products/ProductEditPage.tsx")
 );
+const CategoriesPage = lazy(
+  () => import("./pages/categories/CategoriesPage.tsx")
+);
+const OrdersPage = lazy(() => import("./pages/order/OrdersPage.tsx"));
 
 const Layout = ({ children }: ComponentProps<typeof BaseLayout>) => (
   <GuardedRoute>
@@ -37,34 +39,42 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    id: "Home",
+    handle: { crumb: () => "Dashboard" },
+    id: "Root",
     path: "/",
-    errorElement: (
-      <Layout>
-        <PageNotFound />
-      </Layout>
-    ),
-    element: (
-      <Layout>
-        <Outlet />
-      </Layout>
-    ),
+    errorElement: <Layout children={<PageNotFound />} />,
+    element: <Layout children={<Outlet />} />,
     children: [
+      { index: true, loader: () => redirect("/home") },
       {
-        index: true,
-        id: "Dashboard",
+        handle: { crumb: () => "Home" },
+        path: "home",
+        id: "Home",
         element: (
           <LazyLoader
             fallback={<LoadingPage />}
             component={<DashboardPage />}
           />
         ),
+        children: [
+          {
+            path: "add-order",
+            element: (
+              <LazyLoader
+                fallback={<LoadingPage />}
+                component={<NewOrderPanel />}
+              />
+            ),
+          },
+        ],
       },
       {
+        handle: { crumb: () => "Products" },
         path: "products",
         id: "Products",
         children: [
           {
+            handle: { crumb: () => "All Products" },
             index: true,
             id: "All Products",
             element: (
@@ -75,6 +85,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            handle: { crumb: () => "Create Product" },
             path: "add",
             id: "Create Product",
             element: (
@@ -85,6 +96,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            handle: { crumb: () => "Edit Product" },
             path: "edit/:productId",
             id: "Edit Product",
             element: (
@@ -95,6 +107,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
+            handle: { crumb: () => "Categories" },
             path: "categories",
             id: "Categories",
             element: (
@@ -105,6 +118,14 @@ export const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        handle: { crumb: () => "Orders" },
+        id: "Orders",
+        path: "orders",
+        element: (
+          <LazyLoader fallback={<LoadingPage />} component={<OrdersPage />} />
+        ),
       },
     ],
   },

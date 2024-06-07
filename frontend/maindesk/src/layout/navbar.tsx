@@ -40,7 +40,7 @@ type Menuitem = {
 
 const menus: Menuitem[] = [
   {
-    name: "Dashboard",
+    name: "Home",
     icon: Home,
     link: "/",
   },

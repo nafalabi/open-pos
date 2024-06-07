@@ -1,4 +1,3 @@
-import { Avatar } from "@/shared/components/ui/avatar";
 import { Button } from "@/shared/components/ui/button";
 import {
   DropdownMenu,
@@ -8,8 +7,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import { useAuthState } from "../guard/AuthProvider";
+import { UserRoundIcon } from "lucide-react";
 
 export const DropdownAccount = () => {
   const { handleResetAuthToken } = useAuthState();
@@ -22,10 +21,7 @@ export const DropdownAccount = () => {
           size="icon"
           className="overflow-hidden rounded-full"
         >
-          <Avatar>
-            <AvatarImage src="/vite.svg" alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
-          </Avatar>
+          <UserRoundIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

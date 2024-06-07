@@ -6,33 +6,44 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/shared/components/ui/breadcrumb";
-import { Link, useMatches } from "react-router-dom";
+import { Link, type UIMatch, useMatches } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 
+type BreadcrumbTextHandle = {
+  crumb?: () => string;
+};
+
 export const BreadcrumbMain = () => {
-  const matches = useMatches();
+  const matches = useMatches() as UIMatch<
+    unknown,
+    BreadcrumbTextHandle | undefined
+  >[];
 
   return (
     <Breadcrumb className="hidden md:flex">
       <BreadcrumbList>
-        {matches.map((entry, index) => (
-          <Fragment key={entry.id}>
-            {index != matches.length - 1 ? (
-              <>
+        {matches.map((entry, index) => {
+          const crumbTextFn = entry.handle?.crumb;
+          if (!crumbTextFn) return null;
+          return (
+            <Fragment key={entry.id}>
+              {index != matches.length - 1 ? (
+                <>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink asChild>
+                      <Link to={entry.pathname}>{crumbTextFn()}</Link>
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                </>
+              ) : (
                 <BreadcrumbItem>
-                  <BreadcrumbLink asChild>
-                    <Link to={entry.pathname}>{entry.id}</Link>
-                  </BreadcrumbLink>
+                  <BreadcrumbPage>{crumbTextFn()}</BreadcrumbPage>
                 </BreadcrumbItem>
-                <BreadcrumbSeparator />
-              </>
-            ) : (
-              <BreadcrumbItem>
-                <BreadcrumbPage>{entry.id}</BreadcrumbPage>
-              </BreadcrumbItem>
-            )}
-          </Fragment>
-        ))}
+              )}
+            </Fragment>
+          );
+        })}
       </BreadcrumbList>
     </Breadcrumb>
   );
