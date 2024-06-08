@@ -15,7 +15,7 @@ const HomePage = () => {
 
   return (
     <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
-      <div className="min-w-[275px] w-auto">
+      <div className="min-w-[275px] w-full">
         <LatestOrders />
         <MenuList />
       </div>

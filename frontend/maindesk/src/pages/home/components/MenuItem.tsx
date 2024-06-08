@@ -1,28 +1,37 @@
 import { Model_Product } from "@/generated/models";
 import { currency } from "@/maindesk/src/utils/currency";
 import { Button } from "@/shared/components/ui/button";
+import { cn } from "@/shared/utils/shadcn";
 import { PlusCircleIcon } from "lucide-react";
 
 type MenuItemProps = {
+  size: MenuItemSize;
   menuData: Model_Product;
 };
 
-const MenuItem = ({ menuData: product }: MenuItemProps) => {
+export type MenuItemSize = "sm" | "md" | "lg";
+
+const MenuItem = ({ menuData: product, size }: MenuItemProps) => {
   return (
-    <div className="bg-white rounded-lg shadow-md">
+    <div
+      className={cn(
+        "bg-white rounded-lg shadow-md",
+        size === "lg" && "w-64",
+        size === "md" && "w-48",
+        size === "sm" && "w-40"
+      )}
+    >
       <img
         src={product.image}
         onError={(e) => {
           e.currentTarget.src = "/placeholder.svg";
         }}
-        width={300}
-        height={200}
-        className="rounded-t-lg object-cover w-full h-48"
+        className="rounded-t-lg object-cover w-full aspect-square"
       />
       <div className="p-4">
-        <h3 className="text-lg font-bold">{product.name}</h3>
-        <p className="text-gray-500 mb-4">{product.description}</p>
-        <div className="flex items-center justify-between">
+        <h3 className="text-md font-bold">{product.name}</h3>
+        <p className="text-sm text-gray-500 mb-3 overflow-hidden text-ellipsis line-clamp-2">{product.description}</p>
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <span className="text-gray-900 font-bold">
             {currency(product.price)}
           </span>

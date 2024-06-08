@@ -23,7 +23,7 @@ const OrderCard = ({ orderData }: OrderCardProps) => {
       </h4>
       <div className="flex mt-2">
         <p className="text-sm text-muted-foreground">
-          {orderData.items.length} items
+          {orderData.items.length} item(s)
         </p>
         <p className="ml-auto text-sm">{currency(orderData.total)}</p>
       </div>

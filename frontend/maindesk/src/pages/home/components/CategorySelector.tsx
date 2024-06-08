@@ -1,6 +1,8 @@
 import { getCategories } from "@/maindesk/src/api/categories";
 import { Badge } from "@/shared/components/ui/badge";
+import { cn } from "@/shared/utils/shadcn";
 import { useQuery } from "@tanstack/react-query";
+import { HTMLAttributes } from "react";
 
 const fetchParams: Parameters<typeof getCategories>[0] = {
   page: String(1),
@@ -8,11 +10,13 @@ const fetchParams: Parameters<typeof getCategories>[0] = {
 };
 
 type CategorySelectorProps = {
+  className?: HTMLAttributes<"div">["className"];
   selectedId?: string;
   onChangeSelection: (id?: string) => void;
 };
 
 const CategorySelector = ({
+  className,
   selectedId,
   onChangeSelection,
 }: CategorySelectorProps) => {
@@ -27,7 +31,7 @@ const CategorySelector = ({
   });
 
   return (
-    <div className="mb-6 flex flex-wrap gap-2">
+    <div className={cn("flex flex-wrap gap-2", className)}>
       <Badge
         variant={!selectedId ? "default" : "secondary"}
         className="cursor-pointer"
