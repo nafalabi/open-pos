@@ -3,14 +3,15 @@ import { ComponentProps, lazy } from "react";
 import { Outlet, createBrowserRouter, redirect } from "react-router-dom";
 
 import LoginPage from "./pages/login/LoginPage";
-import LoadingPage from "./layout/LoadingPage.tsx";
+import SpinnerBox from "./layout/spinner-box.tsx";
 import LazyLoader from "./layout/lazy-loader";
 import { GuardedRoute } from "./guard/GuardedRoute";
 import PageNotFound from "./pages/404-not-found/PageNotFound.tsx";
+import { HomeIcon } from "lucide-react";
 
 const BaseLayout = lazy(() => import("./layout/base.tsx"));
-const DashboardPage = lazy(() => import("./pages/dashboard/DashboardPage.tsx"));
-const NewOrderPanel = lazy(() => import("./pages/dashboard/NewOrderPanel.tsx"));
+const HomePage = lazy(() => import("./pages/home/HomePage.tsx"));
+const NewOrderPanel = lazy(() => import("./pages/home/NewOrderPanel.tsx"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage.tsx"));
 const ProductCreatePage = lazy(
   () => import("./pages/products/ProductCreatePage.tsx")
@@ -26,7 +27,7 @@ const OrdersPage = lazy(() => import("./pages/order/OrdersPage.tsx"));
 const Layout = ({ children }: ComponentProps<typeof BaseLayout>) => (
   <GuardedRoute>
     <LazyLoader
-      fallback={<LoadingPage />}
+      fallback={<SpinnerBox />}
       component={<BaseLayout>{children}</BaseLayout>}
     />
   </GuardedRoute>
@@ -39,7 +40,7 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    handle: { crumb: () => "Dashboard" },
+    handle: { crumb: () => <HomeIcon className="h-4 w-4" /> },
     id: "Root",
     path: "/",
     errorElement: <Layout children={<PageNotFound />} />,
@@ -52,8 +53,8 @@ export const router = createBrowserRouter([
         id: "Home",
         element: (
           <LazyLoader
-            fallback={<LoadingPage />}
-            component={<DashboardPage />}
+            fallback={<SpinnerBox />}
+            component={<HomePage />}
           />
         ),
         children: [
@@ -61,7 +62,7 @@ export const router = createBrowserRouter([
             path: "add-order",
             element: (
               <LazyLoader
-                fallback={<LoadingPage />}
+                fallback={<SpinnerBox />}
                 component={<NewOrderPanel />}
               />
             ),
@@ -79,7 +80,7 @@ export const router = createBrowserRouter([
             id: "All Products",
             element: (
               <LazyLoader
-                fallback={<LoadingPage />}
+                fallback={<SpinnerBox />}
                 component={<ProductsPage />}
               />
             ),
@@ -90,7 +91,7 @@ export const router = createBrowserRouter([
             id: "Create Product",
             element: (
               <LazyLoader
-                fallback={<LoadingPage />}
+                fallback={<SpinnerBox />}
                 component={<ProductCreatePage />}
               />
             ),
@@ -101,7 +102,7 @@ export const router = createBrowserRouter([
             id: "Edit Product",
             element: (
               <LazyLoader
-                fallback={<LoadingPage />}
+                fallback={<SpinnerBox />}
                 component={<ProductEditPage />}
               />
             ),
@@ -112,7 +113,7 @@ export const router = createBrowserRouter([
             id: "Categories",
             element: (
               <LazyLoader
-                fallback={<LoadingPage />}
+                fallback={<SpinnerBox />}
                 component={<CategoriesPage />}
               />
             ),
@@ -124,7 +125,7 @@ export const router = createBrowserRouter([
         id: "Orders",
         path: "orders",
         element: (
-          <LazyLoader fallback={<LoadingPage />} component={<OrdersPage />} />
+          <LazyLoader fallback={<SpinnerBox />} component={<OrdersPage />} />
         ),
       },
     ],

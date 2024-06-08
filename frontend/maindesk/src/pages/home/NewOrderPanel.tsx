@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const NewOrderPanel = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [cart] = useState([
     {
@@ -52,11 +52,16 @@ const NewOrderPanel = () => {
   const tax = 0.08 * subtotal;
   const total = subtotal + paymentFee - discount + tax;
   return (
-    <Card>
+    <Card className="relative">
       <CardHeader>
         <CardTitle>
           New Order
-          <Button variant="ghost" size="sm" className="absolute top-4 right-3" onClick={() => navigate("/home")}>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-4 right-3"
+            onClick={() => navigate("/home")}
+          >
             <XIcon className="h-4 w-4" />
           </Button>
         </CardTitle>

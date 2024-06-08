@@ -42,7 +42,7 @@ const menus: Menuitem[] = [
   {
     name: "Home",
     icon: Home,
-    link: "/",
+    link: "/home",
   },
   {
     name: "Orders",
