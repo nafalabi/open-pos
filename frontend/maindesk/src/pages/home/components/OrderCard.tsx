@@ -19,7 +19,7 @@ const OrderCard = ({ orderData }: OrderCardProps) => {
         <OrderStatusBadge status={orderData.status as OrderStatus} />
       </div>
       <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-        {orderData.recipient}
+        {orderData.recipient || "-"}
       </h4>
       <div className="flex mt-2">
         <p className="text-sm text-muted-foreground">

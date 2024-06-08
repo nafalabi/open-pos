@@ -14,7 +14,7 @@ type OrderPayload struct {
 	Items         []OrderItemPayload `json:"items" validate:"dive"`
 	PaymentMethod enum.PaymentMethod `json:"payment_method" validate:"custom"`
 	Remarks       string             `json:"remarks"`
-	Recipient     string             `json:"recipient" validate:"required"`
+	Recipient     string             `json:"recipient"`
 }
 type OrderItemPayload struct {
 	ProductID string `json:"product_id"`
