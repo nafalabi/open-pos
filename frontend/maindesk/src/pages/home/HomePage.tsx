@@ -1,8 +1,4 @@
 import { Button } from "@/shared/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/shared/components/ui/scroll-area";
-import OrderCard from "./components/OrderCard";
-import CategorySelector from "./components/CategorySelector";
-import MenuItems from "./components/MenuItems";
 import { ShoppingBasketIcon } from "lucide-react";
 import { useNavigate, useOutlet } from "react-router-dom";
 import {
@@ -10,6 +6,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/shared/components/ui/tooltip";
+import LatestOrders from "./components/LatestOrders";
+import MenuList from "./components/MenuList";
 
 const HomePage = () => {
   const outlet = useOutlet();
@@ -18,30 +16,8 @@ const HomePage = () => {
   return (
     <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
       <div className="min-w-[275px] w-auto">
-        <div className="mb-2 flex">
-          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            Order List
-          </h3>
-          <Button className="ml-auto h-6" variant="default" size="sm">
-            View more
-          </Button>
-        </div>
-        <ScrollArea className="whitespace-nowrap">
-          <div className="flex gap-2 mb-3">
-            <OrderCard />
-            <OrderCard />
-            <OrderCard />
-            <OrderCard />
-            <OrderCard />
-            <OrderCard />
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-
-        <h3 className="my-2 text-2xl font-semibold tracking-tight">Menu</h3>
-
-        <CategorySelector />
-        <MenuItems />
+        <LatestOrders />
+        <MenuList />
       </div>
       {outlet && (
         <div className="min-w-[275px] lg:min-w-[350px] w-auto sticky bottom-0 md:sticky md:top-4">

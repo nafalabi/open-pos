@@ -355,6 +355,12 @@ const docTemplate = `{
                         "description": "search query",
                         "name": "q",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category id",
+                        "name": "category",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -679,6 +685,9 @@ const docTemplate = `{
         },
         "controller.OrderPayload": {
             "type": "object",
+            "required": [
+                "recipient"
+            ],
             "properties": {
                 "items": {
                     "type": "array",
@@ -688,6 +697,9 @@ const docTemplate = `{
                 },
                 "payment_method": {
                     "$ref": "#/definitions/enum.PaymentMethod"
+                },
+                "recipient": {
+                    "type": "string"
                 },
                 "remarks": {
                     "type": "string"

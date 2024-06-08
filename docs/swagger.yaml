@@ -34,8 +34,12 @@ definitions:
         type: array
       payment_method:
         $ref: '#/definitions/enum.PaymentMethod'
+      recipient:
+        type: string
       remarks:
         type: string
+    required:
+    - recipient
     type: object
   controller.ProductPayload:
     properties:
@@ -309,6 +313,10 @@ paths:
       - description: search query
         in: query
         name: q
+        type: string
+      - description: category id
+        in: query
+        name: category
         type: string
       produces:
       - application/json

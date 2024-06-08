@@ -52,7 +52,7 @@ export class Requestor {
   }
 
   async _getErrorMessage(
-    response: Response,
+    response: Response
   ): Promise<ResponseError | undefined> {
     const code = response.status;
     if (code === 200) return undefined;
@@ -68,10 +68,10 @@ export class Requestor {
 
   async GET<TData, TParams = { [key: string]: string }>(
     url: string,
-    params?: TParams,
+    params?: TParams
   ): Promise<RequestorReturnType<TData>> {
     const urlParams = params
-      ? "?" + new URLSearchParams(params).toString()
+      ? "?" + new URLSearchParams(eliminateNullishValues(params)).toString()
       : "";
     const response = await this.fetch(API_URL + url + urlParams);
 
@@ -84,7 +84,7 @@ export class Requestor {
 
   async POST<TData, TPayload = { [key: string]: string }>(
     url: string,
-    payload: TPayload,
+    payload: TPayload
   ): Promise<RequestorReturnType<TData>> {
     const sPayload = JSON.stringify(payload);
     const response = await this.fetch(API_URL + url, {
@@ -115,7 +115,7 @@ export class Requestor {
 
   async PATCH<TData, TPayload>(
     url: string,
-    payload: TPayload,
+    payload: TPayload
   ): Promise<RequestorReturnType<TData>> {
     const sPayload = JSON.stringify(payload);
     const response = await this.fetch(API_URL + url, {
@@ -133,10 +133,10 @@ export class Requestor {
 
   async DELETE<TData>(
     url: string,
-    params?: Record<string, string>,
+    params?: Record<string, string>
   ): Promise<RequestorReturnType<TData>> {
     const urlParams = params
-      ? "?" + new URLSearchParams(params).toString()
+      ? "?" + new URLSearchParams(eliminateNullishValues(params)).toString()
       : "";
     const response = await this.fetch(API_URL + url + urlParams, {
       method: "DELETE",
@@ -150,5 +150,14 @@ export class Requestor {
     return [data, undefined, response] as const;
   }
 }
+
+const eliminateNullishValues = <TObj extends Record<string, unknown>>(
+  obj: TObj
+) => {
+  Object.keys(obj).forEach((key) => {
+    if (!obj[key]) delete obj[key];
+  });
+  return obj;
+};
 
 export const apiSingleton = new ApiSingleton();

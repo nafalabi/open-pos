@@ -14,6 +14,7 @@ type OrderPayload struct {
 	Items         []OrderItemPayload `json:"items" validate:"dive"`
 	PaymentMethod enum.PaymentMethod `json:"payment_method" validate:"custom"`
 	Remarks       string             `json:"remarks"`
+	Recipient     string             `json:"recipient" validate:"required"`
 }
 type OrderItemPayload struct {
 	ProductID string `json:"product_id"`
@@ -67,6 +68,9 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Transaction(func(tx *gorm.DB) error {
 			items := reqBody.GetItems(tx)
+
+			order.Recipient = reqBody.Recipient
+			order.Remarks = reqBody.Remarks
 			order.Items = items
 			order.PaymentMethod = reqBody.PaymentMethod
 			order.Status = enum.StatusPending
