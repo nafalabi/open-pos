@@ -75,9 +75,9 @@ const MenuList = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4">
+      <div className="flex flex-wrap gap-4 justify-start">
         {data.map((product) => (
-          <MenuItem key={product.id} menuData={product} size={itemSize} />
+          <MenuItem key={product.id} product={product} size={itemSize} />
         ))}
       </div>
     </Fragment>

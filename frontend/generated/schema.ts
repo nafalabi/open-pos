@@ -37,6 +37,6 @@ export const OrderPayloadSchema = z.object({
   items: OrderItemPayloadSchema.array().nullable(),
   payment_method: z.string(),
   remarks: z.string(),
-  recipient: z.string().min(1),
+  recipient: z.string(),
 });
 export type OrderPayload = z.infer<typeof OrderPayloadSchema>;

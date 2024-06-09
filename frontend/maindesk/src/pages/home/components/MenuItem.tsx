@@ -3,15 +3,18 @@ import { currency } from "@/maindesk/src/utils/currency";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/utils/shadcn";
 import { PlusCircleIcon } from "lucide-react";
+import { useOrderStore } from "../state/order";
 
 type MenuItemProps = {
   size: MenuItemSize;
-  menuData: Model_Product;
+  product: Model_Product;
 };
 
 export type MenuItemSize = "sm" | "md" | "lg";
 
-const MenuItem = ({ menuData: product, size }: MenuItemProps) => {
+const MenuItem = ({ product, size }: MenuItemProps) => {
+  const appendProduct = useOrderStore((state) => state.appendProduct);
+
   return (
     <div
       className={cn(
@@ -30,12 +33,18 @@ const MenuItem = ({ menuData: product, size }: MenuItemProps) => {
       />
       <div className="p-4">
         <h3 className="text-md font-bold">{product.name}</h3>
-        <p className="text-sm text-gray-500 mb-3 overflow-hidden text-ellipsis line-clamp-2">{product.description}</p>
+        <p className="text-sm text-gray-500 mb-3 overflow-hidden text-ellipsis line-clamp-2">
+          {product.description}
+        </p>
         <div className="flex items-center justify-between gap-2 flex-wrap">
           <span className="text-gray-900 font-bold">
             {currency(product.price)}
           </span>
-          <Button size="sm" className="h-6 mt-auto" onClick={() => {}}>
+          <Button
+            size="sm"
+            className="h-6 mt-auto"
+            onClick={() => appendProduct(product)}
+          >
             <PlusCircleIcon className="h-4 w-4" />
             &nbsp; Add
           </Button>
