@@ -4,7 +4,7 @@ const PageNotFound = () => {
       <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
         404 Not Found
       </h1>
-      <p className="text-xl text-muted-foreground">
+      <p className="text-xl text-center text-muted-foreground">
         The page you are accessing can't be found
       </p>
     </div>
