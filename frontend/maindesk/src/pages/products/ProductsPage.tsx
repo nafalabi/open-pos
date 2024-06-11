@@ -17,7 +17,7 @@ import {
 import { ColumnDef } from "@tanstack/react-table";
 import { type Model_Product } from "@/generated/models";
 import { DataTable } from "../../layout/data-table";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { deleteProduct, getProducts } from "../../api/products";
 import { toast } from "sonner";
 import useQueryParams from "../../hooks/useQueryParams";
@@ -38,12 +38,18 @@ import {
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
-import { router } from "../../routes";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { queryClient } from "../../App";
+import {
+  QueryClient,
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import GenericImage from "../../layout/generic-image";
 
-const columns: ColumnDef<Model_Product>[] = [
+const generateColumns = (
+  queryClient: QueryClient,
+  navigate: ReturnType<typeof useNavigate>
+): ColumnDef<Model_Product>[] => [
   {
     id: "select",
     header: ({ table }) => (
@@ -160,7 +166,7 @@ const columns: ColumnDef<Model_Product>[] = [
       };
 
       const handleEdit = () => {
-        router.navigate("/products/edit/" + id);
+        navigate("/products/edit/" + id);
       };
 
       return (
@@ -190,6 +196,7 @@ const columns: ColumnDef<Model_Product>[] = [
 ];
 
 const ProductsPage = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { queryParams, setPage, setPageSize, setQueryParams } = useQueryParams({
     paramkeys: ["q"],
@@ -230,6 +237,12 @@ const ProductsPage = () => {
     placeholderData: keepPreviousData,
   });
 
+  const columns = useMemo(
+    () => generateColumns(queryClient, navigate),
+    [queryClient, navigate]
+  );
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleSearch = useCallback(
     debounce((keyword: string) => {
       setQueryParams({ q: keyword });
