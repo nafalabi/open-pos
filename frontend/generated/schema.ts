@@ -16,7 +16,7 @@ export type CategoryPayload = z.infer<typeof CategoryPayloadSchema>;
 
 export const ProductPayloadSchema = z.object({
   name: z.string().min(1),
-  description: z.string().min(1),
+  description: z.string(),
   price: z.number().gte(0),
   image: z.string(),
   stock: z.number().gte(0),
@@ -25,7 +25,7 @@ export const ProductPayloadSchema = z.object({
 export type ProductPayload = z.infer<typeof ProductPayloadSchema>;
 
 export const OrderItemPayloadSchema = z.object({
-  product_id: z.string(),
+  product_id: z.string().min(1),
   quantity: z
     .number()
     .gte(1)
@@ -34,7 +34,7 @@ export const OrderItemPayloadSchema = z.object({
 export type OrderItemPayload = z.infer<typeof OrderItemPayloadSchema>;
 
 export const OrderPayloadSchema = z.object({
-  items: OrderItemPayloadSchema.array().nullable(),
+  items: OrderItemPayloadSchema.array().min(1),
   payment_method: z.string(),
   remarks: z.string(),
   recipient: z.string(),

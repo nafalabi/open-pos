@@ -11,13 +11,13 @@ import (
 )
 
 type OrderPayload struct {
-	Items         []OrderItemPayload `json:"items" validate:"dive"`
+	Items         []OrderItemPayload `json:"items" validate:"gt=0,dive,required"`
 	PaymentMethod enum.PaymentMethod `json:"payment_method" validate:"custom"`
 	Remarks       string             `json:"remarks"`
 	Recipient     string             `json:"recipient"`
 }
 type OrderItemPayload struct {
-	ProductID string `json:"product_id"`
+	ProductID string `json:"product_id" validate:"required"`
 	Quantity  int    `json:"quantity" validate:"required,min=1"`
 }
 

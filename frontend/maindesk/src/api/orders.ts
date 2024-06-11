@@ -15,7 +15,7 @@ export const getOrder = async (orderId: string) => {
 
 export const postOrder = async (payload: OrderPayload) => {
   const { requestor } = apiSingleton;
-  return await requestor.POST("/orders", payload);
+  return await requestor.POST<Model_Order, typeof payload>("/orders", payload);
 };
 
 export const patchOrder = async (orderId: string, payload: OrderPayload) => {

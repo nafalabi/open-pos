@@ -4,6 +4,8 @@ import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/utils/shadcn";
 import { PlusCircleIcon } from "lucide-react";
 import { useOrderStore } from "../state/order";
+import { useNavigate } from "react-router-dom";
+import GenericImage from "@/maindesk/src/layout/generic-image";
 
 type MenuItemProps = {
   size: MenuItemSize;
@@ -13,7 +15,13 @@ type MenuItemProps = {
 export type MenuItemSize = "sm" | "md" | "lg";
 
 const MenuItem = ({ product, size }: MenuItemProps) => {
+  const navigate = useNavigate();
   const appendProduct = useOrderStore((state) => state.appendProduct);
+
+  const handleAddProduct = () => {
+    appendProduct(product);
+    navigate(`/home/add-order`);
+  };
 
   return (
     <div
@@ -24,12 +32,10 @@ const MenuItem = ({ product, size }: MenuItemProps) => {
         size === "sm" && "w-40"
       )}
     >
-      <img
+      <GenericImage
         src={product.image}
-        onError={(e) => {
-          e.currentTarget.src = "/placeholder.svg";
-        }}
-        className="rounded-t-lg object-cover w-full aspect-square"
+        fallbackSrc="/placeholder.svg"
+        containerProps={{ className: "w-full aspect-square rounded-t-lg object-cover" }}
       />
       <div className="p-4">
         <h3 className="text-md font-bold">{product.name}</h3>
@@ -37,14 +43,10 @@ const MenuItem = ({ product, size }: MenuItemProps) => {
           {product.description}
         </p>
         <div className="flex items-center justify-between gap-2 flex-wrap">
-          <span className="text-gray-900 font-bold">
+          <span className="text-gray-900 font-medium">
             {currency(product.price)}
           </span>
-          <Button
-            size="sm"
-            className="h-6 mt-auto"
-            onClick={() => appendProduct(product)}
-          >
+          <Button size="sm" className="h-6 mt-auto" onClick={handleAddProduct}>
             <PlusCircleIcon className="h-4 w-4" />
             &nbsp; Add
           </Button>
