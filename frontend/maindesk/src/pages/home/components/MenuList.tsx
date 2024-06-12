@@ -20,6 +20,8 @@ import { debounce } from "@/maindesk/src/utils/function-utils";
 const defaultFetchParams: Parameters<typeof getProducts>[0] = {
   page: String(1),
   pagesize: String(10),
+  sortkey: "name",
+  sortdir: "asc",
 };
 
 const MenuList = () => {
