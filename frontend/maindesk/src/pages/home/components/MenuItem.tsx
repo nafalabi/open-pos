@@ -6,6 +6,8 @@ import { PlusCircleIcon } from "lucide-react";
 import { useOrderStore } from "../state/order";
 import { useNavigate, useMatch } from "react-router-dom";
 import GenericImage from "@/maindesk/src/layout/generic-image";
+import { Skeleton } from "@/shared/components/ui/skeleton";
+import { ForwardedRef, forwardRef } from "react";
 
 type MenuItemProps = {
   size: MenuItemSize;
@@ -60,3 +62,26 @@ const MenuItem = ({ product, size }: MenuItemProps) => {
 };
 
 export default MenuItem;
+
+export const MenuItemSkeleton = forwardRef(
+  ({ size }: { size: MenuItemSize }, ref: ForwardedRef<HTMLDivElement>) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "",
+          size === "lg" && "w-64",
+          size === "md" && "w-48",
+          size === "sm" && "w-40"
+        )}
+      >
+        <Skeleton className="w-full aspect-square rounded-t-lg object-cover" />
+        <div className="mt-4">
+          <Skeleton className="w-full h-4 mb-3" />
+          <Skeleton className="w-full h-4 mb-3" />
+          <Skeleton className="w-full h-4 mb-3" />
+        </div>
+      </div>
+    );
+  }
+);
