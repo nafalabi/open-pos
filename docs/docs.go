@@ -96,6 +96,18 @@ const docTemplate = `{
                         "description": "search query",
                         "name": "q",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort key",
+                        "name": "sortkey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort direction (asc/desc)",
+                        "name": "sortdir",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -286,6 +298,18 @@ const docTemplate = `{
                         "description": "search query",
                         "name": "q",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort key",
+                        "name": "sortkey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort direction (asc/desc)",
+                        "name": "sortdir",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -354,6 +378,18 @@ const docTemplate = `{
                         "type": "string",
                         "description": "search query",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort key",
+                        "name": "sortkey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort direction (asc/desc)",
+                        "name": "sortdir",
                         "in": "query"
                     },
                     {
@@ -671,6 +707,7 @@ const docTemplate = `{
         "controller.OrderItemPayload": {
             "type": "object",
             "required": [
+                "product_id",
                 "quantity"
             ],
             "properties": {
@@ -686,7 +723,7 @@ const docTemplate = `{
         "controller.OrderPayload": {
             "type": "object",
             "required": [
-                "recipient"
+                "items"
             ],
             "properties": {
                 "items": {
@@ -709,7 +746,6 @@ const docTemplate = `{
         "controller.ProductPayload": {
             "type": "object",
             "required": [
-                "description",
                 "name"
             ],
             "properties": {

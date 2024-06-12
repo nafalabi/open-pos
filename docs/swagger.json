@@ -87,6 +87,18 @@
                         "description": "search query",
                         "name": "q",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort key",
+                        "name": "sortkey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort direction (asc/desc)",
+                        "name": "sortdir",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -277,6 +289,18 @@
                         "description": "search query",
                         "name": "q",
                         "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort key",
+                        "name": "sortkey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort direction (asc/desc)",
+                        "name": "sortdir",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -345,6 +369,18 @@
                         "type": "string",
                         "description": "search query",
                         "name": "q",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort key",
+                        "name": "sortkey",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sort direction (asc/desc)",
+                        "name": "sortdir",
                         "in": "query"
                     },
                     {
@@ -662,6 +698,7 @@
         "controller.OrderItemPayload": {
             "type": "object",
             "required": [
+                "product_id",
                 "quantity"
             ],
             "properties": {
@@ -677,7 +714,7 @@
         "controller.OrderPayload": {
             "type": "object",
             "required": [
-                "recipient"
+                "items"
             ],
             "properties": {
                 "items": {
@@ -700,7 +737,6 @@
         "controller.ProductPayload": {
             "type": "object",
             "required": [
-                "description",
                 "name"
             ],
             "properties": {

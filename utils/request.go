@@ -20,7 +20,7 @@ func BindAndValidate[T any](c echo.Context, reqBody *T) error {
 	return err
 }
 
-func DefinePaginationParam(c echo.Context) (
+func GetPaginationParams(c echo.Context) (
 	limit int, offset int, page int, pageSize int,
 ) {
 	page, _ = strconv.Atoi(c.QueryParam("page"))
@@ -40,4 +40,30 @@ func DefinePaginationParam(c echo.Context) (
 	limit = pageSize
 
 	return limit, offset, page, pageSize
+}
+
+type SortDirection string
+
+const (
+	ASC  SortDirection = "asc"
+	DESC SortDirection = "desc"
+)
+
+func GetSortParams(c echo.Context) (
+	isSorted bool,
+	sortKey string,
+	sortDirection SortDirection,
+) {
+	sortKey = c.QueryParam("sortkey")
+	sortDirection = SortDirection(c.QueryParam("sortdir"))
+
+	if sortKey == "" {
+		return false, "", ""
+	}
+
+	if (sortDirection != ASC) && (sortDirection != DESC) {
+		sortDirection = ASC
+	}
+
+	return true, sortKey, sortDirection
 }

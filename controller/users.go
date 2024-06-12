@@ -33,13 +33,13 @@ func (payload UserPayload) Fill(user *model.User) error {
 	return nil
 }
 
-//	@Summary	Register a new user
-//	@Security	ApiKeyAuth
-//	@Tags		Users
-//	@Accept		json
-//	@Produce	json
-//	@Param		body	body	UserPayload	true	"User Data"
-//	@Router		/users [post]
+// @Summary	Register a new user
+// @Security	ApiKeyAuth
+// @Tags		Users
+// @Accept		json
+// @Produce	json
+// @Param		body	body	UserPayload	true	"User Data"
+// @Router		/users [post]
 func Register(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var reqBody UserPayload
@@ -71,17 +71,17 @@ func Register(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	list of users
-//	@Security	ApiKeyAuth
-//	@Tags		Users
-//	@Accept		json
-//	@Produce	json
-//	@Param		page		query	string	false	"page"
-//	@Param		pagesize	query	string	false	"page size"
-//	@Router		/users [get]
+// @Summary	list of users
+// @Security	ApiKeyAuth
+// @Tags		Users
+// @Accept		json
+// @Produce	json
+// @Param		page		query	string	false	"page"
+// @Param		pagesize	query	string	false	"page size"
+// @Router		/users [get]
 func ListUsers(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		limit, offset, page, pageSize := utils.DefinePaginationParam(c)
+		limit, offset, page, pageSize := utils.GetPaginationParams(c)
 
 		var users []model.User
 		var totalRecords int64
@@ -93,13 +93,13 @@ func ListUsers(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	find user by id
-//	@Security	ApiKeyAuth
-//	@Tags		Users
-//	@Accept		json
-//	@Produce	json
-//	@Param		id	path	string	true	"User ID"
-//	@Router		/users/{id} [get]
+// @Summary	find user by id
+// @Security	ApiKeyAuth
+// @Tags		Users
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"User ID"
+// @Router		/users/{id} [get]
 func FindUser(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userId := c.Param("id")
@@ -115,14 +115,14 @@ func FindUser(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	update user
-//	@Security	ApiKeyAuth
-//	@Tags		Users
-//	@Accept		json
-//	@Produce	json
-//	@Param		id		path	string		true	"User ID"
-//	@Param		body	body	UserPayload	true	"User Data"
-//	@Router		/users/{id} [patch]
+// @Summary	update user
+// @Security	ApiKeyAuth
+// @Tags		Users
+// @Accept		json
+// @Produce	json
+// @Param		id		path	string		true	"User ID"
+// @Param		body	body	UserPayload	true	"User Data"
+// @Router		/users/{id} [patch]
 func UpdateUser(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userId := c.Param("id")
@@ -146,13 +146,13 @@ func UpdateUser(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	delete user by id
-//	@Security	ApiKeyAuth
-//	@Tags		Users
-//	@Accept		json
-//	@Produce	json
-//	@Param		id	path	string	true	"User ID"
-//	@Router		/users/{id} [delete]
+// @Summary	delete user by id
+// @Security	ApiKeyAuth
+// @Tags		Users
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"User ID"
+// @Router		/users/{id} [delete]
 func DeleteUser(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		userId := c.Param("id")

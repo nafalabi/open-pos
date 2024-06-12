@@ -5,6 +5,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 
 	model "open-pos/model"
 )
@@ -83,11 +84,14 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 // @Param		page		query	string	false	"page"
 // @Param		pagesize	query	string	false	"page size"
 // @Param		q			query	string	false	"search query"
+// @Param		sortkey		query	string	false	"sort key"
+// @Param		sortdir		query	string	false	"sort direction (asc/desc)"
 // @Param		category	query	string	false	"category id"
 // @Router		/products [get]
 func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		limit, offset, page, pageSize := utils.DefinePaginationParam(c)
+		limit, offset, page, pageSize := utils.GetPaginationParams(c)
+		isSorted, sortKey, sortDirection := utils.GetSortParams(c)
 		searchQuery := c.QueryParam("q")
 		categoryId := c.QueryParam("category")
 
@@ -102,6 +106,13 @@ func ListProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		if categoryId != "" {
 			query.Joins("JOIN product_categories ON product_categories.product_id = products.id").Where("product_categories.category_id = ?", categoryId)
+		}
+
+		if isSorted {
+			query = query.Order(clause.OrderByColumn{
+				Column: clause.Column{Name: sortKey},
+				Desc:   sortDirection == utils.DESC,
+			})
 		}
 
 		query.Count(&totalRecords)

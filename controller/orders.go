@@ -8,6 +8,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type OrderPayload struct {
@@ -101,16 +102,26 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 // @Param		page		query	string	false	"page"
 // @Param		pagesize	query	string	false	"page size"
 // @Param		q			query	string	false	"search query"
+// @Param		sortkey		query	string	false	"sort key"
+// @Param		sortdir		query	string	false	"sort direction (asc/desc)"
 // @Router		/orders [get]
 func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		limit, offset, page, pageSize := utils.DefinePaginationParam(c)
+		limit, offset, page, pageSize := utils.GetPaginationParams(c)
+		isSorted, sortKey, sortDirection := utils.GetSortParams(c)
 		searchQuery := c.QueryParam("q")
 
 		var orders []model.Order
 		var totalRecords int64
 
 		query := dbClient.Model(&model.Order{})
+
+		if isSorted {
+			query = query.Order(clause.OrderByColumn{
+				Column: clause.Column{Name: sortKey},
+				Desc:   sortDirection == utils.DESC,
+			})
+		}
 
 		if searchQuery != "" {
 			query.Where("order_number like ?", "%"+searchQuery+"%")
