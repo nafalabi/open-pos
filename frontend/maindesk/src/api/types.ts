@@ -2,6 +2,10 @@ export type PaginationParams = {
   page: string;
   pagesize: string;
 };
+export type SortParams = Partial<{
+  sortkey: string;
+  sortdir: string;
+}>;
 
 export type PaginationData = {
   current_page: number;

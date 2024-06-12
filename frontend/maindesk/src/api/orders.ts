@@ -1,9 +1,11 @@
 import { Model_Order } from "@/generated/models";
 import { apiSingleton } from "./api-singleton";
-import { PaginationParams } from "./types";
+import { PaginationParams, SortParams } from "./types";
 import { OrderPayload } from "@/generated/schema";
 
-export const getOrders = async (payload: PaginationParams & { q?: string }) => {
+export const getOrders = async (
+  payload: PaginationParams & SortParams & { q?: string }
+) => {
   const { requestor } = apiSingleton;
   return await requestor.GET<Model_Order[]>("/orders", payload);
 };

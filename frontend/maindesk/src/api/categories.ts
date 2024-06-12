@@ -1,10 +1,10 @@
 import { type CategoryPayload } from "@/generated/schema";
 import { apiSingleton } from "./api-singleton";
-import { type PaginationParams } from "./types";
+import { SortParams, type PaginationParams } from "./types";
 import { type Model_Category } from "@/generated/models";
 
 export const getCategories = async (
-  params: PaginationParams & Partial<{ q: string }>
+  params: PaginationParams & SortParams & Partial<{ q: string }>
 ) => {
   const { requestor } = apiSingleton;
   return requestor.GET<Model_Category[]>("/categories", params);

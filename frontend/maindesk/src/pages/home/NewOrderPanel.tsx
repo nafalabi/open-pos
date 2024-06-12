@@ -17,6 +17,7 @@ import PriceDetail from "./forms/PriceDetail";
 import { useEffect } from "react";
 import { postOrder } from "../../api/orders";
 import { toast } from "sonner";
+import { useQueryClient } from "@tanstack/react-query";
 
 const defaultValues: OrderPayload = {
   items: [],
@@ -26,6 +27,7 @@ const defaultValues: OrderPayload = {
 };
 
 const NewOrderPanel = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { products, reset } = useOrderStore((state) => ({
     products: state.products,
@@ -60,6 +62,7 @@ const NewOrderPanel = () => {
         toast.error("Error creating order", { description: error.message });
         return;
       }
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
       const id = result.data.id;
       navigate("/home/checkout/" + id);
       form.reset();
@@ -96,7 +99,7 @@ const NewOrderPanel = () => {
           <Button
             size="sm"
             className="w-full"
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || products.length === 0}
           >
             {form.formState.isSubmitting && (
               <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />

@@ -1,10 +1,12 @@
 import { apiSingleton } from "./api-singleton";
 import { type ProductPayload } from "@/generated/schema";
 import { type Model_Product } from "@/generated/models";
-import { PaginationParams } from "./types";
+import { PaginationParams, SortParams } from "./types";
 
 export const getProducts = async (
-  payload: PaginationParams & Partial<{ q: string; category: string }>
+  payload: PaginationParams &
+    SortParams &
+    Partial<{ q: string; category: string }>
 ) => {
   const { requestor } = apiSingleton;
   return await requestor.GET<Model_Product[]>("/products", payload);

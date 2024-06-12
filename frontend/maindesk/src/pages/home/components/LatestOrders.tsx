@@ -4,12 +4,14 @@ import { Fragment } from "react";
 import OrderCard from "./OrderCard";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { PaginationParams } from "@/maindesk/src/api/types";
+import { PaginationParams, SortParams } from "@/maindesk/src/api/types";
 import { getOrders } from "@/maindesk/src/api/orders";
 
-const fetchParams: PaginationParams = {
+const fetchParams: PaginationParams & SortParams = {
   page: "1",
-  pagesize: "10",
+  pagesize: "11",
+  sortkey: "created_at",
+  sortdir: "desc",
 };
 
 const LatestOrders = () => {
