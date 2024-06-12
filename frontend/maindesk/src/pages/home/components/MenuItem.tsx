@@ -4,7 +4,7 @@ import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/utils/shadcn";
 import { PlusCircleIcon } from "lucide-react";
 import { useOrderStore } from "../state/order";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useMatch } from "react-router-dom";
 import GenericImage from "@/maindesk/src/layout/generic-image";
 
 type MenuItemProps = {
@@ -15,12 +15,13 @@ type MenuItemProps = {
 export type MenuItemSize = "sm" | "md" | "lg";
 
 const MenuItem = ({ product, size }: MenuItemProps) => {
+  const isAddOrderPanelOpen = useMatch("/home/add-order");
   const navigate = useNavigate();
   const appendProduct = useOrderStore((state) => state.appendProduct);
 
   const handleAddProduct = () => {
     appendProduct(product);
-    navigate(`/home/add-order`);
+    if (!isAddOrderPanelOpen) navigate(`/home/add-order`);
   };
 
   return (
@@ -35,7 +36,9 @@ const MenuItem = ({ product, size }: MenuItemProps) => {
       <GenericImage
         src={product.image}
         fallbackSrc="/placeholder.svg"
-        containerProps={{ className: "w-full aspect-square rounded-t-lg object-cover" }}
+        containerProps={{
+          className: "w-full aspect-square rounded-t-lg object-cover",
+        }}
       />
       <div className="p-4">
         <h3 className="text-md font-bold">{product.name}</h3>

@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { Input } from "@/shared/components/ui/input";
 
 type PriceDetailProps = {
   form: UseFormReturn<OrderPayload>;
@@ -33,7 +34,7 @@ const paymentFeeMapping: Record<string, PaymentFeeMapping | undefined> = {
   },
   [PaymentMethod.PaymentMethodQris]: {
     type: "percentage",
-    value: 0.7/100,
+    value: 0.7 / 100,
   },
 };
 
@@ -70,6 +71,18 @@ const PriceDetail = ({ form }: PriceDetailProps) => {
     <>
       <Separator className="my-4" />
       <div className="grid gap-2">
+        <div className="flex items-center justify-between">
+          <span className="text-gray-900 font-bold">Recipient</span>
+          <span className="text-gray-900 font-bold">
+            <Input {...form.register("recipient")} className="min-w-[130px] w-[150px]" />
+          </span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-gray-900 font-bold">Remarks</span>
+          <span className="text-gray-900 font-bold">
+            <Input {...form.register("remarks")} className="min-w-[130px] w-[150px]" />
+          </span>
+        </div>
         <div className="flex items-center justify-between gap-2">
           <span className="text-gray-900 font-bold">Payment Method</span>
           <Controller

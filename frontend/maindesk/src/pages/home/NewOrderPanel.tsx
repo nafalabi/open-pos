@@ -27,7 +27,10 @@ const defaultValues: OrderPayload = {
 
 const NewOrderPanel = () => {
   const navigate = useNavigate();
-  const products = useOrderStore((state) => state.products);
+  const { products, reset } = useOrderStore((state) => ({
+    products: state.products,
+    reset: state.reset,
+  }));
 
   const form = useForm({
     defaultValues,
@@ -59,6 +62,8 @@ const NewOrderPanel = () => {
       }
       const id = result.data.id;
       navigate("/home/checkout/" + id);
+      form.reset();
+      reset();
     },
     async () => {
       toast.error("Error creating order", {

@@ -25,7 +25,7 @@ const ProductList = ({ form }: ProductListProps) => {
   };
 
   return (
-    <div className="h-[calc(100vh-450px)] min-h-[200px]">
+    <div className="h-[calc(100vh-550px)] min-h-[200px]">
       <ScrollArea className="h-full mr-[-1.5rem] pr-[1.5rem]">
         <div>
           {fields.length === 0 ? (
