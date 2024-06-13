@@ -134,3 +134,22 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		return utils.SendSuccessPaginated(c, orders, page, pageSize, int(totalRecords))
 	}
 }
+
+// @Summary find order by id
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id		path		string	true	"order id"
+// @Router		/orders/{id} [get]
+func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+		var order model.Order
+		err := dbClient.Where("id = ?", id).Preload("Items").First(&order).Error
+		if err != nil {
+			return utils.SendError(c, err)
+		}
+		return utils.SendSuccess(c, order)
+	}
+}

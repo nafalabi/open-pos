@@ -75,6 +75,7 @@ func main() {
 	orders.Use(jwtMiddleware)
 	orders.POST("", utils.RegisterController(dbClient, controller.CreateOrder))
 	orders.GET("", utils.RegisterController(dbClient, controller.ListOrder))
+	orders.GET("/:id", utils.RegisterController(dbClient, controller.FindOrder))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
