@@ -58,7 +58,7 @@ func (payload *OrderPayload) GetItems(db *gorm.DB) []model.OrderItem {
 // @Tags		Orders
 // @Accept		json
 // @Produce	json
-// @Param		body	body OrderPayload	true	"Order Data"
+// @Param		body	body	OrderPayload	true	"Order Data"
 // @Router		/orders [post]
 func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
@@ -95,7 +95,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary list of orders
+// @Summary	list of orders
 // @Security	ApiKeyAuth
 // @Tags		Orders
 // @Accept		json
@@ -136,21 +136,35 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary find order by id
+// @Summary	find order by id
 // @Security	ApiKeyAuth
 // @Tags		Orders
 // @Accept		json
 // @Produce	json
-// @Param		id		path		string	true	"order id"
+// @Param		id				path	string	true	"order id"
+// @Param		includeProducts	query	bool	false	"Should include products"
 // @Router		/orders/{id} [get]
 func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
+		includeProducts := c.QueryParam("includeProducts")
 		var order model.Order
-		err := dbClient.Where("id = ?", id).Preload("Items").First(&order).Error
+
+		query := dbClient.Model(model.Order{})
+		query.Where("id = ?", id).Preload("Items")
+
+		if includeProducts != "" {
+			query.Preload("Items.Product")
+		}
+
+		query.First(&order)
+
+		err := query.Error
+
 		if err != nil {
 			return utils.SendError(c, err)
 		}
+
 		return utils.SendSuccess(c, order)
 	}
 }
