@@ -27,7 +27,7 @@ export const BreadcrumbMain = () => {
           if (!crumbTextFn) return null;
           return (
             <Fragment key={entry.id}>
-              {index != matches.length - 1 ? (
+              {index != matches.length - 1 || index === 0 ? (
                 <>
                   <BreadcrumbItem>
                     <BreadcrumbLink asChild>
