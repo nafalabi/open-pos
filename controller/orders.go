@@ -41,8 +41,9 @@ func (payload *OrderPayload) GetItems(db *gorm.DB) []model.OrderItem {
 
 	for _, product := range products {
 		item := itemMap[product.ID]
+		productId := product.ID
 		items = append(items, model.OrderItem{
-			Product:   &product,
+			ProductID: &productId,
 			Quantity:  item.Quantity,
 			PriceEach: product.Price,
 			SubTotal:  product.Price * float64(item.Quantity),
