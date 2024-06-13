@@ -313,6 +313,28 @@ paths:
       summary: Create a new order
       tags:
       - Orders
+  /orders/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Should include products
+        in: query
+        name: includeProducts
+        type: boolean
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: find order by id
+      tags:
+      - Orders
   /products:
     get:
       consumes:
