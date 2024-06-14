@@ -3,7 +3,7 @@ import { currency } from "@/maindesk/src/utils/currency";
 import { Button } from "@/shared/components/ui/button";
 import { cn } from "@/shared/utils/shadcn";
 import { PlusCircleIcon } from "lucide-react";
-import { useOrderStore } from "../state/order";
+import { useCartStore } from "../state/cart";
 import { useNavigate, useMatch } from "react-router-dom";
 import GenericImage from "@/maindesk/src/layout/generic-image";
 import { Skeleton } from "@/shared/components/ui/skeleton";
@@ -19,7 +19,7 @@ export type MenuItemSize = "sm" | "md" | "lg";
 const MenuItem = ({ product, size }: MenuItemProps) => {
   const isAddOrderPanelOpen = useMatch("/home/add-order");
   const navigate = useNavigate();
-  const appendProduct = useOrderStore((state) => state.appendProduct);
+  const appendProduct = useCartStore((state) => state.appendProduct);
 
   const handleAddProduct = () => {
     appendProduct(product);
@@ -32,7 +32,7 @@ const MenuItem = ({ product, size }: MenuItemProps) => {
         "bg-white rounded-lg shadow-md",
         size === "lg" && "w-64",
         size === "md" && "w-48",
-        size === "sm" && "w-40"
+        size === "sm" && "w-40",
       )}
     >
       <GenericImage
@@ -72,7 +72,7 @@ export const MenuItemSkeleton = forwardRef(
           "",
           size === "lg" && "w-64",
           size === "md" && "w-48",
-          size === "sm" && "w-40"
+          size === "sm" && "w-40",
         )}
       >
         <Skeleton className="w-full aspect-square rounded-t-lg object-cover" />
@@ -83,5 +83,5 @@ export const MenuItemSkeleton = forwardRef(
         </div>
       </div>
     );
-  }
+  },
 );

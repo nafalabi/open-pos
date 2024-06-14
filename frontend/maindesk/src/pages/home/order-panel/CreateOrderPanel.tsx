@@ -8,14 +8,14 @@ import {
 } from "@/shared/components/ui/card";
 import { Loader2Icon, XIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useOrderStore } from "./state/order";
+import { useCartStore } from "../state/cart";
 import { useForm } from "react-hook-form";
 import { OrderPayload, OrderPayloadSchema } from "@/generated/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ProductList from "./forms/ProductList";
-import PriceDetail from "./forms/PriceDetail";
+import ProductList from "../forms/ProductList";
+import PriceDetail from "../forms/PriceDetail";
 import { useEffect } from "react";
-import { postOrder } from "../../api/orders";
+import { postOrder } from "../../../api/orders";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -26,10 +26,10 @@ const defaultValues: OrderPayload = {
   remarks: "",
 };
 
-const NewOrderPanel = () => {
+const CreateOrderPanel = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { products, reset } = useOrderStore((state) => ({
+  const { products, reset } = useCartStore((state) => ({
     products: state.products,
     reset: state.reset,
   }));
@@ -104,7 +104,7 @@ const NewOrderPanel = () => {
             {form.formState.isSubmitting && (
               <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
             )}
-            Checkout
+            Create Order
           </Button>
         </CardFooter>
       </form>
@@ -112,4 +112,4 @@ const NewOrderPanel = () => {
   );
 };
 
-export default NewOrderPanel;
+export default CreateOrderPanel;

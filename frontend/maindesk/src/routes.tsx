@@ -10,8 +10,10 @@ import PageNotFound from "./pages/404-not-found/PageNotFound.tsx";
 import { HomeIcon } from "lucide-react";
 
 const BaseLayout = lazy(() => import("./layout/base.tsx"));
-const HomePage = lazy(() => import("./pages/home/HomePage.tsx"));
-const NewOrderPanel = lazy(() => import("./pages/home/NewOrderPanel.tsx"));
+const Homepage = lazy(() => import("./pages/home/Homepage.tsx"));
+const CreateOrderPanel = lazy(() => import("./pages/home/order-panel/CreateOrderPanel.tsx"));
+const ViewOrderPanel = lazy(() => import("./pages/home/order-panel/ViewOrderPanel.tsx"));
+const CheckoutPanel = lazy(() => import("./pages/home/order-panel/CheckoutPanel.tsx"));
 const ProductsPage = lazy(() => import("./pages/products/ProductsPage.tsx"));
 const ProductCreatePage = lazy(
   () => import("./pages/products/ProductCreatePage.tsx")
@@ -54,7 +56,7 @@ export const router = createBrowserRouter([
         element: (
           <LazyLoader
             fallback={<SpinnerBox />}
-            component={<HomePage />}
+            component={<Homepage />}
           />
         ),
         children: [
@@ -63,10 +65,28 @@ export const router = createBrowserRouter([
             element: (
               <LazyLoader
                 fallback={<SpinnerBox />}
-                component={<NewOrderPanel />}
+                component={<CreateOrderPanel />}
               />
             ),
           },
+          {
+            path: "detail/:id",
+            element: (
+              <LazyLoader
+                fallback={<SpinnerBox />}
+                component={<ViewOrderPanel />}
+              />
+            )
+          },
+          {
+            path: "checkout/:id",
+            element: (
+              <LazyLoader
+                fallback={<SpinnerBox />}
+                component={<CheckoutPanel />}
+              />
+            )
+          }
         ],
       },
       {

@@ -2,7 +2,7 @@ import { Button } from "@/shared/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/shared/components/ui/scroll-area";
 import { Fragment } from "react";
 import OrderCard from "./OrderCard";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { PaginationParams, SortParams } from "@/maindesk/src/api/types";
 import { getOrders } from "@/maindesk/src/api/orders";
@@ -15,8 +15,6 @@ const fetchParams: PaginationParams & SortParams = {
 };
 
 const LatestOrders = () => {
-  const navigate = useNavigate();
-
   const { data } = useQuery({
     queryKey: ["orders", fetchParams],
     queryFn: async () => {
@@ -36,13 +34,8 @@ const LatestOrders = () => {
           Order List
         </h3>
         {data.length > 10 && (
-          <Button
-            className="ml-auto h-6"
-            variant="default"
-            size="sm"
-            onClick={() => navigate("/orders")}
-          >
-            View more
+          <Button className="ml-auto h-6" variant="default" size="sm" asChild>
+            <Link to={"/orders"}>View more</Link>
           </Button>
         )}
       </div>

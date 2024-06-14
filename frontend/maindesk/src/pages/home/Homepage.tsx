@@ -9,7 +9,7 @@ import {
 import LatestOrders from "./components/LatestOrders";
 import MenuList from "./components/MenuList";
 
-const HomePage = () => {
+const Homepage = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
 
@@ -42,4 +42,4 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+export default Homepage;

@@ -1,7 +1,7 @@
 import { OrderPayload } from "@/generated/schema";
 import { Button } from "@/shared/components/ui/button";
 import { UseFormReturn, useFieldArray } from "react-hook-form";
-import { useOrderStore } from "../state/order";
+import { useCartStore } from "../state/cart";
 import { currency } from "@/maindesk/src/utils/currency";
 import { TrashIcon } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/shared/components/ui/scroll-area";
@@ -12,7 +12,7 @@ type ProductListProps = {
 };
 
 const ProductList = ({ form }: ProductListProps) => {
-  const { products, removeProduct } = useOrderStore((state) => ({
+  const { products, removeProduct } = useCartStore((state) => ({
     products: state.products,
     removeProduct: state.removeProduct,
   }));

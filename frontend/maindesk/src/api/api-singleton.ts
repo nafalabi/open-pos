@@ -66,12 +66,12 @@ export class Requestor {
     };
   }
 
-  async GET<TData, TParams = { [key: string]: string }>(
+  async GET<TData>(
     url: string,
-    params?: TParams
+    params?: Record<string, string | null | undefined>
   ): Promise<RequestorReturnType<TData>> {
     const urlParams = params
-      ? "?" + new URLSearchParams(eliminateNullishValues(params)).toString()
+      ? "?" + new URLSearchParams(eliminateFalsyValues(params)).toString()
       : "";
     const response = await this.fetch(API_URL + url + urlParams);
 
@@ -136,7 +136,7 @@ export class Requestor {
     params?: Record<string, string>
   ): Promise<RequestorReturnType<TData>> {
     const urlParams = params
-      ? "?" + new URLSearchParams(eliminateNullishValues(params)).toString()
+      ? "?" + new URLSearchParams(eliminateFalsyValues(params)).toString()
       : "";
     const response = await this.fetch(API_URL + url + urlParams, {
       method: "DELETE",
@@ -151,13 +151,13 @@ export class Requestor {
   }
 }
 
-const eliminateNullishValues = <TObj extends Record<string, unknown>>(
+const eliminateFalsyValues = <TObj extends Record<string, unknown>>(
   obj: TObj
 ) => {
   Object.keys(obj).forEach((key) => {
     if (!obj[key]) delete obj[key];
   });
-  return obj;
+  return obj as Record<string, string>;
 };
 
 export const apiSingleton = new ApiSingleton();

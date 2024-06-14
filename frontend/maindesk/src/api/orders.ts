@@ -10,9 +10,12 @@ export const getOrders = async (
   return await requestor.GET<Model_Order[]>("/orders", payload);
 };
 
-export const getOrder = async (orderId: string) => {
+export const viewOrder = async (
+  orderId: string,
+  params?: { includeProducts?: string }
+) => {
   const { requestor } = apiSingleton;
-  return await requestor.GET<Model_Order>("/orders/" + orderId);
+  return await requestor.GET<Model_Order>("/orders/" + orderId, params);
 };
 
 export const postOrder = async (payload: OrderPayload) => {

@@ -8,7 +8,7 @@ type State = {
   reset: () => void;
 };
 
-export const useOrderStore = create<State>((set) => ({
+export const useCartStore = create<State>((set) => ({
   products: [],
   appendProduct: (product: Model_Product) => {
     return set((state) => {
