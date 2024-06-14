@@ -53,6 +53,20 @@ func (payload *OrderPayload) GetItems(db *gorm.DB) []model.OrderItem {
 	return items
 }
 
+func (payload *OrderPayload) GetPaymentFee(subTotal float64) float64 {
+	method := payload.PaymentMethod
+	switch method {
+	case enum.PaymentMethodCash:
+		return 0
+	case enum.PaymentMethodTransfer:
+		return 4000
+	case enum.PaymentMethodQris:
+		return subTotal * (0.7 / 100)
+	default:
+		return 0
+	}
+}
+
 // @Summary	Create a new order
 // @Security	ApiKeyAuth
 // @Tags		Orders
@@ -76,9 +90,11 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			order.Items = items
 			order.PaymentMethod = reqBody.PaymentMethod
 			order.Status = enum.StatusPending
-			order.Total = lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
+			order.SubTotal = lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
 				return acc + item.SubTotal
 			}, 0)
+			order.PaymentFee = reqBody.GetPaymentFee(order.SubTotal)
+			order.Total = order.SubTotal + order.PaymentFee
 
 			err := tx.Create(&order).Error
 			if err != nil {

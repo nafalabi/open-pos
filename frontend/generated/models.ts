@@ -43,6 +43,8 @@ export interface Model_Order {
   recipient: string;
   items: Model_OrderItem[];
   total: number;
+  sub_total: number;
+  payment_fee: number;
   payment_method: string;
   status: string;
   external_ref: string;

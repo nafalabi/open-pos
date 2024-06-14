@@ -15,6 +15,8 @@ type Order struct {
 	Recipient     string             `gorm:"index" json:"recipient"`
 	Items         []OrderItem        `gorm:"foreignKey:OrderID" json:"items"`
 	Total         float64            `json:"total"`
+	SubTotal      float64            `json:"sub_total"`
+	PaymentFee    float64            `json:"payment_fee"`
 	PaymentMethod enum.PaymentMethod `json:"payment_method"`
 	Status        enum.OrderStatus   `json:"status"`
 	ExternalRef   string             `json:"external_ref"`
