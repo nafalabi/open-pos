@@ -76,6 +76,7 @@ func main() {
 	orders.POST("", utils.RegisterController(dbClient, controller.CreateOrder))
 	orders.GET("", utils.RegisterController(dbClient, controller.ListOrder))
 	orders.GET("/:id", utils.RegisterController(dbClient, controller.FindOrder))
+	orders.POST("/:id/complete", utils.RegisterController(dbClient, controller.CompleteOrder))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

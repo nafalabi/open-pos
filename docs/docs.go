@@ -379,6 +379,44 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/orders/{id}/complete": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Complete order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.CompleteOrderPayload"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/products": {
             "get": {
                 "security": [
@@ -722,6 +760,20 @@ const docTemplate = `{
             ],
             "properties": {
                 "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "controller.CompleteOrderPayload": {
+            "type": "object",
+            "required": [
+                "input_amount"
+            ],
+            "properties": {
+                "input_amount": {
+                    "type": "number"
+                },
+                "notes": {
                     "type": "string"
                 }
             }

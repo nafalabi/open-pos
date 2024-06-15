@@ -40,3 +40,9 @@ export const OrderPayloadSchema = z.object({
   recipient: z.string(),
 });
 export type OrderPayload = z.infer<typeof OrderPayloadSchema>;
+
+export const CompleteOrderPayloadSchema = z.object({
+  input_amount: z.number().refine((val) => val !== 0),
+  notes: z.string(),
+});
+export type CompleteOrderPayload = z.infer<typeof CompleteOrderPayloadSchema>;

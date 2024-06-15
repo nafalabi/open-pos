@@ -50,3 +50,16 @@ export interface Model_Order {
   external_ref: string;
   remarks: string;
 }
+
+export interface Model_Transaction {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  expect_amount: number;
+  input_amount: number;
+  type: string;
+  gateway: string;
+  reference: string;
+  notes: string;
+  order_id: string;
+}

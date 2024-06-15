@@ -24,6 +24,7 @@ var (
 		model.Product{},
 		model.Order{},
 		model.OrderItem{},
+		model.Transaction{},
 	}
 	payloads = []interface{}{
 		controller.UserPayload{},
@@ -31,6 +32,7 @@ var (
 		controller.ProductPayload{},
 		controller.OrderPayload{},
 		controller.OrderItemPayload{},
+		controller.CompleteOrderPayload{},
 	}
 )
 

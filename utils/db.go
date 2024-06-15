@@ -36,6 +36,7 @@ func (dbu *db_utils) AutoMigrate() {
 		&model.Category{},
 		&model.Order{},
 		&model.OrderItem{},
+    &model.Transaction{},
 	)
 	if err != nil {
 		panic(err)

@@ -21,6 +21,10 @@ type OrderItemPayload struct {
 	ProductID string `json:"product_id" validate:"required"`
 	Quantity  int    `json:"quantity" validate:"required,min=1"`
 }
+type CompleteOrderPayload struct {
+	InputAmount float64 `json:"input_amount" validate:"required"`
+	Notes       string  `json:"notes"`
+}
 
 func (payload *OrderPayload) GetItems(db *gorm.DB) []model.OrderItem {
 	var items []model.OrderItem
@@ -29,7 +33,8 @@ func (payload *OrderPayload) GetItems(db *gorm.DB) []model.OrderItem {
 	}
 
 	var productIds []string
-	var itemMap = make(map[string]OrderItemPayload)
+	itemMap := make(map[string]OrderItemPayload)
+
 	for _, item := range payload.Items {
 		var productId string = item.ProductID
 		productIds = append(productIds, productId)
@@ -78,6 +83,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reqBody := OrderPayload{}
 		order := model.Order{}
+
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
 			return utils.SendError(c, err)
 		}
@@ -102,7 +108,6 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			}
 			return nil
 		})
-
 		if err != nil {
 			return utils.SendError(c, err)
 		}
@@ -176,6 +181,67 @@ func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		query.First(&order)
 
 		err := query.Error
+		if err != nil {
+			return utils.SendError(c, err)
+		}
+
+		return utils.SendSuccess(c, order)
+	}
+}
+
+// @summary	Complete order
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id		path	string					true	"order id"
+// @Param		body	body	CompleteOrderPayload	true	"payload"
+// @Router		/orders/{id}/complete [post]
+func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+		var order model.Order
+		var payload CompleteOrderPayload
+
+		if err := utils.BindAndValidate(c, &payload); err != nil {
+			return utils.SendError(c, err)
+		}
+
+		err := dbClient.Where("id = ?", id).First(&order).Error
+		if err != nil {
+			return utils.SendError(c, err)
+		}
+
+		err = dbClient.Transaction(func(tx *gorm.DB) error {
+			paymentMethod := enum.PaymentMethod(order.PaymentMethod)
+
+			if paymentMethod != enum.PaymentMethodCash {
+				return utils.ConstructError("Sorry the method you choose is currently underdevelopment")
+			}
+
+			if order.Status == enum.StatusPaid {
+				return utils.ConstructError("The order is already paid")
+			}
+
+			if payload.InputAmount < order.Total {
+				return utils.ConstructError("Payment amount was not met")
+			}
+
+			transaction := model.Transaction{
+				Type:         enum.TransactionPay,
+				ExpectAmount: order.Total,
+				InputAmount:  payload.InputAmount,
+				OrderID:      order.ID,
+				Notes:        payload.Notes,
+			}
+
+			tx.Model(model.Transaction{}).Save(&transaction)
+
+			order.Status = enum.StatusPaid
+			tx.Save(&order)
+
+			return nil
+		})
 
 		if err != nil {
 			return utils.SendError(c, err)

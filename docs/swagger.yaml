@@ -7,6 +7,15 @@ definitions:
     required:
     - name
     type: object
+  controller.CompleteOrderPayload:
+    properties:
+      input_amount:
+        type: number
+      notes:
+        type: string
+    required:
+    - input_amount
+    type: object
   controller.LoginParams:
     properties:
       email:
@@ -333,6 +342,30 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: find order by id
+      tags:
+      - Orders
+  /orders/{id}/complete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.CompleteOrderPayload'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Complete order
       tags:
       - Orders
   /products:
