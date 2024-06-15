@@ -72,7 +72,7 @@ const CreateOrderPanel = () => {
       toast.error("Error creating order", {
         description: "Please check your order details",
       });
-    }
+    },
   );
 
   return (
@@ -84,6 +84,7 @@ const CreateOrderPanel = () => {
             <Button
               variant="ghost"
               size="sm"
+              type="button"
               className="absolute top-4 right-3"
               onClick={() => navigate("/home")}
             >
@@ -99,6 +100,7 @@ const CreateOrderPanel = () => {
           <Button
             size="sm"
             className="w-full"
+            type="submit"
             disabled={form.formState.isSubmitting || !form.formState.isValid}
           >
             {form.formState.isSubmitting && (

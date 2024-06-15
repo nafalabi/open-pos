@@ -1,7 +1,7 @@
 import { Model_Order } from "@/generated/models";
 import { apiSingleton } from "./api-singleton";
 import { PaginationParams, SortParams } from "./types";
-import { OrderPayload } from "@/generated/schema";
+import { CompleteOrderPayload, OrderPayload } from "@/generated/schema";
 
 export const getOrders = async (
   payload: PaginationParams & SortParams & { q?: string }
@@ -20,15 +20,10 @@ export const viewOrder = async (
 
 export const postOrder = async (payload: OrderPayload) => {
   const { requestor } = apiSingleton;
-  return await requestor.POST<Model_Order, typeof payload>("/orders", payload);
+  return await requestor.POST<Model_Order>("/orders", payload);
 };
 
-export const patchOrder = async (orderId: string, payload: OrderPayload) => {
+export const completeOrder = async (orderId: string, payload: CompleteOrderPayload) => {
   const { requestor } = apiSingleton;
-  return await requestor.PATCH("/orders/" + orderId, payload);
-};
-
-export const deleteOrder = async (orderId: string) => {
-  const { requestor } = apiSingleton;
-  return await requestor.DELETE("/orders/" + orderId);
-};
+  return await requestor.POST(`/orders/${orderId}/complete`, payload);
+}

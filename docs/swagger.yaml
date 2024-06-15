@@ -13,6 +13,8 @@ definitions:
         type: number
       notes:
         type: string
+      tip_amount:
+        type: number
     required:
     - input_amount
     type: object

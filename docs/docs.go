@@ -775,6 +775,9 @@ const docTemplate = `{
                 },
                 "notes": {
                     "type": "string"
+                },
+                "tip_amount": {
+                    "type": "number"
                 }
             }
         },

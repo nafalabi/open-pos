@@ -57,6 +57,8 @@ export interface Model_Transaction {
   updated_at: string;
   expect_amount: number;
   input_amount: number;
+  tip_amount: number;
+  change_amount: number;
   type: string;
   gateway: string;
   reference: string;

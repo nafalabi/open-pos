@@ -52,7 +52,7 @@ export class Requestor {
   }
 
   async _getErrorMessage(
-    response: Response
+    response: Response,
   ): Promise<ResponseError | undefined> {
     const code = response.status;
     if (code === 200) return undefined;
@@ -68,7 +68,7 @@ export class Requestor {
 
   async GET<TData>(
     url: string,
-    params?: Record<string, string | null | undefined>
+    params?: Record<string, string | null | undefined>,
   ): Promise<RequestorReturnType<TData>> {
     const urlParams = params
       ? "?" + new URLSearchParams(eliminateFalsyValues(params)).toString()
@@ -82,9 +82,9 @@ export class Requestor {
     return [data, undefined, response] as const;
   }
 
-  async POST<TData, TPayload = { [key: string]: string }>(
+  async POST<TData>(
     url: string,
-    payload: TPayload
+    payload: Record<string, unknown>,
   ): Promise<RequestorReturnType<TData>> {
     const sPayload = JSON.stringify(payload);
     const response = await this.fetch(API_URL + url, {
@@ -113,9 +113,9 @@ export class Requestor {
     return [data, undefined, response] as const;
   }
 
-  async PATCH<TData, TPayload>(
+  async PATCH<TData>(
     url: string,
-    payload: TPayload
+    payload: Record<string, unknown>,
   ): Promise<RequestorReturnType<TData>> {
     const sPayload = JSON.stringify(payload);
     const response = await this.fetch(API_URL + url, {
@@ -133,7 +133,7 @@ export class Requestor {
 
   async DELETE<TData>(
     url: string,
-    params?: Record<string, string>
+    params?: Record<string, string>,
   ): Promise<RequestorReturnType<TData>> {
     const urlParams = params
       ? "?" + new URLSearchParams(eliminateFalsyValues(params)).toString()
@@ -152,7 +152,7 @@ export class Requestor {
 }
 
 const eliminateFalsyValues = <TObj extends Record<string, unknown>>(
-  obj: TObj
+  obj: TObj,
 ) => {
   Object.keys(obj).forEach((key) => {
     if (!obj[key]) delete obj[key];

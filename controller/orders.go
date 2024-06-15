@@ -23,6 +23,7 @@ type OrderItemPayload struct {
 }
 type CompleteOrderPayload struct {
 	InputAmount float64 `json:"input_amount" validate:"required"`
+	TipAmount   float64 `json:"tip_amount"`
 	Notes       string  `json:"notes"`
 }
 
@@ -223,14 +224,18 @@ func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
 				return utils.ConstructError("The order is already paid")
 			}
 
-			if payload.InputAmount < order.Total {
+			if (payload.InputAmount - payload.TipAmount) < order.Total {
 				return utils.ConstructError("Payment amount was not met")
 			}
+
+			changeAmount := payload.InputAmount - payload.TipAmount - order.Total
 
 			transaction := model.Transaction{
 				Type:         enum.TransactionPay,
 				ExpectAmount: order.Total,
 				InputAmount:  payload.InputAmount,
+				TipAmount:    payload.TipAmount,
+				ChangeAmount: changeAmount,
 				OrderID:      order.ID,
 				Notes:        payload.Notes,
 			}
