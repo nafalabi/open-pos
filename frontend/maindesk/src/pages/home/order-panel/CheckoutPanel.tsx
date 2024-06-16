@@ -12,6 +12,7 @@ import { useQueryOrderById } from "../query/useQueryOrderById";
 import { PaymentMethod } from "@/generated/enums";
 import PaymentBankTransfer from "../forms/PaymentBankTransfer";
 import PaymentQris from "../forms/PaymentQris";
+import PaymentPaid from "../forms/PaymentPaid";
 
 const paymentMethodNames: Record<string, string> = {
   [PaymentMethod.PaymentMethodCash]: "Cash",
@@ -45,6 +46,8 @@ const CheckoutPanel = () => {
       <CardContent className="max-h-[calc(100vh-150px)] overflow-hidden overflow-y-auto">
         {!data ? (
           <Loader2Icon className="h-4 w-4 animate-spin" />
+        ) : data.status === "paid" ? (
+          <PaymentPaid order={data} />
         ) : (
           <>
             {data.payment_method === PaymentMethod.PaymentMethodCash && (

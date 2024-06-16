@@ -68,7 +68,7 @@ const PaymentCash = ({ order }: PaymentCashProps) => {
         return;
       }
       toast("success, todo: remove this line");
-      queryClient.invalidateQueries({queryKey: ['orders']})
+      queryClient.invalidateQueries({ queryKey: ['orders'] })
     },
     (errors) => {
       console.log("trace errors", errors);

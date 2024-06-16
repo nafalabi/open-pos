@@ -15,6 +15,7 @@ const OrderCard = ({ orderData }: OrderCardProps) => {
   const handleClick = () => {
     switch (orderData.status as OrderStatus) {
       case OrderStatus.StatusPending:
+      case OrderStatus.StatusPaid:
         navigate("/home/checkout/" + orderData.id);
         break;
       default:
