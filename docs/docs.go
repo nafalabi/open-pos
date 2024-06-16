@@ -379,7 +379,7 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/orders/{id}/complete": {
+        "/orders/{id}/cashpay": {
             "post": {
                 "security": [
                     {
@@ -395,7 +395,7 @@ const docTemplate = `{
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Complete order",
+                "summary": "Pay order (cash)",
                 "parameters": [
                     {
                         "type": "string",
@@ -410,7 +410,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CompleteOrderPayload"
+                            "$ref": "#/definitions/controller.PayOrderCashPayload"
                         }
                     }
                 ],
@@ -764,23 +764,6 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.CompleteOrderPayload": {
-            "type": "object",
-            "required": [
-                "input_amount"
-            ],
-            "properties": {
-                "input_amount": {
-                    "type": "number"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "tip_amount": {
-                    "type": "number"
-                }
-            }
-        },
         "controller.LoginParams": {
             "type": "object",
             "properties": {
@@ -830,6 +813,23 @@ const docTemplate = `{
                 },
                 "remarks": {
                     "type": "string"
+                }
+            }
+        },
+        "controller.PayOrderCashPayload": {
+            "type": "object",
+            "required": [
+                "input_amount"
+            ],
+            "properties": {
+                "input_amount": {
+                    "type": "number"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "tip_amount": {
+                    "type": "number"
                 }
             }
         },

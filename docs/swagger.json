@@ -370,7 +370,7 @@
                 "responses": {}
             }
         },
-        "/orders/{id}/complete": {
+        "/orders/{id}/cashpay": {
             "post": {
                 "security": [
                     {
@@ -386,7 +386,7 @@
                 "tags": [
                     "Orders"
                 ],
-                "summary": "Complete order",
+                "summary": "Pay order (cash)",
                 "parameters": [
                     {
                         "type": "string",
@@ -401,7 +401,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CompleteOrderPayload"
+                            "$ref": "#/definitions/controller.PayOrderCashPayload"
                         }
                     }
                 ],
@@ -755,23 +755,6 @@
                 }
             }
         },
-        "controller.CompleteOrderPayload": {
-            "type": "object",
-            "required": [
-                "input_amount"
-            ],
-            "properties": {
-                "input_amount": {
-                    "type": "number"
-                },
-                "notes": {
-                    "type": "string"
-                },
-                "tip_amount": {
-                    "type": "number"
-                }
-            }
-        },
         "controller.LoginParams": {
             "type": "object",
             "properties": {
@@ -821,6 +804,23 @@
                 },
                 "remarks": {
                     "type": "string"
+                }
+            }
+        },
+        "controller.PayOrderCashPayload": {
+            "type": "object",
+            "required": [
+                "input_amount"
+            ],
+            "properties": {
+                "input_amount": {
+                    "type": "number"
+                },
+                "notes": {
+                    "type": "string"
+                },
+                "tip_amount": {
+                    "type": "number"
                 }
             }
         },

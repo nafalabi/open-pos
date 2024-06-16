@@ -21,7 +21,7 @@ type OrderItemPayload struct {
 	ProductID string `json:"product_id" validate:"required"`
 	Quantity  int    `json:"quantity" validate:"required,min=1"`
 }
-type CompleteOrderPayload struct {
+type PayOrderCashPayload struct {
 	InputAmount float64 `json:"input_amount" validate:"required"`
 	TipAmount   float64 `json:"tip_amount"`
 	Notes       string  `json:"notes"`
@@ -73,13 +73,13 @@ func (payload *OrderPayload) GetPaymentFee(subTotal float64) float64 {
 	}
 }
 
-// @Summary	Create a new order
-// @Security	ApiKeyAuth
-// @Tags		Orders
-// @Accept		json
-// @Produce	json
-// @Param		body	body	OrderPayload	true	"Order Data"
-// @Router		/orders [post]
+//	@Summary	Create a new order
+//	@Security	ApiKeyAuth
+//	@Tags		Orders
+//	@Accept		json
+//	@Produce	json
+//	@Param		body	body	OrderPayload	true	"Order Data"
+//	@Router		/orders [post]
 func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reqBody := OrderPayload{}
@@ -117,17 +117,17 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary	list of orders
-// @Security	ApiKeyAuth
-// @Tags		Orders
-// @Accept		json
-// @Produce	json
-// @Param		page		query	string	false	"page"
-// @Param		pagesize	query	string	false	"page size"
-// @Param		q			query	string	false	"search query"
-// @Param		sortkey		query	string	false	"sort key"
-// @Param		sortdir		query	string	false	"sort direction (asc/desc)"
-// @Router		/orders [get]
+//	@Summary	list of orders
+//	@Security	ApiKeyAuth
+//	@Tags		Orders
+//	@Accept		json
+//	@Produce	json
+//	@Param		page		query	string	false	"page"
+//	@Param		pagesize	query	string	false	"page size"
+//	@Param		q			query	string	false	"search query"
+//	@Param		sortkey		query	string	false	"sort key"
+//	@Param		sortdir		query	string	false	"sort direction (asc/desc)"
+//	@Router		/orders [get]
 func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		limit, offset, page, pageSize := utils.GetPaginationParams(c)
@@ -158,14 +158,14 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @Summary	find order by id
-// @Security	ApiKeyAuth
-// @Tags		Orders
-// @Accept		json
-// @Produce	json
-// @Param		id				path	string	true	"order id"
-// @Param		includeProducts	query	bool	false	"Should include products"
-// @Router		/orders/{id} [get]
+//	@Summary	find order by id
+//	@Security	ApiKeyAuth
+//	@Tags		Orders
+//	@Accept		json
+//	@Produce	json
+//	@Param		id				path	string	true	"order id"
+//	@Param		includeProducts	query	bool	false	"Should include products"
+//	@Router		/orders/{id} [get]
 func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
@@ -190,19 +190,19 @@ func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-// @summary	Complete order
-// @Security	ApiKeyAuth
-// @Tags		Orders
-// @Accept		json
-// @Produce	json
-// @Param		id		path	string					true	"order id"
-// @Param		body	body	CompleteOrderPayload	true	"payload"
-// @Router		/orders/{id}/complete [post]
-func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
+//	@summary	Pay order (cash)
+//	@Security	ApiKeyAuth
+//	@Tags		Orders
+//	@Accept		json
+//	@Produce	json
+//	@Param		id		path	string				true	"order id"
+//	@Param		body	body	PayOrderCashPayload	true	"payload"
+//	@Router		/orders/{id}/cashpay [post]
+func Cashpay(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
 		var order model.Order
-		var payload CompleteOrderPayload
+		var payload PayOrderCashPayload
 
 		if err := utils.BindAndValidate(c, &payload); err != nil {
 			return utils.SendError(c, err)

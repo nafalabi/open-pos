@@ -7,17 +7,6 @@ definitions:
     required:
     - name
     type: object
-  controller.CompleteOrderPayload:
-    properties:
-      input_amount:
-        type: number
-      notes:
-        type: string
-      tip_amount:
-        type: number
-    required:
-    - input_amount
-    type: object
   controller.LoginParams:
     properties:
       email:
@@ -52,6 +41,17 @@ definitions:
         type: string
     required:
     - items
+    type: object
+  controller.PayOrderCashPayload:
+    properties:
+      input_amount:
+        type: number
+      notes:
+        type: string
+      tip_amount:
+        type: number
+    required:
+    - input_amount
     type: object
   controller.ProductPayload:
     properties:
@@ -346,7 +346,7 @@ paths:
       summary: find order by id
       tags:
       - Orders
-  /orders/{id}/complete:
+  /orders/{id}/cashpay:
     post:
       consumes:
       - application/json
@@ -361,13 +361,13 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.CompleteOrderPayload'
+          $ref: '#/definitions/controller.PayOrderCashPayload'
       produces:
       - application/json
       responses: {}
       security:
       - ApiKeyAuth: []
-      summary: Complete order
+      summary: Pay order (cash)
       tags:
       - Orders
   /products:

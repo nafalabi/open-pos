@@ -10,7 +10,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2Icon } from "lucide-react";
-import { completeOrder } from "@/maindesk/src/api/orders";
+import { paycashOrder } from "@/maindesk/src/api/orders";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -58,7 +58,7 @@ const PaymentCash = ({ order }: PaymentCashProps) => {
 
   const handleSubmit = form.handleSubmit(
     async (values) => {
-      const [, error] = await completeOrder(order.id, {
+      const [, error] = await paycashOrder(order.id, {
         tip_amount: values.tip,
         input_amount: values.inputAmount,
         notes: "",

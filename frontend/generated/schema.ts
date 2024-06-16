@@ -41,9 +41,9 @@ export const OrderPayloadSchema = z.object({
 });
 export type OrderPayload = z.infer<typeof OrderPayloadSchema>;
 
-export const CompleteOrderPayloadSchema = z.object({
+export const PayOrderCashPayloadSchema = z.object({
   input_amount: z.number().refine((val) => val !== 0),
   tip_amount: z.number(),
   notes: z.string(),
 });
-export type CompleteOrderPayload = z.infer<typeof CompleteOrderPayloadSchema>;
+export type PayOrderCashPayload = z.infer<typeof PayOrderCashPayloadSchema>;

@@ -32,7 +32,7 @@ var (
 		controller.ProductPayload{},
 		controller.OrderPayload{},
 		controller.OrderItemPayload{},
-		controller.CompleteOrderPayload{},
+		controller.PayOrderCashPayload{},
 	}
 )
 
