@@ -12,8 +12,8 @@ import { useCartStore } from "../state/cart";
 import { useForm } from "react-hook-form";
 import { OrderPayload, OrderPayloadSchema } from "@/generated/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ProductList from "../forms/ProductList";
-import PriceDetail from "../forms/PriceDetail";
+import CartProductList from "./CartProductList";
+import CartPriceDetail from "./CartPriceDetail";
 import { useEffect } from "react";
 import { postOrder } from "../../../api/orders";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ const defaultValues: OrderPayload = {
   remarks: "",
 };
 
-const CreateOrderPanel = () => {
+const CartOrderPanel = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { products, reset } = useCartStore((state) => ({
@@ -93,8 +93,8 @@ const CreateOrderPanel = () => {
           </CardTitle>
         </CardHeader>
         <CardContent className="max-h-[calc(100vh-150px)] overflow-hidden overflow-y-auto">
-          <ProductList form={form} />
-          <PriceDetail form={form} />
+          <CartProductList form={form} />
+          <CartPriceDetail form={form} />
         </CardContent>
         <CardFooter className="flex flex-col gap-2">
           <Button
@@ -114,4 +114,4 @@ const CreateOrderPanel = () => {
   );
 };
 
-export default CreateOrderPanel;
+export default CartOrderPanel;

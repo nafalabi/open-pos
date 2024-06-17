@@ -13,14 +13,7 @@ type OrderCardProps = {
 const OrderCard = ({ orderData }: OrderCardProps) => {
   const navigate = useNavigate();
   const handleClick = () => {
-    switch (orderData.status as OrderStatus) {
-      case OrderStatus.StatusPending:
-      case OrderStatus.StatusPaid:
-        navigate("/home/checkout/" + orderData.id);
-        break;
-      default:
-        break;
-    }
+    navigate("/home/detail/" + orderData.id);
   };
   return (
     <Card className="w-[280px] px-4 py-4 cursor-pointer" onClick={handleClick}>

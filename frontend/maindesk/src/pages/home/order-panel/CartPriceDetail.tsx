@@ -44,7 +44,7 @@ const getPaymentFee = (paymentMethod: string, subtotal: number) => {
   return value;
 };
 
-const PriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
+const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
   const paymentMethod = form.watch("payment_method");
   const { products } = useCartStore((state) => ({
     products: state.products,
@@ -129,4 +129,4 @@ const PriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
   );
 };
 
-export default PriceDetail;
+export default CartPriceDetail;

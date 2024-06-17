@@ -7,11 +7,7 @@ import { TrashIcon } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/shared/components/ui/scroll-area";
 import GenericImage from "@/maindesk/src/layout/generic-image";
 
-type ProductListProps = {
-  form: UseFormReturn<OrderPayload>;
-};
-
-const ProductList = ({ form }: ProductListProps) => {
+const CartProductList = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
   const { products, removeProduct } = useCartStore((state) => ({
     products: state.products,
     removeProduct: state.removeProduct,
@@ -44,7 +40,9 @@ const ProductList = ({ form }: ProductListProps) => {
                       <GenericImage
                         src={productInfo.image}
                         fallbackSrc="/placeholder.svg"
-                        containerProps={{className: "mr-4 min-h-12 min-w-12 h-12 w-12"}}
+                        containerProps={{
+                          className: "mr-4 min-h-12 min-w-12 h-12 w-12",
+                        }}
                       />
                       <div>
                         <h3 className="text-gray-900 font-bold">
@@ -107,4 +105,4 @@ const ProductList = ({ form }: ProductListProps) => {
   );
 };
 
-export default ProductList;
+export default CartProductList;
