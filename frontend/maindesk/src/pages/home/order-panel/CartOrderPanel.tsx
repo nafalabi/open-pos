@@ -64,7 +64,7 @@ const CartOrderPanel = () => {
       }
       queryClient.invalidateQueries({ queryKey: ["orders"] });
       const id = result.data.id;
-      navigate("/home/checkout/" + id);
+      navigate("/home/detail/" + id);
       form.reset();
       reset();
     },

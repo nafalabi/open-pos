@@ -5,15 +5,16 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { Loader2Icon, XIcon } from "lucide-react";
+import { XIcon } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import PaymentCash from "./PaymentCash";
 import { useQueryOrderById } from "../query/useQueryOrderById";
-import { PaymentMethod } from "@/generated/enums";
+import { OrderStatus, PaymentMethod } from "@/generated/enums";
 import PaymentBankTransfer from "./PaymentBankTransfer";
 import PaymentQris from "./PaymentQris";
 import PaymentPaid from "./PaymentPaid";
 import SummaryOrder from "./SummaryOrder";
+import { Skeleton } from "@/shared/components/ui/skeleton";
 
 const paymentMethodNames: Record<string, string> = {
   [PaymentMethod.PaymentMethodCash]: "Cash",
@@ -46,11 +47,11 @@ const DetailOrderPanel = () => {
       </CardHeader>
       <CardContent className="max-h-[calc(100vh-150px)] overflow-hidden overflow-y-auto">
         {!data ? (
-          <Loader2Icon className="h-4 w-4 animate-spin" />
+          <DetailOrderSkeleton />
         ) : (
           <div className="grid gap-4">
             <SummaryOrder order={data} />
-            {data.status === "paid" ? (
+            {data.status === OrderStatus.StatusPaid ? (
               <PaymentPaid order={data} />
             ) : (
               <>
@@ -74,3 +75,41 @@ const DetailOrderPanel = () => {
 };
 
 export default DetailOrderPanel;
+
+const DetailOrderSkeleton = () => (
+  <div className="grid gap-2">
+    <div className="flex w-full justify-between mb-4">
+      <div className="grid gap-2">
+        <Skeleton className="h-4 w-[80px]" />
+        <Skeleton className="h-4 w-[80px]" />
+      </div>
+      <div className="grid gap-2">
+        <Skeleton className="h-4 w-[80px]" />
+        <Skeleton className="h-4 w-[80px]" />
+      </div>
+    </div>
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-full" />
+    <div className="my-4 grid gap-2">
+      <div className="flex w-full justify-between">
+        <Skeleton className="h-4 w-[120px]" />
+        <Skeleton className="h-4 w-[120px]" />
+      </div>
+      <div className="flex w-full justify-between">
+        <Skeleton className="h-4 w-[120px]" />
+        <Skeleton className="h-4 w-[120px]" />
+      </div>
+      <div className="flex w-full justify-between">
+        <Skeleton className="h-4 w-[120px]" />
+        <Skeleton className="h-4 w-[120px]" />
+      </div>
+    </div>
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="h-4 w-full" />
+    <Skeleton className="mt-4 h-8 w-full" />
+  </div>
+);

@@ -13,8 +13,8 @@ const PaymentPaid = ({ }: PaymentPaidProps) => {
     <div className="grid gap-2">
       <div className="flex flex-col items-center justify-center bg-green-50 border-green-800 text-green-800 border rounded-lg px-2 py-3 mt-2">
         <div className="text-md">Order is paid</div>
-        <div className="mt-4 mb-4">
-          <CircleCheckBigIcon className="h-10 w-10" />
+        <div className="mt-2 mb-2">
+          <CircleCheckBigIcon className="h-8 w-8" />
         </div>
         <div className="text-sm text-center">
           if the customer already received the order you can mark it as complete

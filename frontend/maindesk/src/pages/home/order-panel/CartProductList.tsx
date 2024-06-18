@@ -25,7 +25,9 @@ const CartProductList = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
       <ScrollArea className="h-full mr-[-1.5rem] pr-[1.5rem]">
         <div>
           {fields.length === 0 ? (
-            <p className="text-gray-500">Your cart is empty.</p>
+            <p className="text-gray-500 text-center h-[calc(100vh-550px)] min-h-[200px] content-center">
+              Your cart is empty.
+            </p>
           ) : (
             <div className="space-y-4">
               {fields.map((item, index) => {
@@ -44,7 +46,7 @@ const CartProductList = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
                           className: "mr-4 min-h-12 min-w-12 h-12 w-12",
                         }}
                       />
-                      <div>
+                      <div className="text-sm">
                         <h3 className="text-gray-900 font-bold">
                           {productInfo.name}
                         </h3>

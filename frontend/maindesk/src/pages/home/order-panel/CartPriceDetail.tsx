@@ -62,7 +62,7 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
   }, [products, paymentMethod]);
 
   return (
-    <>
+    <div className="text-sm">
       <Separator className="my-4" />
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
@@ -70,7 +70,7 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
           <span className="text-gray-900 font-bold">
             <Input
               {...form.register("recipient")}
-              className="min-w-[130px] w-[150px]"
+              className="min-w-[130px] w-[150px] h-[25px]"
             />
           </span>
         </div>
@@ -79,7 +79,7 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
           <span className="text-gray-900 font-bold">
             <Input
               {...form.register("remarks")}
-              className="min-w-[130px] w-[150px]"
+              className="min-w-[130px] w-[150px] h-[25px]"
             />
           </span>
         </div>
@@ -90,7 +90,7 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
             control={form.control}
             render={({ field }) => (
               <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-[100px]">
+                <SelectTrigger className="min-w-[130px] w-[150px] h-[25px]">
                   <SelectValue placeholder="Theme" />
                 </SelectTrigger>
 
@@ -125,7 +125,7 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
           <span className="text-gray-900 font-bold">{currency(total)}</span>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
