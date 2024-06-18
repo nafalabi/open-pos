@@ -370,6 +370,24 @@ paths:
       summary: Pay order (cash)
       tags:
       - Orders
+  /orders/{id}/complete:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Mark order as completed
+      tags:
+      - Orders
   /products:
     get:
       consumes:

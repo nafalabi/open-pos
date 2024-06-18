@@ -64,7 +64,7 @@ const PaymentCash = ({ order }: PaymentCashProps) => {
         toast.error("Error paying order", { description: error.message });
         return;
       }
-      toast("success, todo: remove this line");
+      toast.success("Pay Order Success");
       queryClient.invalidateQueries({ queryKey: ["orders"] });
     },
     (errors) => {

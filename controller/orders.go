@@ -220,8 +220,8 @@ func Cashpay(dbClient *gorm.DB) echo.HandlerFunc {
 				return utils.ConstructError("Sorry the method you choose is currently underdevelopment")
 			}
 
-			if order.Status == enum.StatusPaid {
-				return utils.ConstructError("The order is already paid")
+			if order.Status != enum.StatusPending {
+				return utils.ConstructError("The order is already paid / canceled")
 			}
 
 			if (payload.InputAmount - payload.TipAmount) < order.Total {
@@ -251,6 +251,36 @@ func Cashpay(dbClient *gorm.DB) echo.HandlerFunc {
 		if err != nil {
 			return utils.SendError(c, err)
 		}
+
+		return utils.SendSuccess(c, order)
+	}
+}
+
+//	@summary	Mark order as completed
+//	@Security	ApiKeyAuth
+//	@Tags		Orders
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path	string	true	"order id"
+//	@Router		/orders/{id}/complete [post]
+func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+		var order model.Order
+
+		err := dbClient.Where("id = ?", id).First(&order).Error
+		if err != nil {
+			return utils.SendError(c, err)
+		}
+
+		if order.Status != enum.StatusPaid {
+			err := utils.ConstructError("Unable to complete the order, the order was not paid.")
+			return utils.SendError(c, err)
+		}
+
+		order.Status = enum.StatusCompleted
+
+		dbClient.Save(&order)
 
 		return utils.SendSuccess(c, order)
 	}
