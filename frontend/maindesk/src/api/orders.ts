@@ -26,9 +26,14 @@ export const postOrder = async (payload: OrderPayload) => {
 export const paycashOrder = async (orderId: string, payload: PayOrderCashPayload) => {
   const { requestor } = apiSingleton;
   return await requestor.POST(`/orders/${orderId}/cashpay`, payload);
-}
+};
 
 export const completeOrder = async (orderId: string) => {
   const { requestor } = apiSingleton;
   return await requestor.POST(`/orders/${orderId}/complete`, {});
-}
+};
+
+export const cancelOrder = async (orderId: string) => {
+  const { requestor } = apiSingleton;
+  return await requestor.POST(`/orders/${orderId}/cancel`, {});
+};

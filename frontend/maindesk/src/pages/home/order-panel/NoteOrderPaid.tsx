@@ -15,7 +15,9 @@ type NoteOrderPaidProps = {
 
 const schema = z.object({
   id: z.string(),
-  status: z.literal(OrderStatus.StatusPaid),
+  status: z.literal(OrderStatus.StatusPaid, {
+    message: "Unable to complete the order, the order was not paid.",
+  }),
 });
 
 const NoteOrderPaid = ({ order }: NoteOrderPaidProps) => {

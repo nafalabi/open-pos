@@ -16,6 +16,7 @@ import NoteOrderPaid from "./NoteOrderPaid";
 import SummaryOrder from "./SummaryOrder";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import NoteOrderCompleted from "./NoteOrderCompleted";
+import CancelOrder from "./CancelOrder";
 
 const paymentMethodNames: Record<string, string> = {
   [PaymentMethod.PaymentMethodCash]: "Cash",
@@ -70,6 +71,7 @@ const DetailOrderPanel = () => {
                 {data.payment_method === PaymentMethod.PaymentMethodQris && (
                   <PaymentQris />
                 )}
+                <CancelOrder order={data} />
               </>
             )}
           </div>

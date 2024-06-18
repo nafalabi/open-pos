@@ -60,6 +60,7 @@ const CartProductList = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
                         <Button
                           variant="outline"
                           size="sm"
+                          type="button"
                           onClick={() => {
                             update(index, {
                               product_id: item.product_id,
@@ -73,6 +74,7 @@ const CartProductList = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
                         <Button
                           variant="outline"
                           size="sm"
+                          type="button"
                           onClick={() => {
                             removeProduct(item.product_id);
                           }}
@@ -85,6 +87,7 @@ const CartProductList = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
                       <Button
                         variant="outline"
                         size="sm"
+                        type="button"
                         onClick={() => {
                           update(index, {
                             product_id: item.product_id,
