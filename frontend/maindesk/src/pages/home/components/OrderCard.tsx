@@ -1,10 +1,10 @@
 import { OrderStatus } from "@/generated/enums";
 import { Model_Order } from "@/generated/models";
 import { currency } from "@/maindesk/src/utils/currency";
-import { Badge } from "@/shared/components/ui/badge";
 import { Card } from "@/shared/components/ui/card";
 import { format } from "date-fns";
 import { useNavigate } from "react-router-dom";
+import OrderStatusBadge from "./OrderStatusBadge";
 
 type OrderCardProps = {
   orderData: Model_Order;
@@ -36,22 +36,3 @@ const OrderCard = ({ orderData }: OrderCardProps) => {
   );
 };
 export default OrderCard;
-
-const orderStatusVariant = {
-  [OrderStatus.StatusPaid]: "default",
-  [OrderStatus.StatusCanceled]: "destructive",
-  [OrderStatus.StatusPending]: "secondary",
-  [OrderStatus.StatusCompleted]: "default",
-} as const;
-const orderStatusText = {
-  [OrderStatus.StatusPaid]: "Paid",
-  [OrderStatus.StatusCanceled]: "Canceled",
-  [OrderStatus.StatusPending]: "Pending",
-  [OrderStatus.StatusCompleted]: "Completed",
-} as const;
-
-export const OrderStatusBadge = ({ status }: { status: OrderStatus }) => {
-  const variant = orderStatusVariant[status] ?? "secondary";
-  const text = orderStatusText[status] ?? "Pending";
-  return <Badge variant={variant}>{text}</Badge>;
-};

@@ -1,6 +1,6 @@
 import { OrderStatus } from "@/generated/enums";
 import { Model_Order } from "@/generated/models";
-import { OrderStatusBadge } from "../components/OrderCard";
+import OrderStatusBadge from "../components/OrderStatusBadge";
 import { format } from "date-fns";
 import { useState } from "react";
 import { currency } from "@/maindesk/src/utils/currency";

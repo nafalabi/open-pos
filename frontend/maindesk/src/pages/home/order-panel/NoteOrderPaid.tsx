@@ -9,7 +9,7 @@ import { completeOrder } from "@/maindesk/src/api/orders";
 import { toast } from "sonner";
 import { useQueryClient } from "@tanstack/react-query";
 
-type PaymentPaidProps = {
+type NoteOrderPaidProps = {
   order: Model_Order;
 };
 
@@ -18,7 +18,7 @@ const schema = z.object({
   status: z.literal(OrderStatus.StatusPaid),
 });
 
-const PaymentPaid = ({ order }: PaymentPaidProps) => {
+const NoteOrderPaid = ({ order }: NoteOrderPaidProps) => {
   const queryClient = useQueryClient();
   const form = useForm({
     defaultValues: order,
@@ -75,4 +75,4 @@ const PaymentPaid = ({ order }: PaymentPaidProps) => {
   );
 };
 
-export default PaymentPaid;
+export default NoteOrderPaid;

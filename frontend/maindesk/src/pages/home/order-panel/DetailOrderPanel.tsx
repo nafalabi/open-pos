@@ -12,9 +12,10 @@ import { useQueryOrderById } from "../query/useQueryOrderById";
 import { OrderStatus, PaymentMethod } from "@/generated/enums";
 import PaymentBankTransfer from "./PaymentBankTransfer";
 import PaymentQris from "./PaymentQris";
-import PaymentPaid from "./PaymentPaid";
+import NoteOrderPaid from "./NoteOrderPaid";
 import SummaryOrder from "./SummaryOrder";
 import { Skeleton } from "@/shared/components/ui/skeleton";
+import NoteOrderCompleted from "./NoteOrderCompleted";
 
 const paymentMethodNames: Record<string, string> = {
   [PaymentMethod.PaymentMethodCash]: "Cash",
@@ -51,9 +52,13 @@ const DetailOrderPanel = () => {
         ) : (
           <div className="grid gap-4">
             <SummaryOrder order={data} />
-            {data.status === OrderStatus.StatusPaid ? (
-              <PaymentPaid order={data} />
-            ) : (
+            {data.status === OrderStatus.StatusPaid && (
+              <NoteOrderPaid order={data} />
+            )}
+            {data.status === OrderStatus.StatusCompleted && (
+              <NoteOrderCompleted />
+            )}
+            {data.status === OrderStatus.StatusPending && (
               <>
                 {data.payment_method === PaymentMethod.PaymentMethodCash && (
                   <PaymentCash order={data} />
