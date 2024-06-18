@@ -379,6 +379,35 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/orders/{id}/cancel": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Cancel order",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/orders/{id}/cashpay": {
             "post": {
                 "security": [

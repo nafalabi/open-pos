@@ -76,8 +76,9 @@ func main() {
 	orders.POST("", utils.RegisterController(dbClient, controller.CreateOrder))
 	orders.GET("", utils.RegisterController(dbClient, controller.ListOrder))
 	orders.GET("/:id", utils.RegisterController(dbClient, controller.FindOrder))
-	orders.POST("/:id/cashpay", utils.RegisterController(dbClient, controller.Cashpay))
+	orders.POST("/:id/cashpay", utils.RegisterController(dbClient, controller.CashpayOrder))
 	orders.POST("/:id/complete", utils.RegisterController(dbClient, controller.CompleteOrder))
+	orders.POST("/:id/cancel", utils.RegisterController(dbClient, controller.CancelOrder))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

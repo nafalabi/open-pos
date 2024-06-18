@@ -346,6 +346,24 @@ paths:
       summary: find order by id
       tags:
       - Orders
+  /orders/{id}/cancel:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Cancel order
+      tags:
+      - Orders
   /orders/{id}/cashpay:
     post:
       consumes:

@@ -73,13 +73,13 @@ func (payload *OrderPayload) GetPaymentFee(subTotal float64) float64 {
 	}
 }
 
-//	@Summary	Create a new order
-//	@Security	ApiKeyAuth
-//	@Tags		Orders
-//	@Accept		json
-//	@Produce	json
-//	@Param		body	body	OrderPayload	true	"Order Data"
-//	@Router		/orders [post]
+// @Summary	Create a new order
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		body	body	OrderPayload	true	"Order Data"
+// @Router		/orders [post]
 func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		reqBody := OrderPayload{}
@@ -117,17 +117,17 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	list of orders
-//	@Security	ApiKeyAuth
-//	@Tags		Orders
-//	@Accept		json
-//	@Produce	json
-//	@Param		page		query	string	false	"page"
-//	@Param		pagesize	query	string	false	"page size"
-//	@Param		q			query	string	false	"search query"
-//	@Param		sortkey		query	string	false	"sort key"
-//	@Param		sortdir		query	string	false	"sort direction (asc/desc)"
-//	@Router		/orders [get]
+// @Summary	list of orders
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		page		query	string	false	"page"
+// @Param		pagesize	query	string	false	"page size"
+// @Param		q			query	string	false	"search query"
+// @Param		sortkey		query	string	false	"sort key"
+// @Param		sortdir		query	string	false	"sort direction (asc/desc)"
+// @Router		/orders [get]
 func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		limit, offset, page, pageSize := utils.GetPaginationParams(c)
@@ -158,14 +158,14 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@Summary	find order by id
-//	@Security	ApiKeyAuth
-//	@Tags		Orders
-//	@Accept		json
-//	@Produce	json
-//	@Param		id				path	string	true	"order id"
-//	@Param		includeProducts	query	bool	false	"Should include products"
-//	@Router		/orders/{id} [get]
+// @Summary	find order by id
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id				path	string	true	"order id"
+// @Param		includeProducts	query	bool	false	"Should include products"
+// @Router		/orders/{id} [get]
 func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
@@ -190,15 +190,15 @@ func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@summary	Pay order (cash)
-//	@Security	ApiKeyAuth
-//	@Tags		Orders
-//	@Accept		json
-//	@Produce	json
-//	@Param		id		path	string				true	"order id"
-//	@Param		body	body	PayOrderCashPayload	true	"payload"
-//	@Router		/orders/{id}/cashpay [post]
-func Cashpay(dbClient *gorm.DB) echo.HandlerFunc {
+// @Summary	Pay order (cash)
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id		path	string				true	"order id"
+// @Param		body	body	PayOrderCashPayload	true	"payload"
+// @Router		/orders/{id}/cashpay [post]
+func CashpayOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
 		var order model.Order
@@ -256,13 +256,13 @@ func Cashpay(dbClient *gorm.DB) echo.HandlerFunc {
 	}
 }
 
-//	@summary	Mark order as completed
-//	@Security	ApiKeyAuth
-//	@Tags		Orders
-//	@Accept		json
-//	@Produce	json
-//	@Param		id	path	string	true	"order id"
-//	@Router		/orders/{id}/complete [post]
+// @Summary	Mark order as completed
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"order id"
+// @Router		/orders/{id}/complete [post]
 func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id := c.Param("id")
@@ -282,6 +282,31 @@ func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
 
 		dbClient.Save(&order)
 
+		return utils.SendSuccess(c, order)
+	}
+}
+
+// @Summary	Cancel order
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"order id"
+// @Router		/orders/{id}/cancel [post]
+func CancelOrder(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+		var order model.Order
+		err := dbClient.Where("id = ?", id).First(&order).Error
+		if err != nil {
+			return utils.SendError(c, err)
+		}
+		if order.Status != enum.StatusPending {
+			err := utils.ConstructError("Unable to cancel the order, can only cancel pending orders.")
+			return utils.SendError(c, err)
+		}
+		order.Status = enum.StatusCanceled
+		dbClient.Save(&order)
 		return utils.SendSuccess(c, order)
 	}
 }
