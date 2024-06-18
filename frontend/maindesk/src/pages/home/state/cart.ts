@@ -1,14 +1,14 @@
 import { Model_Product } from "@/generated/models";
 import { create } from "zustand";
 
-type State = {
+export type CartStoreState = {
   products: Model_Product[];
   appendProduct: (product: Model_Product) => void;
   removeProduct: (id: string) => void;
   reset: () => void;
 };
 
-export const useCartStore = create<State>((set) => ({
+export const useCartStore = create<CartStoreState>((set) => ({
   products: [],
   appendProduct: (product: Model_Product) => {
     return set((state) => {
