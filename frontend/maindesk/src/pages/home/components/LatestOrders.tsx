@@ -52,7 +52,7 @@ const LatestOrders = () => {
     fetchNextPage();
   });
 
-  if (!isFetching && !data?.pages.length) return null;
+  if (!isFetching && !data?.pages?.[0]?.data?.length) return null;
 
   return (
     <Fragment>
