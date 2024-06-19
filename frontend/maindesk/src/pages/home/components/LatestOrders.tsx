@@ -1,14 +1,12 @@
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/shared/components/ui/scroll-area";
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import OrderCard, { SkeletonOrderCard } from "./OrderCard";
 import { Link } from "react-router-dom";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PaginationParams, SortParams } from "@/maindesk/src/api/types";
 import { getOrders } from "@/maindesk/src/api/orders";
-import { useRefUnmountedStatus } from "@/maindesk/src/hooks/useRefUnmountedStatus";
 import { useObserveIntersection } from "@/maindesk/src/hooks/useObserveIntersection";
-import { debounce } from "@/maindesk/src/utils/function-utils";
 
 const defaultFetchParams: PaginationParams & SortParams = {
   page: "1",
@@ -19,10 +17,9 @@ const defaultFetchParams: PaginationParams & SortParams = {
 
 const LatestOrders = () => {
   const intersectionScrollRef = useRef<HTMLDivElement>(null);
-  const unmountedRef = useRefUnmountedStatus();
   const queryClient = useQueryClient();
 
-  const [fetchParams, setFetchParams] = useState(defaultFetchParams);
+  const [fetchParams] = useState(defaultFetchParams);
   const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ["orders", fetchParams],
     queryFn: async ({ pageParam }) => {
@@ -53,15 +50,15 @@ const LatestOrders = () => {
     fetchNextPage();
   });
 
-  if (!data?.pages.length) return null;
+  if (!isFetching && !data?.pages.length) return null;
 
   return (
     <Fragment>
       <div className="mb-2 flex">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-          Order List
+          Today's Orders
         </h3>
-        {data.pages && (
+        {data?.pages && (
           <Button className="ml-auto h-6" variant="default" size="sm" asChild>
             <Link to={"/orders"}>View more</Link>
           </Button>
@@ -74,7 +71,7 @@ const LatestOrders = () => {
               <OrderCard key={order.id} orderData={order} />
             )),
           )}
-          {hasNextPage && (
+          {(hasNextPage || isFetching) && (
             <>
               <SkeletonOrderCard />
               <SkeletonOrderCard ref={intersectionScrollRef} />

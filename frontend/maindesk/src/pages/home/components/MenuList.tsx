@@ -70,7 +70,7 @@ const MenuList = () => {
         const q = event.target.value;
         setFetchParams((old) => ({ ...old, q }));
       }, 500),
-    [unmountedRef]
+    [unmountedRef],
   );
 
   return (
@@ -100,9 +100,9 @@ const MenuList = () => {
           data.pages.map((page) =>
             page.data.map((product) => (
               <MenuItem key={product.id} product={product} size={gridSize} />
-            ))
+            )),
           )}
-        {hasNextPage && (
+        {(hasNextPage || isFetching) && (
           <>
             <MenuItemSkeleton size={gridSize} ref={intersectionScrollRef} />
             <MenuItemSkeleton size={gridSize} />
