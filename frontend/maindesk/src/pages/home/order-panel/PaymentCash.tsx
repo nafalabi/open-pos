@@ -25,7 +25,9 @@ const defaultValues = {
 const validatorSchema = z
   .object({
     expectedAmount: z.number().nonnegative("Payment amount can't be negative"),
-    inputAmount: z.number().nonnegative("Input amount can't be negative"),
+    inputAmount: z
+      .number({ message: "Input amount is required" })
+      .nonnegative("Input amount can't be negative"),
     tip: z.number().nonnegative("Tip can't be negative"),
     notes: z.string(),
   })
