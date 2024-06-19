@@ -290,6 +290,10 @@ paths:
         in: query
         name: q
         type: string
+      - description: date search (YYYY-MM-DD)
+        in: query
+        name: date
+        type: string
       - description: sort key
         in: query
         name: sortkey

@@ -4,6 +4,7 @@ import (
 	"open-pos/enum"
 	"open-pos/model"
 	"open-pos/utils"
+	"time"
 
 	"github.com/labstack/echo/v4"
 	"github.com/samber/lo"
@@ -125,6 +126,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 // @Param		page		query	string	false	"page"
 // @Param		pagesize	query	string	false	"page size"
 // @Param		q			query	string	false	"search query"
+// @Param		date		query	string	false	"date search (YYYY-MM-DD)"
 // @Param		sortkey		query	string	false	"sort key"
 // @Param		sortdir		query	string	false	"sort direction (asc/desc)"
 // @Router		/orders [get]
@@ -133,6 +135,7 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		limit, offset, page, pageSize := utils.GetPaginationParams(c)
 		isSorted, sortKey, sortDirection := utils.GetSortParams(c)
 		searchQuery := c.QueryParam("q")
+		dateText := c.QueryParam("date")
 
 		var orders []model.Order
 		var totalRecords int64
@@ -149,6 +152,16 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		if searchQuery != "" {
 			query.Where("order_number like ?", "%"+searchQuery+"%")
 			query.Or("recipient like ?", "%"+searchQuery+"%")
+		}
+
+		if dateText != "" {
+			selectedDate, error := time.Parse("2006-01-02", dateText)
+			if error != nil {
+				return utils.SendError(c, utils.ConstructError("invalid date filter"))
+			}
+			startOfDay := selectedDate.Round(time.Hour * 24)
+			endOfDay := startOfDay.Add(time.Hour * 24)
+			query.Where("created_at BETWEEN ? AND ?", startOfDay, endOfDay)
 		}
 
 		query.Count(&totalRecords)

@@ -21,7 +21,7 @@ func (base *BaseModel) BeforeCreate(tx *gorm.DB) error {
 
 type BaseModelWithTimestamp struct {
 	BaseModel
-	CreatedAt time.Time      `json:"created_at" ts_type:"string"`
+	CreatedAt time.Time      `gorm:"index" json:"created_at" ts_type:"string"`
 	UpdatedAt time.Time      `json:"updated_at" ts_type:"string"`
 	DeletedAt gorm.DeletedAt `sql:"index" json:"-"`
 }

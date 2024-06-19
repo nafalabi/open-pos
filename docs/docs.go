@@ -301,6 +301,12 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
+                        "description": "date search (YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
                         "description": "sort key",
                         "name": "sortkey",
                         "in": "query"
