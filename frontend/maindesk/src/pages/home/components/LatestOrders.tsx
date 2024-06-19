@@ -7,6 +7,7 @@ import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PaginationParams, SortParams } from "@/maindesk/src/api/types";
 import { getOrders } from "@/maindesk/src/api/orders";
 import { useObserveIntersection } from "@/maindesk/src/hooks/useObserveIntersection";
+import { format } from "date-fns";
 
 const defaultFetchParams: PaginationParams & SortParams = {
   page: "1",
@@ -26,6 +27,7 @@ const LatestOrders = () => {
       const [result] = await getOrders({
         ...fetchParams,
         page: pageParam.toString(),
+        date: format(Date.now(), "yyyy-MM-dd"),
       });
       return {
         data: result?.data ?? [],
