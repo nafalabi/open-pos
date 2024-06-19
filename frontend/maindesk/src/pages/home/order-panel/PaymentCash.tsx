@@ -76,7 +76,7 @@ const PaymentCash = ({ order }: PaymentCashProps) => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid gap-2">
+      <div className="grid gap-2 mt-2">
         <div className="grid gap-2 text-xs border border-input rounded-md pt-3 px-3 pb-4">
           {form.formState.errors.inputAmount && (
             <div className="text-red-500 text-center">
@@ -124,7 +124,7 @@ const PaymentCash = ({ order }: PaymentCashProps) => {
           </div>
         </div>
 
-        <div className="mt-4">
+        <div className="mt-2">
           <Button
             size="sm"
             className="w-full"

@@ -51,7 +51,7 @@ const DetailOrderPanel = () => {
         {!data ? (
           <DetailOrderSkeleton />
         ) : (
-          <div className="grid gap-4">
+          <div className="grid gap-2">
             <SummaryOrder order={data} />
             {data.status === OrderStatus.StatusPaid && (
               <NoteOrderPaid order={data} />
