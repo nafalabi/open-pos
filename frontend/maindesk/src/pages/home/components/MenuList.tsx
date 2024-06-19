@@ -27,7 +27,7 @@ const defaultFetchParams: Parameters<typeof getProducts>[0] = {
 };
 
 const MenuList = () => {
-  const infiniteScrollRef = useRef<HTMLDivElement>(null);
+  const intersectionScrollRef = useRef<HTMLDivElement>(null);
   const unmountedRef = useRefUnmountedStatus();
   const queryClient = useQueryClient();
   const [gridSize, setGridSize] = useState<MenuItemSize>("md");
@@ -57,7 +57,7 @@ const MenuList = () => {
     queryClient.invalidateQueries({ queryKey: ["products"] });
   }, [fetchParams, queryClient]);
 
-  useObserveIntersection(infiniteScrollRef, ([entry]) => {
+  useObserveIntersection(intersectionScrollRef, ([entry]) => {
     if (isFetching || !hasNextPage) return;
     if (!entry.isIntersecting) return;
     fetchNextPage();
@@ -104,7 +104,7 @@ const MenuList = () => {
           )}
         {hasNextPage && (
           <>
-            <MenuItemSkeleton size={gridSize} ref={infiniteScrollRef} />
+            <MenuItemSkeleton size={gridSize} ref={intersectionScrollRef} />
             <MenuItemSkeleton size={gridSize} />
             <MenuItemSkeleton size={gridSize} />
             <MenuItemSkeleton size={gridSize} />

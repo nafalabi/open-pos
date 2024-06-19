@@ -1,31 +1,59 @@
 import { Button } from "@/shared/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/shared/components/ui/scroll-area";
-import { Fragment } from "react";
-import OrderCard from "./OrderCard";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import OrderCard, { SkeletonOrderCard } from "./OrderCard";
 import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { PaginationParams, SortParams } from "@/maindesk/src/api/types";
 import { getOrders } from "@/maindesk/src/api/orders";
+import { useRefUnmountedStatus } from "@/maindesk/src/hooks/useRefUnmountedStatus";
+import { useObserveIntersection } from "@/maindesk/src/hooks/useObserveIntersection";
+import { debounce } from "@/maindesk/src/utils/function-utils";
 
-const fetchParams: PaginationParams & SortParams = {
+const defaultFetchParams: PaginationParams & SortParams = {
   page: "1",
-  pagesize: "11",
+  pagesize: "10",
   sortkey: "created_at",
   sortdir: "desc",
 };
 
 const LatestOrders = () => {
-  const { data } = useQuery({
+  const intersectionScrollRef = useRef<HTMLDivElement>(null);
+  const unmountedRef = useRefUnmountedStatus();
+  const queryClient = useQueryClient();
+
+  const [fetchParams, setFetchParams] = useState(defaultFetchParams);
+  const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteQuery({
     queryKey: ["orders", fetchParams],
-    queryFn: async () => {
-      const [result, error] = await getOrders(fetchParams);
-      if (error) return [];
-      return result.data;
+    queryFn: async ({ pageParam }) => {
+      const [result] = await getOrders({
+        ...fetchParams,
+        page: pageParam.toString(),
+      });
+      return {
+        data: result?.data ?? [],
+        pagination: result?.pagination,
+      };
     },
-    initialData: [],
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => {
+      return lastPage.data.length < 10
+        ? undefined
+        : (lastPage.pagination?.current_page ?? 0) + 1;
+    },
   });
 
-  if (data.length === 0) return null;
+  useEffect(() => {
+    queryClient.invalidateQueries({ queryKey: ["products"] });
+  }, [fetchParams, queryClient]);
+
+  useObserveIntersection(intersectionScrollRef, ([entry]) => {
+    if (isFetching || !hasNextPage) return;
+    if (!entry.isIntersecting) return;
+    fetchNextPage();
+  });
+
+  if (!data?.pages.length) return null;
 
   return (
     <Fragment>
@@ -33,7 +61,7 @@ const LatestOrders = () => {
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Order List
         </h3>
-        {data.length > 10 && (
+        {data.pages && (
           <Button className="ml-auto h-6" variant="default" size="sm" asChild>
             <Link to={"/orders"}>View more</Link>
           </Button>
@@ -41,7 +69,18 @@ const LatestOrders = () => {
       </div>
       <ScrollArea className="whitespace-nowrap">
         <div className="flex gap-2 mb-3">
-          {data?.map((order) => <OrderCard key={order.id} orderData={order} />)}
+          {data?.pages.map((page) =>
+            page?.data.map((order) => (
+              <OrderCard key={order.id} orderData={order} />
+            )),
+          )}
+          {hasNextPage && (
+            <>
+              <SkeletonOrderCard />
+              <SkeletonOrderCard ref={intersectionScrollRef} />
+              <SkeletonOrderCard />
+            </>
+          )}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
