@@ -22,12 +22,12 @@ const Homepage = () => {
 
   return (
     <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
-      <div className="min-w-[275px] w-full">
+      <div className="min-w-[275px]">
         <LatestOrders />
         <MenuList />
       </div>
       {outlet && (
-        <div className="min-w-[275px] lg:min-w-[350px] w-auto sticky bottom-0 md:sticky md:top-4">
+        <div className="min-w-[275px] lg:min-w-[350px] w-full md:w-auto sticky bottom-0 md:sticky md:top-4">
           {outlet}
         </div>
       )}

@@ -1,40 +1,40 @@
 import { Model_Product } from "@/generated/models";
 import { currency } from "@/maindesk/src/utils/currency";
 import { Button } from "@/shared/components/ui/button";
-import { cn } from "@/shared/utils/shadcn";
 import { PlusCircleIcon } from "lucide-react";
 import { useCartStore } from "../state/cart";
 import { useNavigate, useMatch } from "react-router-dom";
 import GenericImage from "@/maindesk/src/layout/generic-image";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import { ForwardedRef, forwardRef } from "react";
+import { TableCell, TableRow } from "@/shared/components/ui/table";
+import { useMediaQuery } from "@/maindesk/src/hooks/useMediaQuery";
 
 type MenuItemProps = {
-  size: MenuItemSize;
   product: Model_Product;
 };
 
-export type MenuItemSize = "sm" | "md" | "lg";
-
-const MenuItem = ({ product, size }: MenuItemProps) => {
+const useMenuItemActions = (product: Model_Product) => {
+  const isMobile = useMediaQuery("(max-width: 640px)");
   const isAddOrderPanelOpen = useMatch("/home/add-order");
   const navigate = useNavigate();
   const appendProduct = useCartStore((state) => state.appendProduct);
 
   const handleAddProduct = () => {
     appendProduct(product);
-    if (!isAddOrderPanelOpen) navigate(`/home/add-order`);
+    if (isMobile) return;
+    if (isAddOrderPanelOpen) return;
+    navigate(`/home/add-order`);
   };
 
+  return { handleAddProduct };
+};
+
+export const MenuItemCard = ({ product }: MenuItemProps) => {
+  const { handleAddProduct } = useMenuItemActions(product);
+
   return (
-    <div
-      className={cn(
-        "bg-white rounded-lg shadow-md",
-        size === "lg" && "w-64",
-        size === "md" && "w-48",
-        size === "sm" && "w-40",
-      )}
-    >
+    <div className="bg-white rounded-lg shadow-md">
       <GenericImage
         src={product.image}
         fallbackSrc="/placeholder.svg"
@@ -61,20 +61,10 @@ const MenuItem = ({ product, size }: MenuItemProps) => {
   );
 };
 
-export default MenuItem;
-
-export const MenuItemSkeleton = forwardRef(
-  ({ size }: { size: MenuItemSize }, ref: ForwardedRef<HTMLDivElement>) => {
+export const MenuItemCardSkeleton = forwardRef(
+  (_, ref: ForwardedRef<HTMLDivElement>) => {
     return (
-      <div
-        ref={ref}
-        className={cn(
-          "",
-          size === "lg" && "w-64",
-          size === "md" && "w-48",
-          size === "sm" && "w-40",
-        )}
-      >
+      <div ref={ref}>
         <Skeleton className="w-full aspect-square rounded-t-lg object-cover" />
         <div className="mt-4">
           <Skeleton className="w-full h-4 mb-3" />
@@ -82,6 +72,52 @@ export const MenuItemSkeleton = forwardRef(
           <Skeleton className="w-full h-4 mb-3" />
         </div>
       </div>
+    );
+  },
+);
+
+export const MenuItemList = ({ product }: MenuItemProps) => {
+  const { handleAddProduct } = useMenuItemActions(product);
+  return (
+    <TableRow>
+      <TableCell className="w-12">
+        <GenericImage
+          src={product.image}
+          fallbackSrc="/placeholder.svg"
+          containerProps={{
+            className: "w-full aspect-square rounded-t-lg object-cover",
+          }}
+        />
+      </TableCell>
+      <TableCell>{product.name}</TableCell>
+      <TableCell>{currency(product.price)}</TableCell>
+      <TableCell className="w-[50px] sticky right-0">
+        <Button size="sm" className="h-6 mt-auto" onClick={handleAddProduct}>
+          <PlusCircleIcon className="h-4 w-4" />
+          &nbsp; Add
+        </Button>
+      </TableCell>
+    </TableRow>
+  );
+};
+
+export const MenuItemListSkeleton = forwardRef(
+  (_, ref: ForwardedRef<HTMLTableRowElement>) => {
+    return (
+      <TableRow ref={ref}>
+        <TableCell className="h-12 w-12">
+          <Skeleton className="h-12 w-12" />
+        </TableCell>
+        <TableCell>
+          <Skeleton className="h-4 w-auto" />
+        </TableCell>
+        <TableCell>
+          <Skeleton className="h-4 w-auto" />
+        </TableCell>
+        <TableCell className="w-[50px]">
+          <Skeleton className="h-4 w-auto" />
+        </TableCell>
+      </TableRow>
     );
   },
 );

@@ -1,6 +1,11 @@
 import { Fragment } from "react/jsx-runtime";
 import CategorySelector from "./CategorySelector";
-import MenuItem, { MenuItemSize, MenuItemSkeleton } from "./MenuItem";
+import {
+  MenuItemCard,
+  MenuItemCardSkeleton,
+  MenuItemList,
+  MenuItemListSkeleton,
+} from "./MenuItem";
 import { getProducts } from "@/maindesk/src/api/products";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -12,12 +17,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { LayoutGridIcon, SearchIcon } from "lucide-react";
+import { LayoutGridIcon, LayoutListIcon, SearchIcon } from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { debounce } from "@/maindesk/src/utils/function-utils";
 import { useObserveIntersection } from "@/maindesk/src/hooks/useObserveIntersection";
 import { useRefUnmountedStatus } from "@/maindesk/src/hooks/useRefUnmountedStatus";
+import { cn } from "@/shared/utils/shadcn";
+import { useMatch } from "react-router-dom";
+import { Table, TableBody } from "@/shared/components/ui/table";
+
+type ViewType = "grid" | "list";
 
 const defaultFetchParams: Parameters<typeof getProducts>[0] = {
   page: String(1),
@@ -27,10 +37,14 @@ const defaultFetchParams: Parameters<typeof getProducts>[0] = {
 };
 
 const MenuList = () => {
-  const intersectionScrollRef = useRef<HTMLDivElement>(null);
+  const intersectionScrollRef = useRef<HTMLDivElement & HTMLTableRowElement>(
+    null,
+  );
   const unmountedRef = useRefUnmountedStatus();
   const queryClient = useQueryClient();
-  const [gridSize, setGridSize] = useState<MenuItemSize>("md");
+  const [viewType, setViewType] = useState<ViewType>("grid");
+  const matchPath = useMatch("/home/*");
+  const isPanelOpened = matchPath?.params["*"] !== "";
 
   const [fetchParams, setFetchParams] = useState(defaultFetchParams);
   const { data, isFetching, hasNextPage, fetchNextPage } = useInfiniteQuery({
@@ -54,6 +68,9 @@ const MenuList = () => {
   });
 
   useEffect(() => {
+    if (!queryClient.isFetching) {
+      queryClient.removeQueries({ queryKey: ["products"] });
+    }
     queryClient.invalidateQueries({ queryKey: ["products"] });
   }, [fetchParams, queryClient]);
 
@@ -91,27 +108,60 @@ const MenuList = () => {
             onChange={handleSearch}
             className="w-full rounded-lg bg-background pl-8 min-w-[200px]"
           />
-          <MenuSizeOption onChange={setGridSize} />
+          <MenuSizeOption value={viewType} onChange={setViewType} />
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 justify-start">
-        {data &&
-          data.pages.map((page) =>
-            page.data.map((product) => (
-              <MenuItem key={product.id} product={product} size={gridSize} />
-            )),
+      {viewType === "grid" && (
+        <div
+          className={cn(
+            "grid gap-4 justify-start",
+            isPanelOpened
+              ? "grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5"
+              : "grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6",
           )}
-        {(hasNextPage || isFetching) && (
-          <>
-            <MenuItemSkeleton size={gridSize} ref={intersectionScrollRef} />
-            <MenuItemSkeleton size={gridSize} />
-            <MenuItemSkeleton size={gridSize} />
-            <MenuItemSkeleton size={gridSize} />
-            <MenuItemSkeleton size={gridSize} />
-          </>
-        )}
-      </div>
+        >
+          {data &&
+            data.pages.map((page) =>
+              page.data.map((product) => (
+                <MenuItemCard key={product.id} product={product} />
+              )),
+            )}
+          {(hasNextPage || isFetching) && (
+            <>
+              <MenuItemCardSkeleton ref={intersectionScrollRef} />
+              <MenuItemCardSkeleton />
+              <MenuItemCardSkeleton />
+              <MenuItemCardSkeleton />
+              <MenuItemCardSkeleton />
+              <MenuItemCardSkeleton />
+              <MenuItemCardSkeleton />
+            </>
+          )}
+        </div>
+      )}
+
+      {viewType === "list" && (
+        <Table className="min-w-[300px] mb-16">
+          <TableBody>
+            {data &&
+              data.pages.map((page) =>
+                page.data.map((product) => (
+                  <MenuItemList key={product.id} product={product} />
+                )),
+              )}
+            {(hasNextPage || isFetching) && (
+              <>
+                <MenuItemListSkeleton ref={intersectionScrollRef} />
+                <MenuItemListSkeleton />
+                <MenuItemListSkeleton />
+                <MenuItemListSkeleton />
+                <MenuItemListSkeleton />
+              </>
+            )}
+          </TableBody>
+        </Table>
+      )}
     </Fragment>
   );
 };
@@ -119,28 +169,28 @@ const MenuList = () => {
 export default MenuList;
 
 const MenuSizeOption = ({
+  value,
   onChange,
 }: {
-  onChange: (size: MenuItemSize) => void;
+  value: ViewType;
+  onChange: (val: ViewType) => void;
 }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size="icon" variant="ghost">
-          <LayoutGridIcon />
+          {value === "grid" && <LayoutGridIcon />}
+          {value === "list" && <LayoutListIcon />}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Menu Size</DropdownMenuLabel>
+        <DropdownMenuLabel>Menu view</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => onChange("sm")}>
-          Small
+        <DropdownMenuItem onClick={() => onChange("grid")}>
+          Grid view
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onChange("md")}>
-          Medium
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onChange("lg")}>
-          Large
+        <DropdownMenuItem onClick={() => onChange("list")}>
+          List view
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -81,6 +81,11 @@ const CartOrderPanel = () => {
         <CardHeader>
           <CardTitle>
             New Order
+            {products.length > 0 && (
+              <span className="ml-2 font-normal text-sm">
+                {products.length} item(s)
+              </span>
+            )}
             <Button
               variant="ghost"
               size="sm"
