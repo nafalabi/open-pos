@@ -80,7 +80,7 @@ export const MenuItemList = ({ product }: MenuItemProps) => {
   const { handleAddProduct } = useMenuItemActions(product);
   return (
     <TableRow>
-      <TableCell className="w-12">
+      <TableCell className="min-w-12 max-w-12">
         <GenericImage
           src={product.image}
           fallbackSrc="/placeholder.svg"
