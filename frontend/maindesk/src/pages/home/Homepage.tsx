@@ -10,6 +10,8 @@ import LatestOrders from "./components/LatestOrders";
 import MenuList from "./components/MenuList";
 import { CartStoreState, useCartStore } from "./state/cart";
 import { Badge } from "@/shared/components/ui/badge";
+import { motion, useAnimationControls, type Transition } from "framer-motion";
+import { useEffect } from "react";
 
 const selectCartCount = (state: CartStoreState) => {
   return state.products.length;
@@ -19,6 +21,24 @@ const Homepage = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
   const cartCount = useCartStore(selectCartCount);
+
+  const controls = useAnimationControls();
+  useEffect(() => {
+    const transition = {
+      duration: 0.3,
+      ease: [0, 0.71, 0.2, 1.01],
+      scale: {
+        type: "spring",
+        damping: 5,
+        stiffness: 100,
+        restDelta: 0.001,
+      },
+    } satisfies Transition;
+    controls.start({ scale: 0.8 }, transition);
+    setTimeout(() => {
+      controls.start({ scale: 1 }, transition);
+    }, 300);
+  }, [cartCount, controls]);
 
   return (
     <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
@@ -39,16 +59,19 @@ const Homepage = () => {
                 size="icon"
                 className="relative rounded-full aspect-square h-12 w-12 mb-8 mr-8 shadow-md"
                 onClick={() => navigate("/home/add-order")}
+                asChild
               >
-                <ShoppingBasketIcon className="h-8 w-8" />
-                {cartCount > 0 && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute top-[-5px] right-[-5px]"
-                  >
-                    {cartCount}
-                  </Badge>
-                )}
+                <motion.a animate={controls}>
+                  <ShoppingBasketIcon className="h-8 w-8" />
+                  {cartCount > 0 && (
+                    <Badge
+                      variant="destructive"
+                      className="absolute top-[-5px] right-[-5px]"
+                    >
+                      {cartCount}
+                    </Badge>
+                  )}
+                </motion.a>
               </Button>
             </div>
           </TooltipTrigger>
