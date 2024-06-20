@@ -26,6 +26,7 @@ import { useRefUnmountedStatus } from "@/maindesk/src/hooks/useRefUnmountedStatu
 import { cn } from "@/shared/utils/shadcn";
 import { useMatch } from "react-router-dom";
 import { Table, TableBody } from "@/shared/components/ui/table";
+import { LOCALSTORAGE_PREFIX } from "@/maindesk/src/constant/common";
 
 type ViewType = "grid" | "list";
 
@@ -36,13 +37,29 @@ const defaultFetchParams: Parameters<typeof getProducts>[0] = {
   sortdir: "asc",
 };
 
+const MENU_VIEW_STORAGE_KEY = LOCALSTORAGE_PREFIX + "home::menu-view";
+
+const useViewType = () => {
+  const defaultView = useMemo(() => {
+    return (localStorage.getItem(MENU_VIEW_STORAGE_KEY) || "grid") as ViewType;
+  }, []);
+  const [viewType, setViewType] = useState<ViewType>(defaultView);
+
+  const handleSetViewType = (view: ViewType) => {
+    setViewType(view);
+    localStorage.setItem(MENU_VIEW_STORAGE_KEY, view);
+  };
+
+  return [viewType, handleSetViewType] as const;
+};
+
 const MenuList = () => {
   const intersectionScrollRef = useRef<HTMLDivElement & HTMLTableRowElement>(
     null,
   );
   const unmountedRef = useRefUnmountedStatus();
   const queryClient = useQueryClient();
-  const [viewType, setViewType] = useState<ViewType>("grid");
+  const [viewType, setViewType] = useViewType();
   const matchPath = useMatch("/home/*");
   const isPanelOpened = matchPath?.params["*"] !== "";
 
