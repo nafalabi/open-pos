@@ -80,12 +80,13 @@ export const MenuItemList = ({ product }: MenuItemProps) => {
   const { handleAddProduct } = useMenuItemActions(product);
   return (
     <TableRow>
-      <TableCell className="min-w-12 max-w-12">
+      <TableCell className="w-[50px]">
         <GenericImage
           src={product.image}
           fallbackSrc="/placeholder.svg"
           containerProps={{
-            className: "w-full aspect-square rounded-t-lg object-cover",
+            className:
+              "aspect-square rounded-t-lg object-cover min-w-[50px] max-w-[50px]",
           }}
         />
       </TableCell>
