@@ -129,6 +129,12 @@ const MenuList = () => {
         </div>
       </div>
 
+      {!isFetching && (data?.pages?.[0].data?.length ?? 0) < 1 && (
+        <div className="text-center h-[100px] content-center">
+          There's no item to show
+        </div>
+      )}
+
       {viewType === "grid" && (
         <div
           className={cn(

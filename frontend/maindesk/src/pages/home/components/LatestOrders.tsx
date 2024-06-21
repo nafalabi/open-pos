@@ -52,15 +52,13 @@ const LatestOrders = () => {
     fetchNextPage();
   });
 
-  if (!isFetching && !data?.pages?.[0]?.data?.length) return null;
-
   return (
     <Fragment>
       <div className="mb-2 flex">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Today's Orders
         </h3>
-        {data?.pages && (
+        {!isFetching && (data?.pages?.[0]?.data?.length ?? 0) > 0 && (
           <Button className="ml-auto h-6" variant="default" size="sm" asChild>
             <Link to={"/orders"}>View more</Link>
           </Button>
@@ -68,6 +66,11 @@ const LatestOrders = () => {
       </div>
       <ScrollArea className="whitespace-nowrap">
         <div className="flex gap-2 mb-3">
+          {!isFetching && (data?.pages?.[0]?.data?.length ?? 0) < 1 && (
+            <div className="h-[100px] content-center">
+              There's no item to show
+            </div>
+          )}
           {data?.pages.map((page) =>
             page?.data.map((order) => (
               <OrderCard key={order.id} orderData={order} />
