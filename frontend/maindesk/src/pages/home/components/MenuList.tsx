@@ -85,6 +85,7 @@ const MenuList = () => {
   });
 
   useEffect(() => {
+    console.log('trace')
     if (!queryClient.isFetching) {
       queryClient.removeQueries({ queryKey: ["products"] });
     }
@@ -150,7 +151,7 @@ const MenuList = () => {
                 <MenuItemCard key={product.id} product={product} />
               )),
             )}
-          {(hasNextPage || isFetching) && (
+          {(hasNextPage) && (
             <>
               <MenuItemCardSkeleton ref={intersectionScrollRef} />
               <MenuItemCardSkeleton />
@@ -173,7 +174,7 @@ const MenuList = () => {
                   <MenuItemList key={product.id} product={product} />
                 )),
               )}
-            {(hasNextPage || isFetching) && (
+            {(hasNextPage) && (
               <>
                 <MenuItemListSkeleton ref={intersectionScrollRef} />
                 <MenuItemListSkeleton />

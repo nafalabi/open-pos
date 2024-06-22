@@ -58,11 +58,9 @@ const LatestOrders = () => {
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
           Today's Orders
         </h3>
-        {!isFetching && (data?.pages?.[0]?.data?.length ?? 0) > 0 && (
-          <Button className="ml-auto h-6" variant="default" size="sm" asChild>
-            <Link to={"/orders"}>View more</Link>
-          </Button>
-        )}
+        <Button className="ml-auto h-6" variant="default" size="sm" asChild>
+          <Link to={"/orders"}>View more</Link>
+        </Button>
       </div>
       <ScrollArea className="whitespace-nowrap">
         <div className="flex gap-2 mb-3">
@@ -76,7 +74,7 @@ const LatestOrders = () => {
               <OrderCard key={order.id} orderData={order} />
             )),
           )}
-          {(hasNextPage || isFetching) && (
+          {hasNextPage && (
             <>
               <SkeletonOrderCard />
               <SkeletonOrderCard ref={intersectionScrollRef} />
