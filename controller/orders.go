@@ -14,7 +14,7 @@ import (
 
 type OrderPayload struct {
 	Items         []OrderItemPayload `json:"items" validate:"gt=0,dive,required"`
-	PaymentMethod enum.PaymentMethod `json:"payment_method" validate:"custom"`
+	PaymentMethod string             `json:"payment_method"`
 	Remarks       string             `json:"remarks"`
 	Recipient     string             `json:"recipient"`
 }
@@ -60,20 +60,6 @@ func (payload *OrderPayload) GetItems(db *gorm.DB) []model.OrderItem {
 	return items
 }
 
-func (payload *OrderPayload) GetPaymentFee(subTotal float64) float64 {
-	method := payload.PaymentMethod
-	switch method {
-	case enum.PaymentMethodCash:
-		return 0
-	case enum.PaymentMethodTransfer:
-		return 4000
-	case enum.PaymentMethodQris:
-		return subTotal * (0.7 / 100)
-	default:
-		return 0
-	}
-}
-
 // @Summary	Create a new order
 // @Security	ApiKeyAuth
 // @Tags		Orders
@@ -101,10 +87,16 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			order.SubTotal = lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
 				return acc + item.SubTotal
 			}, 0)
-			order.PaymentFee = reqBody.GetPaymentFee(order.SubTotal)
+
+			paymentFee, err := CalculatePaymentFee(reqBody.PaymentMethod, order.SubTotal)
+			if err != nil {
+				return err
+			}
+
+			order.PaymentFee = paymentFee
 			order.Total = order.SubTotal + order.PaymentFee
 
-			err := tx.Create(&order).Error
+			err = tx.Create(&order).Error
 			if err != nil {
 				return err
 			}
@@ -227,9 +219,9 @@ func CashpayOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		}
 
 		err = dbClient.Transaction(func(tx *gorm.DB) error {
-			paymentMethod := enum.PaymentMethod(order.PaymentMethod)
+			paymentMethod := order.PaymentMethod
 
-			if paymentMethod != enum.PaymentMethodCash {
+			if paymentMethod != "cash" {
 				return utils.ConstructError("Sorry the method you choose is currently underdevelopment")
 			}
 

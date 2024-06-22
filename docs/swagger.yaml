@@ -1,10 +1,5 @@
 basePath: /
 definitions:
-  controller.CalculatePaymentFeePayload:
-    properties:
-      totalamount:
-        type: number
-    type: object
   controller.CategoryPayload:
     properties:
       name:
@@ -39,7 +34,7 @@ definitions:
           $ref: '#/definitions/controller.OrderItemPayload'
         type: array
       payment_method:
-        $ref: '#/definitions/enum.PaymentMethod'
+        type: string
       recipient:
         type: string
       remarks:
@@ -96,16 +91,6 @@ definitions:
     required:
     - name
     type: object
-  enum.PaymentMethod:
-    enum:
-    - cash
-    - qris
-    - trans
-    type: string
-    x-enum-varnames:
-    - PaymentMethodCash
-    - PaymentMethodQris
-    - PaymentMethodTransfer
   enum.UserLevel:
     enum:
     - 0
@@ -428,27 +413,43 @@ paths:
       tags:
       - Payment
   /payment-methods/{code}:
-    post:
+    get:
       consumes:
       - application/json
       parameters:
-      - description: paymentmethod code
+      - description: payment method code
         in: path
         name: code
         required: true
         type: string
-      - description: Payload
-        in: body
-        name: body
-        required: true
-        schema:
-          $ref: '#/definitions/controller.CalculatePaymentFeePayload'
       produces:
       - application/json
       responses: {}
       security:
       - ApiKeyAuth: []
-      summary: Calculate payment fee
+      summary: find payment method by id
+      tags:
+      - Payment
+  /payment-methods/{code}/fee:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: payment method code
+        in: path
+        name: code
+        required: true
+        type: string
+      - description: total amount
+        in: query
+        name: totalamount
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: get payment fee
       tags:
       - Payment
   /products:

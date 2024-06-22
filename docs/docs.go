@@ -502,7 +502,7 @@ const docTemplate = `{
             }
         },
         "/payment-methods/{code}": {
-            "post": {
+            "get": {
                 "security": [
                     {
                         "ApiKeyAuth": []
@@ -517,23 +517,49 @@ const docTemplate = `{
                 "tags": [
                     "Payment"
                 ],
-                "summary": "Calculate payment fee",
+                "summary": "find payment method by id",
                 "parameters": [
                     {
                         "type": "string",
-                        "description": "paymentmethod code",
+                        "description": "payment method code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/payment-methods/{code}/fee": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "get payment fee",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "payment method code",
                         "name": "code",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "Payload",
-                        "name": "body",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/controller.CalculatePaymentFeePayload"
-                        }
+                        "type": "string",
+                        "description": "total amount",
+                        "name": "totalamount",
+                        "in": "query"
                     }
                 ],
                 "responses": {}
@@ -875,14 +901,6 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controller.CalculatePaymentFeePayload": {
-            "type": "object",
-            "properties": {
-                "totalamount": {
-                    "type": "number"
-                }
-            }
-        },
         "controller.CategoryPayload": {
             "type": "object",
             "required": [
@@ -936,7 +954,7 @@ const docTemplate = `{
                     }
                 },
                 "payment_method": {
-                    "$ref": "#/definitions/enum.PaymentMethod"
+                    "type": "string"
                 },
                 "recipient": {
                     "type": "string"
@@ -1017,19 +1035,6 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "enum.PaymentMethod": {
-            "type": "string",
-            "enum": [
-                "cash",
-                "qris",
-                "trans"
-            ],
-            "x-enum-varnames": [
-                "PaymentMethodCash",
-                "PaymentMethodQris",
-                "PaymentMethodTransfer"
-            ]
         },
         "enum.UserLevel": {
             "type": "integer",

@@ -83,7 +83,8 @@ func main() {
 	paymentmethods := e.Group("/payment-methods")
 	paymentmethods.Use(jwtMiddleware)
 	paymentmethods.GET("", utils.RegisterController(dbClient, controller.ListPaymentMethod))
-  paymentmethods.POST("/:code", utils.RegisterController(dbClient, controller.CalculatePaymentFee))
+  paymentmethods.GET("/:code", utils.RegisterController(dbClient, controller.FindPaymentMethod))
+  paymentmethods.GET("/:code/fee", utils.RegisterController(dbClient, controller.GetPaymentFee))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

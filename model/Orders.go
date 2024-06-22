@@ -11,20 +11,24 @@ import (
 
 type Order struct {
 	BaseModelWithTimestamp
-	OrderNumber   string             `gorm:"uniqueIndex" json:"order_number"`
-	Recipient     string             `gorm:"index" json:"recipient"`
-	Items         []OrderItem        `gorm:"foreignKey:OrderID" json:"items"`
-	Total         float64            `json:"total"`
-	SubTotal      float64            `json:"sub_total"`
-	PaymentFee    float64            `json:"payment_fee"`
-	PaymentMethod enum.PaymentMethod `json:"payment_method"`
-	Status        enum.OrderStatus   `json:"status"`
-	ExternalRef   string             `json:"external_ref"`
-	Remarks       string             `json:"remarks"`
+	OrderNumber   string           `gorm:"uniqueIndex" json:"order_number"`
+	Recipient     string           `gorm:"index" json:"recipient"`
+	Items         []OrderItem      `gorm:"foreignKey:OrderID" json:"items"`
+	Total         float64          `json:"total"`
+	SubTotal      float64          `json:"sub_total"`
+	PaymentFee    float64          `json:"payment_fee"`
+	PaymentMethod string           `json:"payment_method"`
+	Status        enum.OrderStatus `json:"status"`
+	ExternalRef   string           `json:"external_ref"`
+	Remarks       string           `json:"remarks"`
 }
 
 func (order *Order) BeforeCreate(tx *gorm.DB) error {
-	order.BaseModel.BeforeCreate(tx)
+	err := order.BaseModel.BeforeCreate(tx)
+	if err != nil {
+		return nil
+	}
+
 	if order.OrderNumber == "" {
 		timeRef := time.Now().Format("060102150405.000")
 		timeRef = strings.Replace(timeRef, ".", "", 1)
