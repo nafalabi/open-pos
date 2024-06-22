@@ -80,5 +80,10 @@ func main() {
 	orders.POST("/:id/complete", utils.RegisterController(dbClient, controller.CompleteOrder))
 	orders.POST("/:id/cancel", utils.RegisterController(dbClient, controller.CancelOrder))
 
+	paymentmethods := e.Group("/payment-methods")
+	paymentmethods.Use(jwtMiddleware)
+	paymentmethods.GET("", utils.RegisterController(dbClient, controller.ListPaymentMethod))
+  paymentmethods.POST("/:code", utils.RegisterController(dbClient, controller.CalculatePaymentFee))
+
 	e.Logger.Fatal(e.Start(":8080"))
 }

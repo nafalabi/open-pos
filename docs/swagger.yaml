@@ -1,5 +1,10 @@
 basePath: /
 definitions:
+  controller.CalculatePaymentFeePayload:
+    properties:
+      totalamount:
+        type: number
+    type: object
   controller.CategoryPayload:
     properties:
       name:
@@ -410,6 +415,42 @@ paths:
       summary: Mark order as completed
       tags:
       - Orders
+  /payment-methods:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: list of payment method
+      tags:
+      - Payment
+  /payment-methods/{code}:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: paymentmethod code
+        in: path
+        name: code
+        required: true
+        type: string
+      - description: Payload
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.CalculatePaymentFeePayload'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Calculate payment fee
+      tags:
+      - Payment
   /products:
     get:
       consumes:

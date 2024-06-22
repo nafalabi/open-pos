@@ -481,6 +481,64 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/payment-methods": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "list of payment method",
+                "responses": {}
+            }
+        },
+        "/payment-methods/{code}": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Payment"
+                ],
+                "summary": "Calculate payment fee",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "paymentmethod code",
+                        "name": "code",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Payload",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.CalculatePaymentFeePayload"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/products": {
             "get": {
                 "security": [
@@ -817,6 +875,14 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.CalculatePaymentFeePayload": {
+            "type": "object",
+            "properties": {
+                "totalamount": {
+                    "type": "number"
+                }
+            }
+        },
         "controller.CategoryPayload": {
             "type": "object",
             "required": [
