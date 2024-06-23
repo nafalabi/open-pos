@@ -16,9 +16,7 @@ import SummaryOrder from "./SummaryOrder";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import NoteOrderCompleted from "./NoteOrderCompleted";
 import CancelOrder from "./CancelOrder";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { getPaymentMethodDetail } from "@/maindesk/src/api/payment-method";
-import { toast } from "sonner";
+import { useQueryPaymentMethodDetail } from "../query/useQueryPaymentMethodDetail";
 
 const DetailOrderPanel = () => {
   const navigate = useNavigate();
@@ -26,21 +24,9 @@ const DetailOrderPanel = () => {
   const orderId = useParams().id;
 
   const { data } = useQueryOrderById(orderId);
-  const { data: paymentMethodDetail } = useQuery({
-    queryKey: ["payment-methods", data?.payment_method ?? ""],
-    queryFn: async () => {
-      if (!data?.payment_method) {
-        return null;
-      }
-      const [result, error] = await getPaymentMethodDetail(data.payment_method);
-      if (error) {
-        toast.error("Failed to get payment fee");
-        return null;
-      }
-      return result.data;
-    },
-    placeholderData: keepPreviousData,
-  });
+  const { data: paymentMethodDetail } = useQueryPaymentMethodDetail(
+    data?.payment_method,
+  );
   const methodName = paymentMethodDetail ? `(${paymentMethodDetail.name})` : "";
 
   return (

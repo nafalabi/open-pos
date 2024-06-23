@@ -12,51 +12,32 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { Input } from "@/shared/components/ui/input";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import {
-  getPaymentFee,
-  getPaymentMethodList,
-} from "@/maindesk/src/api/payment-method";
 import { Loader2Icon } from "lucide-react";
-import { toast } from "sonner";
+import { useQueryPaymentFee } from "../query/useQueryPaymentFee";
+import { useQueryPaymentMethodList } from "../query/useQueryPaymentMethodList";
 
 const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
-  const paymentMethod = form.watch("payment_method");
+  const paymentMethodCode = form.watch("payment_method");
+  const orderItems = form.watch("items");
   const { products } = useCartStore((state) => ({
     products: state.products,
     removeProduct: state.removeProduct,
   }));
 
-  const { data: paymentMethodList } = useQuery({
-    queryKey: ["payment-methods"],
-    queryFn: async () => {
-      const [result, error] = await getPaymentMethodList();
-      if (error) {
-        return [];
-      }
-      return result.data;
-    },
-    initialData: [],
-  });
+  const { data: paymentMethodList } = useQueryPaymentMethodList();
 
   const subtotal = useMemo(() => {
-    return products.reduce((sum, product) => sum + product.price, 0);
-  }, [products]);
+    return products.reduce((sum, product) => {
+      const itemData = orderItems.find((oi) => oi.product_id == product.id);
+      if (!itemData) return sum;
+      const sumItem = product.price * itemData.quantity;
+      return sum + sumItem;
+    }, 0);
+  }, [products, orderItems]);
 
-  const { data: paymentFee, isFetching: isFetchingPaymentFee } = useQuery({
-    queryKey: ["payment-methods", paymentMethod, "fee", subtotal],
-    queryFn: async () => {
-      const [result, error] = await getPaymentFee(paymentMethod, {
-        totalamount: String(subtotal),
-      });
-      if (error) {
-        toast.error("Failed to get payment fee");
-        return 0;
-      }
-      return result.data.payment_fee;
-    },
-    placeholderData: keepPreviousData,
-  });
+  const { data: paymentFee, isFetching: isFetchingPaymentFee } =
+    useQueryPaymentFee(paymentMethodCode, subtotal);
+
   const total = subtotal + (paymentFee ?? 0);
 
   return (
