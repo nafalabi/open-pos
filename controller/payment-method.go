@@ -38,7 +38,7 @@ func GetAvailableMethod() []PaymentMethod {
 		},
 		{
 			Code:     "midtrans_qris",
-			Name:     "QRIS",
+			Name:     "QRIS Dynamic",
 			FeeType:  PercentagePaymentFee,
 			Variable: 0.7 / 100,
 		},
