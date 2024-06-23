@@ -9,20 +9,16 @@ import { XIcon } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import PaymentCash from "./PaymentCash";
 import { useQueryOrderById } from "../query/useQueryOrderById";
-import { OrderStatus, PaymentMethod } from "@/generated/enums";
-import PaymentBankTransfer from "./PaymentBankTransfer";
+import { OrderStatus } from "@/generated/enums";
 import PaymentQris from "./PaymentQris";
 import NoteOrderPaid from "./NoteOrderPaid";
 import SummaryOrder from "./SummaryOrder";
 import { Skeleton } from "@/shared/components/ui/skeleton";
 import NoteOrderCompleted from "./NoteOrderCompleted";
 import CancelOrder from "./CancelOrder";
-
-const paymentMethodNames: Record<string, string> = {
-  [PaymentMethod.PaymentMethodCash]: "Cash",
-  [PaymentMethod.PaymentMethodTransfer]: "Transfer",
-  [PaymentMethod.PaymentMethodQris]: "QRIS",
-};
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { getPaymentMethodDetail } from "@/maindesk/src/api/payment-method";
+import { toast } from "sonner";
 
 const DetailOrderPanel = () => {
   const navigate = useNavigate();
@@ -30,7 +26,22 @@ const DetailOrderPanel = () => {
   const orderId = useParams().id;
 
   const { data } = useQueryOrderById(orderId);
-  const methodName = data ? `(${paymentMethodNames[data.payment_method]})` : "";
+  const { data: paymentMethodDetail } = useQuery({
+    queryKey: ["payment-methods", data?.payment_method ?? ""],
+    queryFn: async () => {
+      if (!data?.payment_method) {
+        return null;
+      }
+      const [result, error] = await getPaymentMethodDetail(data.payment_method);
+      if (error) {
+        toast.error("Failed to get payment fee");
+        return null;
+      }
+      return result.data;
+    },
+    placeholderData: keepPreviousData,
+  });
+  const methodName = paymentMethodDetail ? `(${paymentMethodDetail.name})` : "";
 
   return (
     <Card className="relative">
@@ -61,16 +72,8 @@ const DetailOrderPanel = () => {
             )}
             {data.status === OrderStatus.StatusPending && (
               <>
-                {data.payment_method === PaymentMethod.PaymentMethodCash && (
-                  <PaymentCash order={data} />
-                )}
-                {data.payment_method ===
-                  PaymentMethod.PaymentMethodTransfer && (
-                  <PaymentBankTransfer />
-                )}
-                {data.payment_method === PaymentMethod.PaymentMethodQris && (
-                  <PaymentQris />
-                )}
+                {data.payment_method === "cash" && <PaymentCash order={data} />}
+                {data.payment_method === "midtrans_qris" && <PaymentQris />}
                 <CancelOrder order={data} />
               </>
             )}

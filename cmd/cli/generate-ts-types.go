@@ -25,6 +25,7 @@ var (
 		model.Order{},
 		model.OrderItem{},
 		model.Transaction{},
+		controller.PaymentMethod{},
 	}
 	payloads = []interface{}{
 		controller.UserPayload{},

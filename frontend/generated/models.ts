@@ -65,3 +65,9 @@ export interface Model_Transaction {
   notes: string;
   order_id: string;
 }
+export interface Model_PaymentMethod {
+  code: string;
+  name: string;
+  fee_type: string;
+  variable: number;
+}

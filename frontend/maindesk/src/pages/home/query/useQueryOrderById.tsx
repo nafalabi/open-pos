@@ -3,14 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useQueryOrderById = (orderId?: string) => {
   return useQuery({
-    initialData: false,
     queryKey: ["orders", orderId],
     queryFn: async () => {
-      if (!orderId) return false;
+      if (!orderId) return null;
       const [result] = await viewOrder(orderId, {
         includeProducts: String(true),
       });
-      if (!result) return false;
+      if (!result) return null;
       return result.data;
     },
   });

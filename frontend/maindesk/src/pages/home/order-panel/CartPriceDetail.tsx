@@ -4,7 +4,6 @@ import { Controller, UseFormReturn } from "react-hook-form";
 import { useCartStore } from "../state/cart";
 import { useMemo } from "react";
 import { currency } from "@/maindesk/src/utils/currency";
-import { PaymentMethod } from "@/generated/enums";
 import {
   Select,
   SelectContent,
@@ -13,36 +12,13 @@ import {
   SelectValue,
 } from "@/shared/components/ui/select";
 import { Input } from "@/shared/components/ui/input";
-
-type PaymentFeeMapping = {
-  type: "percentage" | "fixed";
-  value: number;
-};
-
-const paymentFeeMapping: Record<string, PaymentFeeMapping | undefined> = {
-  [PaymentMethod.PaymentMethodCash]: {
-    type: "fixed",
-    value: 0,
-  },
-  [PaymentMethod.PaymentMethodTransfer]: {
-    type: "fixed",
-    value: 4000,
-  },
-  [PaymentMethod.PaymentMethodQris]: {
-    type: "percentage",
-    value: 0.7 / 100,
-  },
-};
-
-const getPaymentFee = (paymentMethod: string, subtotal: number) => {
-  const mapping = paymentFeeMapping[paymentMethod];
-  if (!mapping) return 0;
-  const { type, value } = mapping;
-  if (type === "percentage") {
-    return subtotal * value;
-  }
-  return value;
-};
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  getPaymentFee,
+  getPaymentMethodList,
+} from "@/maindesk/src/api/payment-method";
+import { Loader2Icon } from "lucide-react";
+import { toast } from "sonner";
 
 const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
   const paymentMethod = form.watch("payment_method");
@@ -50,16 +26,38 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
     products: state.products,
     removeProduct: state.removeProduct,
   }));
-  const { subtotal, paymentFee, total } = useMemo(() => {
-    const subtotal = products.reduce((sum, product) => sum + product.price, 0);
-    const paymentFee = getPaymentFee(paymentMethod, subtotal);
-    const total = subtotal + paymentFee;
-    return {
-      subtotal,
-      paymentFee,
-      total,
-    };
-  }, [products, paymentMethod]);
+
+  const { data: paymentMethodList } = useQuery({
+    queryKey: ["payment-methods"],
+    queryFn: async () => {
+      const [result, error] = await getPaymentMethodList();
+      if (error) {
+        return [];
+      }
+      return result.data;
+    },
+    initialData: [],
+  });
+
+  const subtotal = useMemo(() => {
+    return products.reduce((sum, product) => sum + product.price, 0);
+  }, [products]);
+
+  const { data: paymentFee, isFetching: isFetchingPaymentFee } = useQuery({
+    queryKey: ["payment-methods", paymentMethod, "fee", subtotal],
+    queryFn: async () => {
+      const [result, error] = await getPaymentFee(paymentMethod, {
+        totalamount: String(subtotal),
+      });
+      if (error) {
+        toast.error("Failed to get payment fee");
+        return 0;
+      }
+      return result.data.payment_fee;
+    },
+    placeholderData: keepPreviousData,
+  });
+  const total = subtotal + (paymentFee ?? 0);
 
   return (
     <div className="text-sm">
@@ -95,15 +93,11 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
                 </SelectTrigger>
 
                 <SelectContent>
-                  <SelectItem value={PaymentMethod.PaymentMethodCash}>
-                    Cash
-                  </SelectItem>
-                  <SelectItem value={PaymentMethod.PaymentMethodTransfer}>
-                    Transfer
-                  </SelectItem>
-                  <SelectItem value={PaymentMethod.PaymentMethodQris}>
-                    QRIS
-                  </SelectItem>
+                  {paymentMethodList.map((item) => (
+                    <SelectItem key={item.code} value={item.code}>
+                      {item.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             )}
@@ -116,7 +110,10 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
         <div className="flex items-center justify-between">
           <span className="text-gray-900 font-bold">Payment Fee</span>
           <span className="text-gray-900 font-bold">
-            {currency(paymentFee)}
+            {isFetchingPaymentFee && (
+              <Loader2Icon className="inline h-4 w-4 animate-spin border-foreground" />
+            )}
+            &nbsp;{currency(paymentFee ?? 0)}
           </span>
         </div>
         <Separator className="my-4" />
