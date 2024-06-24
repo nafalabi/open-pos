@@ -10,7 +10,7 @@ import (
 )
 
 type LoginParams struct {
-  Email    string `json:"email" example:"admin@admin.com"`
+	Email    string `json:"email" example:"admin@admin.com"`
 	Password string `json:"password" example:"admin"`
 }
 
@@ -25,23 +25,31 @@ func AuthLogin(dbClient *gorm.DB) echo.HandlerFunc {
 		reqBody := LoginParams{}
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		user := model.User{}
 		err := dbClient.Where("email = ?", reqBody.Email).First(&user).Error
 		if err != nil {
-			return utils.SendError(c, utils.ConstructError("Invalid credentials"))
+			return utils.ApiError{
+				Message: "Invalid credentials",
+			}
 		}
 
 		if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(reqBody.Password)); err != nil {
-			return utils.SendError(c, utils.ConstructError("Invalid credentials"))
+			return utils.ApiError{
+				Message: "Invalid credentials",
+			}
 		}
 
 		jwtUtils := utils.NewJwt()
 		tokens, err := jwtUtils.CreateJwtToken(user)
 		if err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Failed to process login",
+			}
 		}
 
 		return utils.SendSuccess(c, tokens)
@@ -61,7 +69,7 @@ func UserInfo(dbClient *gorm.DB) echo.HandlerFunc {
 		user := model.User{}
 		err := dbClient.Where("id = ?", userClaims.UserId).First(&user).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, user)

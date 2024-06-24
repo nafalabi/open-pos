@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"errors"
 	"open-pos/utils"
 	"slices"
 	"strconv"
@@ -50,7 +49,10 @@ func CalculatePaymentFee(code string, totalAmount float64) (paymentFee float64, 
 
 	idx := slices.IndexFunc(methods, func(m PaymentMethod) bool { return m.Code == code })
 	if idx == -1 {
-		return paymentFee, errors.New("The specified payment method can't be found")
+		error := utils.ApiError{
+			Message: "The specified payment method can't be found",
+		}
+		return paymentFee, error
 	}
 
 	method := methods[idx]
@@ -92,7 +94,9 @@ func FindPaymentMethod(dbClient *gorm.DB) echo.HandlerFunc {
 
 		idx := slices.IndexFunc(methods, func(m PaymentMethod) bool { return m.Code == payment_code })
 		if idx == -1 {
-			return errors.New("The specified payment method can't be found")
+			return utils.ApiError{
+				Message: "The specified payment method can't be found",
+			}
 		}
 
 		method := methods[idx]
@@ -117,12 +121,14 @@ func GetPaymentFee(dbClient *gorm.DB) echo.HandlerFunc {
 
 		totalAmount, err := strconv.ParseFloat(totalAmountStr, 64)
 		if err != nil {
-			return utils.SendError(c, errors.New("Payload is not valid"))
+			return utils.ApiError{
+				Message: "Payload is not valid",
+			}
 		}
 
 		paymentFee, err := CalculatePaymentFee(payment_code, totalAmount)
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		result := map[string]float64{

@@ -31,6 +31,7 @@ func main() {
 	defer utils.DB.DisconnectDB()
 
 	utils.SetupValidator(e)
+	utils.SetupErrorHandler(e)
 
 	jwtUtils := utils.NewJwt()
 	jwtMiddleware := jwtUtils.SetupMiddleware()
@@ -83,8 +84,8 @@ func main() {
 	paymentmethods := e.Group("/payment-methods")
 	paymentmethods.Use(jwtMiddleware)
 	paymentmethods.GET("", utils.RegisterController(dbClient, controller.ListPaymentMethod))
-  paymentmethods.GET("/:code", utils.RegisterController(dbClient, controller.FindPaymentMethod))
-  paymentmethods.GET("/:code/fee", utils.RegisterController(dbClient, controller.GetPaymentFee))
+	paymentmethods.GET("/:code", utils.RegisterController(dbClient, controller.FindPaymentMethod))
+	paymentmethods.GET("/:code/fee", utils.RegisterController(dbClient, controller.GetPaymentFee))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

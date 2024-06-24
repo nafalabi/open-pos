@@ -30,7 +30,9 @@ func CreateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 		reqBody := CategoryPayload{}
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		category := model.Category{}
@@ -45,7 +47,7 @@ func CreateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 			return nil
 		})
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, category)
@@ -107,7 +109,7 @@ func FindCategory(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", categoryId).First(&category).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, category)
@@ -130,12 +132,14 @@ func UpdateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := utils.BindAndValidate(c, &reqBody)
 		if err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		err = dbClient.Where("id = ? ", categoryId).First(&category).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		err = dbClient.Transaction(func(tx *gorm.DB) error {
@@ -144,7 +148,7 @@ func UpdateCategory(dbClient *gorm.DB) echo.HandlerFunc {
 		})
 
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, category)
@@ -164,7 +168,7 @@ func DeleteCategory(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", categoryId).Delete(&model.Category{}).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, map[string]interface{}{

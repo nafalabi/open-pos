@@ -73,7 +73,9 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		order := model.Order{}
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		err := dbClient.Transaction(func(tx *gorm.DB) error {
@@ -103,7 +105,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			return nil
 		})
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, order)
@@ -149,7 +151,9 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		if dateText != "" {
 			selectedDate, error := time.Parse("2006-01-02", dateText)
 			if error != nil {
-				return utils.SendError(c, utils.ConstructError("invalid date filter"))
+				return utils.ApiError{
+					Message: "invalid date filter",
+				}
 			}
 			startOfDay := selectedDate.Round(time.Hour * 24)
 			endOfDay := startOfDay.Add(time.Hour * 24)
@@ -188,7 +192,7 @@ func FindOrder(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := query.Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, order)
@@ -210,27 +214,35 @@ func CashpayOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		var payload PayOrderCashPayload
 
 		if err := utils.BindAndValidate(c, &payload); err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		err := dbClient.Where("id = ?", id).First(&order).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		err = dbClient.Transaction(func(tx *gorm.DB) error {
 			paymentMethod := order.PaymentMethod
 
 			if paymentMethod != "cash" {
-				return utils.ConstructError("Sorry the method you choose is currently underdevelopment")
+				return utils.ApiError{
+					Message: "Sorry the method you choose is currently underdevelopment",
+				}
 			}
 
 			if order.Status != enum.StatusPending {
-				return utils.ConstructError("The order is already paid / canceled")
+				return utils.ApiError{
+					Message: "The order is already paid / canceled",
+				}
 			}
 
 			if (payload.InputAmount - payload.TipAmount) < order.Total {
-				return utils.ConstructError("Payment amount was not met")
+				return utils.ApiError{
+					Message: "Payment amount was not met",
+				}
 			}
 
 			changeAmount := payload.InputAmount - payload.TipAmount - order.Total
@@ -254,7 +266,7 @@ func CashpayOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		})
 
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, order)
@@ -275,12 +287,13 @@ func CompleteOrder(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ?", id).First(&order).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		if order.Status != enum.StatusPaid {
-			err := utils.ConstructError("Unable to complete the order, the order was not paid.")
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Unable to complete the order, the order was not paid.",
+			}
 		}
 
 		order.Status = enum.StatusCompleted
@@ -304,11 +317,12 @@ func CancelOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		var order model.Order
 		err := dbClient.Where("id = ?", id).First(&order).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 		if order.Status != enum.StatusPending {
-			err := utils.ConstructError("Unable to cancel the order, can only cancel pending orders.")
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Unable to cancel the order, can only cancel pending orders.",
+			}
 		}
 		order.Status = enum.StatusCanceled
 		dbClient.Save(&order)

@@ -20,11 +20,13 @@ import (
 // @Router		/images [post]
 func UploadImage(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		commonErrorMsg := utils.ConstructError("Failed to upload file")
+		commonErrorMsg := utils.ApiError{
+			Message: "Failed to upload file",
+		}
 
 		file, err := c.FormFile("file")
 		if err != nil {
-			return utils.SendError(c, commonErrorMsg)
+			return commonErrorMsg
 		}
 
 		imageId := uuid.NewString()
@@ -35,13 +37,13 @@ func UploadImage(dbClient *gorm.DB) echo.HandlerFunc {
 
 		src, err := file.Open()
 		if err != nil {
-			return utils.SendError(c, commonErrorMsg)
+			return commonErrorMsg
 		}
 		defer src.Close()
 
 		processedImage, err := imaging.Decode(src)
 		if err != nil {
-			return utils.SendError(c, commonErrorMsg)
+			return commonErrorMsg
 		}
 
 		optimizeDimension := getOptimizeResolution(Dimension{
@@ -54,7 +56,7 @@ func UploadImage(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err = imaging.Save(processedImage, filepath)
 		if err != nil {
-			return utils.SendError(c, commonErrorMsg)
+			return commonErrorMsg
 		}
 
 		imageUri := fmt.Sprintf("/images/%s", filename)

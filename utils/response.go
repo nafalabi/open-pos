@@ -7,15 +7,6 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// type response_util struct {
-// 	HTTPError            response_error
-// 	HTTPSuccess          response_success
-// 	HTTPSuccessPaginated response_success_paginated
-// 	Pagination           pagination
-// }
-//
-// var Response response_util
-
 func SendSuccess(context echo.Context, data interface{}) error {
 	return context.JSON(http.StatusOK, Response_success{
 		Code: 200,
@@ -39,16 +30,11 @@ func SendSuccessPaginated(
 	return context.JSON(http.StatusOK, response)
 }
 
-func SendErrorPlain(context echo.Context, httpCode int, message string) error {
+func SendError(context echo.Context, httpCode int, message string) error {
 	return context.JSON(httpCode, Response_error{
 		Code:    httpCode,
 		Message: message,
 	})
-}
-
-func SendError(context echo.Context, error error) error {
-	httpCode, message := TranslateGormError(error)
-	return SendErrorPlain(context, httpCode, message)
 }
 
 type Response_error struct {

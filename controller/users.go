@@ -45,24 +45,30 @@ func Register(dbClient *gorm.DB) echo.HandlerFunc {
 		var reqBody UserPayload
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		if reqBody.Level == enum.Admin {
-			err := utils.ConstructError("Can't register admin level user")
-			return utils.SendError(c, err)
+			err := utils.ApiError{
+				Message: "Can't register admin level user",
+			}
+			return err
 		}
 
 		if reqBody.Password == "" {
-			err := utils.ConstructError("Password is required")
-			return utils.SendError(c, err)
+			err := utils.ApiError{
+				Message: "Password is required",
+			}
+			return err
 		}
 
 		var user model.User
 
 		err := reqBody.Fill(&user)
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		dbClient.Create(&user)
@@ -108,7 +114,7 @@ func FindUser(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", userId).First(&user).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, user)
@@ -131,12 +137,14 @@ func UpdateUser(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := utils.BindAndValidate(c, &reqBody)
 		if err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		err = dbClient.Where("id = ? ", userId).First(&user).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		reqBody.Fill(&user)
@@ -159,7 +167,7 @@ func DeleteUser(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", userId).Delete(&model.User{}).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, map[string]interface{}{

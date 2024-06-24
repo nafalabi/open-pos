@@ -40,7 +40,9 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		reqBody := ProductPayload{}
 
 		if err := utils.BindAndValidate(c, &reqBody); err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		product := model.Product{}
@@ -69,7 +71,7 @@ func CreateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 			return nil
 		})
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, product)
@@ -137,7 +139,7 @@ func FindProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", productId).Preload("Categories").First(&product).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, product)
@@ -160,12 +162,14 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := utils.BindAndValidate(c, &reqBody)
 		if err != nil {
-			return utils.SendError(c, err)
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
 		}
 
 		err = dbClient.Where("id = ? ", productId).First(&product).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		err = dbClient.Transaction(func(tx *gorm.DB) error {
@@ -194,7 +198,7 @@ func UpdateProduct(dbClient *gorm.DB) echo.HandlerFunc {
 		})
 
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, product)
@@ -214,7 +218,7 @@ func DeleteProduct(dbClient *gorm.DB) echo.HandlerFunc {
 
 		err := dbClient.Where("id = ? ", productId).Delete(&model.Product{}).Error
 		if err != nil {
-			return utils.SendError(c, err)
+			return err
 		}
 
 		return utils.SendSuccess(c, map[string]interface{}{
