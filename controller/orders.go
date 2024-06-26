@@ -90,7 +90,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			subtotal := lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
 				return acc + item.SubTotal
 			}, 0)
-			paymentFee := CalculatePaymentFee(paymentMethod, order.SubTotal)
+			paymentFee := CalculatePaymentFee(paymentMethod, subtotal)
 
 			order.Recipient = reqBody.Recipient
 			order.Remarks = reqBody.Remarks
