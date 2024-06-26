@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"net/http"
 	"open-pos/enum"
 	"open-pos/model"
 	service "open-pos/service/payment-gateway"
@@ -102,17 +103,26 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 
 			err = tx.Create(&order).Error
 			if err != nil {
-				return err
+				return utils.ApiError{
+					Code:    http.StatusUnprocessableEntity,
+					Message: "Failed to create order",
+				}
 			}
 
 			paygate, err := service.NewPaymentGateway(reqBody.PaymentMethod, tx)
 			if err != nil {
-				return err
+				return utils.ApiError{
+					Code:    http.StatusUnprocessableEntity,
+					Message: "Failed to setup payment gateway",
+				}
 			}
 
 			err = paygate.ChargeTransaction(order, nil)
 			if err != nil {
-				return err
+				return utils.ApiError{
+					Code:    http.StatusUnprocessableEntity,
+					Message: "Failed to charge Order",
+				}
 			}
 
 			return nil
