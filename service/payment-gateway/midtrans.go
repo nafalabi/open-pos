@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"open-pos/model"
 	"os"
+	"strconv"
 	"time"
 
 	"gorm.io/datatypes"
@@ -105,6 +106,7 @@ func (m *Midtrans) ChargeTransaction(order model.Order, out *map[string]any) err
 		StatusCode        string `json:"status_code"`
 		TransactionStatus string `json:"transaction_status"`
 		ExpiryTime        string `json:"expiry_time"`
+		GrossAmount       string `json:"gross_amount"`
 		Actions           []struct {
 			Name   string `json:"name"`
 			Method string `json:"method"`
@@ -139,6 +141,7 @@ func (m *Midtrans) ChargeTransaction(order model.Order, out *map[string]any) err
 			ExpireAt:       expirationTime,
 			MidtransDetail: &midtransDetailJSON,
 		}
+		paymentInfo.GrossAmount, _ = strconv.ParseFloat(result.GrossAmount, 64)
 		err := tx.Create(&paymentInfo).Error
 		if err != nil {
 			return err

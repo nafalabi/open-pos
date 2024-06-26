@@ -11,6 +11,7 @@ type PaymentInfo struct {
 	OrderID        string                              `json:"order_id" gorm:"index"`
 	PaymentGateway string                              `json:"payment_gateway"`
 	PaymentType    string                              `json:"payment_type"`
+	GrossAmount    float64                             `json:"gross_amount"`
 	MidtransDetail *datatypes.JSONType[MidtransDetail] `json:"midtrans_detail"`
 	ExpireAt       time.Time                           `json:"expire_at"`
 }
