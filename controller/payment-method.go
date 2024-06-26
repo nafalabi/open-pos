@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/samber/lo"
 	"gorm.io/gorm"
 )
 
@@ -44,26 +45,30 @@ func GetAvailableMethod() []PaymentMethod {
 	}
 }
 
-func CalculatePaymentFee(code string, totalAmount float64) (paymentFee float64, err error) {
-	methods := GetAvailableMethod()
+func FindMethod(code string) (PaymentMethod, error) {
+	var result PaymentMethod
 
+	methods := GetAvailableMethod()
 	idx := slices.IndexFunc(methods, func(m PaymentMethod) bool { return m.Code == code })
 	if idx == -1 {
 		error := utils.ApiError{
 			Message: "The specified payment method can't be found",
 		}
-		return paymentFee, error
+		return result, error
 	}
 
 	method := methods[idx]
+	return method, nil
+}
 
+func CalculatePaymentFee(method PaymentMethod, totalAmount float64) (paymentFee float64) {
 	if method.FeeType == PercentagePaymentFee {
 		paymentFee = totalAmount * method.Variable
 	} else if method.FeeType == FixedPaymentFee {
 		paymentFee = method.Variable
 	}
 
-	return paymentFee, nil
+	return paymentFee
 }
 
 // @Summary	list of payment method
@@ -76,7 +81,14 @@ func ListPaymentMethod(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		methods := GetAvailableMethod()
 
-		return utils.SendSuccessPaginated(c, methods, 1, len(methods), len(methods))
+		safeList := lo.Map(methods, func(item PaymentMethod, _ int) map[string]any {
+			return map[string]any{
+				"code": item.Code,
+				"name": item.Name,
+			}
+		})
+
+		return utils.SendSuccessPaginated(c, safeList, 1, len(methods), len(methods))
 	}
 }
 
@@ -90,16 +102,11 @@ func ListPaymentMethod(dbClient *gorm.DB) echo.HandlerFunc {
 func FindPaymentMethod(dbClient *gorm.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		payment_code := c.Param("code")
-		methods := GetAvailableMethod()
 
-		idx := slices.IndexFunc(methods, func(m PaymentMethod) bool { return m.Code == payment_code })
-		if idx == -1 {
-			return utils.ApiError{
-				Message: "The specified payment method can't be found",
-			}
+		method, err := FindMethod(payment_code)
+		if err != nil {
+			return err
 		}
-
-		method := methods[idx]
 
 		return utils.SendSuccess(c, method)
 	}
@@ -126,10 +133,11 @@ func GetPaymentFee(dbClient *gorm.DB) echo.HandlerFunc {
 			}
 		}
 
-		paymentFee, err := CalculatePaymentFee(payment_code, totalAmount)
+		method, err := FindMethod(payment_code)
 		if err != nil {
 			return err
 		}
+		paymentFee := CalculatePaymentFee(method, totalAmount)
 
 		result := map[string]float64{
 			"payment_fee": paymentFee,

@@ -7,40 +7,35 @@ import (
 	"gorm.io/gorm"
 )
 
-type db_utils struct {
-	DbClient *gorm.DB
-}
-
-func (dbu *db_utils) ConnectDB() *gorm.DB {
+func ConnectDB() *gorm.DB {
 	db, err := gorm.Open(sqlite.Open("app.db"), &gorm.Config{})
 	if err != nil {
 		panic("failed to connect database")
 	}
-	dbu.DbClient = db
 	return db
 }
 
-func (dbu *db_utils) DisconnectDB() {
-	sqlDB, err := dbu.DbClient.DB()
+func DisconnectDB(dbClient *gorm.DB) {
+	sqlDB, err := dbClient.DB()
 	if err != nil {
 		panic(err)
 	}
 	sqlDB.Close()
-	dbu.DbClient = nil
+	dbClient = nil
 }
 
-func (dbu *db_utils) AutoMigrate() {
-	err := dbu.DbClient.AutoMigrate(
+func AutoMigrateDB(dbClient *gorm.DB) {
+	err := dbClient.AutoMigrate(
 		&model.Product{},
 		&model.User{},
 		&model.Category{},
 		&model.Order{},
 		&model.OrderItem{},
-    &model.Transaction{},
+		&model.Transaction{},
+		&model.PaymentInfo{},
+		&model.MidtransEvent{},
 	)
 	if err != nil {
 		panic(err)
 	}
 }
-
-var DB db_utils

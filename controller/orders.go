@@ -3,6 +3,7 @@ package controller
 import (
 	"open-pos/enum"
 	"open-pos/model"
+	service "open-pos/service/payment-gateway"
 	"open-pos/utils"
 	"time"
 
@@ -79,29 +80,41 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		}
 
 		err := dbClient.Transaction(func(tx *gorm.DB) error {
+			paymentMethod, err := FindMethod(reqBody.PaymentMethod)
+			if err != nil {
+				return err
+			}
+
 			items := reqBody.GetItems(tx)
+			subtotal := lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
+				return acc + item.SubTotal
+			}, 0)
+			paymentFee := CalculatePaymentFee(paymentMethod, order.SubTotal)
 
 			order.Recipient = reqBody.Recipient
 			order.Remarks = reqBody.Remarks
 			order.Items = items
 			order.PaymentMethod = reqBody.PaymentMethod
 			order.Status = enum.StatusPending
-			order.SubTotal = lo.Reduce(items, func(acc float64, item model.OrderItem, _ int) float64 {
-				return acc + item.SubTotal
-			}, 0)
-
-			paymentFee, err := CalculatePaymentFee(reqBody.PaymentMethod, order.SubTotal)
-			if err != nil {
-				return err
-			}
-
 			order.PaymentFee = paymentFee
+			order.SubTotal = subtotal
 			order.Total = order.SubTotal + order.PaymentFee
 
 			err = tx.Create(&order).Error
 			if err != nil {
 				return err
 			}
+
+			paygate, err := service.NewPaymentGateway(reqBody.PaymentMethod, tx)
+			if err != nil {
+				return err
+			}
+
+			err = paygate.ChargeTransaction(order, nil)
+			if err != nil {
+				return err
+			}
+
 			return nil
 		})
 		if err != nil {
@@ -229,7 +242,7 @@ func CashpayOrder(dbClient *gorm.DB) echo.HandlerFunc {
 
 			if paymentMethod != "cash" {
 				return utils.ApiError{
-					Message: "Sorry the method you choose is currently underdevelopment",
+					Message: "The payment method used is not supported",
 				}
 			}
 

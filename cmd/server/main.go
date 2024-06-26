@@ -25,10 +25,9 @@ func main() {
 
 	e := echo.New()
 
-	utils.DB.ConnectDB()
-	utils.DB.AutoMigrate()
-	dbClient := utils.DB.DbClient
-	defer utils.DB.DisconnectDB()
+	dbClient := utils.ConnectDB()
+	utils.AutoMigrateDB(dbClient)
+	defer utils.DisconnectDB(dbClient)
 
 	utils.SetupValidator(e)
 	utils.SetupErrorHandler(e)

@@ -9,7 +9,8 @@ type Transaction struct {
 	TipAmount    float64              `json:"tip_amount"`
 	ChangeAmount float64              `json:"change_amount"`
 	Type         enum.TransactionType `json:"type" validate:"required"`
-	Gateway      string               `json:"gateway" validate:"required"`
+	Gateway      string               `json:"gateway"`
+	PaymentType  string               `json:"payment_type"`
 	Reference    string               `json:"reference"`
 	Notes        string               `json:"notes"`
 	OrderID      string               `gorm:"index" json:"order_id"`

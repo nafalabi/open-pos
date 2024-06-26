@@ -32,10 +32,9 @@ func generateAdmin(tmpEmail string, tmpPassword string) {
 		fmt.Println()
 	}
 
-	utils.DB.ConnectDB()
-	utils.DB.AutoMigrate()
-	dbClient := utils.DB.DbClient
-	defer utils.DB.DisconnectDB()
+	dbClient := utils.ConnectDB()
+	utils.AutoMigrateDB(dbClient)
+	defer utils.DisconnectDB(dbClient)
 
 	var user model.User
 	var userData controller.UserPayload
