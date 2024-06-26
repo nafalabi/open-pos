@@ -109,7 +109,11 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 				}
 			}
 
-			paygate, err := service.NewPaymentGateway(reqBody.PaymentMethod, tx)
+			if order.PaymentMethod == "cash" {
+				return nil
+			}
+
+			paygate, err := service.NewPaymentGateway(order.PaymentMethod, tx)
 			if err != nil {
 				return utils.ApiError{
 					Code:    http.StatusUnprocessableEntity,

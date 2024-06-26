@@ -36,7 +36,7 @@ func (e ApiError) Error() string {
 func SetupErrorHandler(e *echo.Echo) {
 	e.HTTPErrorHandler = func(err error, c echo.Context) {
 		if apiErr, ok := err.(ApiError); ok {
-			var code int
+			code := apiErr.Code
 			message := apiErr.Message
 			if apiErr.Code == 0 {
 				code = http.StatusBadRequest
