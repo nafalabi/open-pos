@@ -46,7 +46,14 @@ func SetupErrorHandler(e *echo.Echo) {
 				panic(e)
 			}
 			return
+		} else if httpErr, ok := err.(*echo.HTTPError); ok {
+			e := SendError(c, httpErr.Code, httpErr.Message.(string))
+			if e != nil {
+				panic(e)
+			}
+			return
 		}
+
 		code, message := TranslateGormError(err)
 		e := SendError(c, code, message)
 		if e != nil {
