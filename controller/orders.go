@@ -356,3 +356,27 @@ func CancelOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		return utils.SendSuccess(c, order)
 	}
 }
+
+// @Summary	Get Payment Info
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"order id"
+// @Router		/orders/{id}/payment-info [get]
+func GetPaymentInfo(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+		var paymentInfo model.PaymentInfo
+
+		err := dbClient.Where("order_id = ?", id).First(&paymentInfo).Error
+		if err != nil {
+			return utils.ApiError{
+				Code:    http.StatusNotFound,
+				Message: "Unable to find payment info",
+			}
+		}
+
+		return utils.SendSuccess(c, paymentInfo)
+	}
+}

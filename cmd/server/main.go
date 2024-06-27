@@ -79,6 +79,7 @@ func main() {
 	orders.POST("/:id/cashpay", utils.RegisterController(dbClient, controller.CashpayOrder))
 	orders.POST("/:id/complete", utils.RegisterController(dbClient, controller.CompleteOrder))
 	orders.POST("/:id/cancel", utils.RegisterController(dbClient, controller.CancelOrder))
+	orders.GET("/:id/payment-info", utils.RegisterController(dbClient, controller.GetPaymentInfo))
 
 	paymentmethods := e.Group("/payment-methods")
 	paymentmethods.Use(jwtMiddleware)
