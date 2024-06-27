@@ -61,6 +61,7 @@ export interface Model_Transaction {
   change_amount: number;
   type: string;
   gateway: string;
+  payment_type: string;
   reference: string;
   notes: string;
   order_id: string;
@@ -70,4 +71,32 @@ export interface Model_PaymentMethod {
   name: string;
   fee_type: string;
   variable: number;
+}
+export interface Model_PaymentInfo {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  order_id: string;
+  payment_gateway: string;
+  payment_type: string;
+  gross_amount: number;
+  midtrans_detail?: Model_MidtransDetail;
+  expire_at: string;
+}
+export interface Model_MidtransDetail {
+  ref_id: string;
+  status_code: string;
+  transaction_status: string;
+  qr_link: string;
+  qr_string: string;
+  virtual_account: string;
+}
+export interface Model_MidtransEvent {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  order_id: string;
+  ref_id: string;
+  raw_data: string;
+  event_type: string;
 }
