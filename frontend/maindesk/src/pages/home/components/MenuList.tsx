@@ -85,7 +85,6 @@ const MenuList = () => {
   });
 
   useEffect(() => {
-    console.log('trace')
     if (!queryClient.isFetching) {
       queryClient.removeQueries({ queryKey: ["products"] });
     }
