@@ -400,6 +400,24 @@ paths:
       summary: Mark order as completed
       tags:
       - Orders
+  /orders/{id}/payment-info:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Get Payment Info
+      tags:
+      - Orders
   /payment-methods:
     get:
       consumes:
