@@ -1,4 +1,4 @@
-import { Model_Order } from "@/generated/models";
+import { Model_Order, Model_PaymentInfo } from "@/generated/models";
 import { apiSingleton } from "./api-singleton";
 import { PaginationParams, SortParams } from "./types";
 import { OrderPayload, PayOrderCashPayload } from "@/generated/schema";
@@ -37,3 +37,8 @@ export const cancelOrder = async (orderId: string) => {
   const { requestor } = apiSingleton;
   return await requestor.POST(`/orders/${orderId}/cancel`, {});
 };
+
+export const getPaymentInfo = async (orderId: string) => {
+  const { requestor } = apiSingleton;
+  return await requestor.GET<Model_PaymentInfo>(`/orders/${orderId}/payment-info`);
+}

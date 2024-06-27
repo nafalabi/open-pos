@@ -59,7 +59,9 @@ const DetailOrderPanel = () => {
             {data.status === OrderStatus.StatusPending && (
               <>
                 {data.payment_method === "cash" && <PaymentCash order={data} />}
-                {data.payment_method === "midtrans_qris" && <PaymentQris />}
+                {data.payment_method === "midtrans_qris" && (
+                  <PaymentQris order={data} />
+                )}
                 <CancelOrder order={data} />
               </>
             )}
