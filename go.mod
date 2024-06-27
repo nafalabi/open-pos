@@ -19,8 +19,8 @@ require (
 	github.com/swaggo/echo-swagger v1.4.1
 	github.com/swaggo/swag v1.16.3
 	github.com/tkrajina/typescriptify-golang-structs v0.1.11
-	golang.org/x/crypto v0.22.0
-	golang.org/x/term v0.19.0
+	golang.org/x/crypto v0.23.0
+	golang.org/x/term v0.20.0
 	gorm.io/datatypes v1.2.1
 	gorm.io/driver/sqlite v1.5.4
 	gorm.io/gorm v1.25.9
@@ -55,12 +55,12 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
 	golang.org/x/exp v0.0.0-20220303212507-bbda1eaf7a17 // indirect
-	golang.org/x/image v0.16.0 // indirect
-	golang.org/x/net v0.23.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/image v0.18.0 // indirect
+	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	golang.org/x/tools v0.19.0 // indirect
+	golang.org/x/tools v0.21.1-0.20240508182429-e35e4ccd0d2d // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.6 // indirect
