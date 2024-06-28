@@ -42,16 +42,16 @@ export const MenuItemCard = ({ product }: MenuItemProps) => {
           className: "w-full aspect-square rounded-t-lg object-cover",
         }}
       />
-      <div className="p-4">
-        <h3 className="text-md font-bold">{product.name}</h3>
-        <p className="text-sm text-gray-500 mb-3 overflow-hidden text-ellipsis line-clamp-2">
+      <div className="p-4 h-auto">
+        <h3 className="text-sm font-bold overflow-hidden text-ellipsis line-clamp-1">{product.name}</h3>
+        <p className="text-xs text-gray-500 mb-3 overflow-hidden text-ellipsis line-clamp-2">
           {product.description}
         </p>
-        <div className="flex items-center justify-between gap-2 flex-wrap">
-          <span className="text-gray-900 font-medium">
+        <div className="flex flex-col items-start justify-between gap-2 flex-wrap mt-auto">
+          <span className="text-gray-900 font-medium text-sm px-1">
             {currency(product.price)}
           </span>
-          <Button size="sm" className="h-6 mt-auto" onClick={handleAddProduct}>
+          <Button size="sm" className="h-6 mt-auto w-full" onClick={handleAddProduct}>
             <PlusCircleIcon className="h-4 w-4" />
             &nbsp; Add
           </Button>
