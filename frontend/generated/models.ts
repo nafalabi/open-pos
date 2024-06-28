@@ -59,6 +59,7 @@ export interface Model_Transaction {
   input_amount: number;
   tip_amount: number;
   change_amount: number;
+  payment_fee: number;
   type: string;
   gateway: string;
   payment_type: string;
