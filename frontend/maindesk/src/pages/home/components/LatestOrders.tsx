@@ -63,9 +63,9 @@ const LatestOrders = () => {
         </Button>
       </div>
       <ScrollArea className="whitespace-nowrap">
-        <div className="flex gap-2 mb-3">
+        <div className="flex gap-2 mb-3 min-h-[122px]">
           {!isFetching && (data?.pages?.[0]?.data?.length ?? 0) < 1 && (
-            <div className="h-[100px] content-center">
+            <div className="h-[122px] content-center">
               There's no item to show
             </div>
           )}
