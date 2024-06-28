@@ -7,6 +7,7 @@ const (
 	StatusCanceled  OrderStatus = "canceled"
 	StatusPaid      OrderStatus = "paid"
 	StatusCompleted OrderStatus = "completed"
+	StatusExpired   OrderStatus = "expired"
 )
 
 func (status OrderStatus) CustomValidate() bool {
@@ -14,7 +15,8 @@ func (status OrderStatus) CustomValidate() bool {
 	case StatusPending,
 		StatusCanceled,
 		StatusPaid,
-		StatusCompleted:
+		StatusCompleted,
+		StatusExpired:
 		return true
 	default:
 		return false

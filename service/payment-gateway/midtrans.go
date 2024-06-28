@@ -2,10 +2,14 @@ package service
 
 import (
 	"bytes"
+	"crypto/sha512"
 	"encoding/base64"
+	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
+	"open-pos/enum"
 	"open-pos/model"
 	"os"
 	"strconv"
@@ -70,7 +74,19 @@ func (m *Midtrans) makeRequest(method string, path string, body io.Reader) (resu
 	return result, nil
 }
 
-func (m *Midtrans) ChargeTransaction(order model.Order, out *map[string]any) error {
+func (m *Midtrans) verifySignature(signature string, param struct {
+	OrderID     string
+	StatusCode  string
+	GrossAmount string
+},
+) bool {
+	hash := sha512.Sum512([]byte(param.OrderID + param.StatusCode + param.GrossAmount + m.serverkey))
+	hash_string := hex.EncodeToString(hash[:])
+
+	return signature == hash_string
+}
+
+func (m *Midtrans) ChargeTransaction(order *model.Order, out *map[string]any) error {
 	grossAmount := order.SubTotal + order.PaymentFee
 	orderTime := time.Now()
 
@@ -175,11 +191,121 @@ func (m *Midtrans) ChargeTransaction(order model.Order, out *map[string]any) err
 	return nil
 }
 
-func (m *Midtrans) CancelTransaction(o model.Order, out *map[string]any) error {
+func (m *Midtrans) CancelTransaction(o *model.Order, out *map[string]any) error {
 	return nil
 }
 
-func (m *Midtrans) StatusTransaction(o model.Order, out *map[string]any) error {
+func (m *Midtrans) StatusTransaction(o *model.Order, out *map[string]any) error {
+	resultRaw, err := m.makeRequest("GET", "/"+o.ID+"/status", nil)
+	if err != nil {
+		return errors.New("Failed to make http request")
+	}
+
+	var result struct {
+		StatusCode               string `json:"status_code"`
+		StatusMessage            string `json:"status_message"`
+		TransactionID            string `json:"transaction_id"`
+		OrderID                  string `json:"order_id"`
+		PaymentType              string `json:"payment_type"`
+		TransactionTime          string `json:"transaction_time"`
+		TransactionStatus        string `json:"transaction_status"`
+		FraudStatus              string `json:"fraud_status"`
+		ApprovalCode             string `json:"approval_code"`
+		SignatureKey             string `json:"signature_key"`
+		Bank                     string `json:"bank"`
+		GrossAmount              string `json:"gross_amount"`
+		ChannelResponseCode      string `json:"channel_response_code"`
+		ChannelResponseMessage   string `json:"channel_response_message"`
+		CardType                 string `json:"card_type"`
+		PaymentOptionType        string `json:"payment_option_type"`
+		ShopeepayReferenceNumber string `json:"shopeepay_reference_number"`
+		ReferenceID              string `json:"reference_id"`
+	}
+
+	err = json.Unmarshal(resultRaw, &result)
+	if err != nil {
+		return errors.New("Failed to unmarshal response")
+	}
+
+	ok := m.verifySignature(result.SignatureKey, struct {
+		OrderID     string
+		StatusCode  string
+		GrossAmount string
+	}{
+		OrderID:     o.ID,
+		StatusCode:  result.StatusCode,
+		GrossAmount: result.GrossAmount,
+	})
+	if !ok {
+		return errors.New("The signature is invalid")
+	}
+
+	var orderStatus enum.OrderStatus
+
+	switch result.TransactionStatus {
+	case "settlement":
+		orderStatus = enum.StatusPaid
+	case "pending":
+		orderStatus = enum.StatusPending
+	case "cancel":
+		orderStatus = enum.StatusCanceled
+	case "expire":
+		orderStatus = enum.StatusExpired
+	}
+
+	if orderStatus == o.Status {
+		return nil
+	}
+
+	err = m.tx.Transaction(func(tx *gorm.DB) error {
+		switch orderStatus {
+		case enum.StatusPaid:
+			transRecord := model.Transaction{
+				Type:         enum.TransactionPay,
+				Gateway:      "midtrans",
+				PaymentType:  m.params.PaymentType,
+				PaymentFee:   o.PaymentFee,
+				InputAmount:  o.Total,
+				ExpectAmount: o.Total,
+				OrderID:      o.ID,
+			}
+			err := tx.Save(&transRecord).Error
+			if err != nil {
+				return errors.New("Unable to create transaction record")
+			}
+		case enum.StatusCanceled:
+		case enum.StatusExpired:
+		}
+
+		o.Status = orderStatus
+		err := tx.Save(&o).Error
+		if err != nil {
+			return errors.New("Failed to update order")
+		}
+
+		paymentInfo := model.PaymentInfo{}
+		err = tx.Where("order_id = ?", o.ID).First(&paymentInfo).Error
+		if err != nil {
+			return errors.New("Unable to find payment info")
+		}
+
+		midtransDetail := paymentInfo.MidtransDetail.Data()
+		midtransDetail.TransactionStatus = result.TransactionStatus
+		midtransDetail.StatusCode = result.StatusCode
+		updatedMidtransDetail := datatypes.NewJSONType(midtransDetail)
+		paymentInfo.MidtransDetail = &updatedMidtransDetail
+
+		err = tx.Save(&paymentInfo).Error
+		if err != nil {
+			return errors.New("Failed to update payment info")
+		}
+
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

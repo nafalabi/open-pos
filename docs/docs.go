@@ -510,6 +510,35 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/orders/{id}/refresh-status": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Refresh Order Status",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "order id",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/payment-methods": {
             "get": {
                 "security": [

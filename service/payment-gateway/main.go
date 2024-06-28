@@ -8,9 +8,9 @@ import (
 )
 
 type PaymentGateway interface {
-	ChargeTransaction(o model.Order, out *map[string]any) error
-	CancelTransaction(o model.Order, out *map[string]any) error
-	StatusTransaction(o model.Order, out *map[string]any) error
+	ChargeTransaction(o *model.Order, out *map[string]any) error
+	CancelTransaction(o *model.Order, out *map[string]any) error
+	StatusTransaction(o *model.Order, out *map[string]any) error
 	SettleTransaction(param any, out *map[string]any) error
 }
 

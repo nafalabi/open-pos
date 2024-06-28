@@ -418,6 +418,24 @@ paths:
       summary: Get Payment Info
       tags:
       - Orders
+  /orders/{id}/refresh-status:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: order id
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: Refresh Order Status
+      tags:
+      - Orders
   /payment-methods:
     get:
       consumes:

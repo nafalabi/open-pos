@@ -121,7 +121,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 				}
 			}
 
-			err = paygate.ChargeTransaction(order, nil)
+			err = paygate.ChargeTransaction(&order, nil)
 			if err != nil {
 				return utils.ApiError{
 					Code:    http.StatusUnprocessableEntity,
@@ -378,5 +378,53 @@ func GetPaymentInfo(dbClient *gorm.DB) echo.HandlerFunc {
 		}
 
 		return utils.SendSuccess(c, paymentInfo)
+	}
+}
+
+// @Summary	Refresh Order Status
+// @Security	ApiKeyAuth
+// @Tags		Orders
+// @Accept		json
+// @Produce	json
+// @Param		id	path	string	true	"order id"
+// @Router		/orders/{id}/refresh-status [post]
+func RefreshOrderStatus(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		id := c.Param("id")
+		var order model.Order
+
+		err := dbClient.Where("id = ?", id).First(&order).Error
+		if err != nil {
+			return utils.ApiError{
+				Code:    http.StatusNotFound,
+				Message: "Unable to find order",
+			}
+		}
+
+		err = dbClient.Transaction(func(tx *gorm.DB) error {
+			paygate, err := service.NewPaymentGateway(order.PaymentMethod, tx)
+			if err != nil {
+				return utils.ApiError{
+					Code:    http.StatusUnprocessableEntity,
+					Message: err.Error(),
+				}
+			}
+
+			err = paygate.StatusTransaction(&order, nil)
+			if err != nil {
+				return utils.ApiError{
+					Code:    http.StatusUnprocessableEntity,
+          Message: "an error occured: " + err.Error(),
+				}
+			}
+
+			return nil
+		})
+
+		if err != nil {
+			return err
+		}
+
+		return utils.SendSuccess(c, order)
 	}
 }

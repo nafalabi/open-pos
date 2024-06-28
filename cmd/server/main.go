@@ -80,6 +80,7 @@ func main() {
 	orders.POST("/:id/complete", utils.RegisterController(dbClient, controller.CompleteOrder))
 	orders.POST("/:id/cancel", utils.RegisterController(dbClient, controller.CancelOrder))
 	orders.GET("/:id/payment-info", utils.RegisterController(dbClient, controller.GetPaymentInfo))
+	orders.POST("/:id/refresh-status", utils.RegisterController(dbClient, controller.RefreshOrderStatus))
 
 	paymentmethods := e.Group("/payment-methods")
 	paymentmethods.Use(jwtMiddleware)
