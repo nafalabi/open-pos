@@ -71,7 +71,7 @@ const PaymentQris = ({ order }: { order: Model_Order }) => {
         )}
 
         {isExpired ? (
-          <div className="h-auto w-full min-h-[220px] squared text-center">
+          <div className="h-auto w-full min-h-[220px] squared text-center content-center bg-gray-100 rounded-sm mt-4 text-gray-700">
             QRIS is expired
           </div>
         ) : (
