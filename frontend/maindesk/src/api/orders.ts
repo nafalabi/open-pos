@@ -42,3 +42,8 @@ export const getPaymentInfo = async (orderId: string) => {
   const { requestor } = apiSingleton;
   return await requestor.GET<Model_PaymentInfo>(`/orders/${orderId}/payment-info`);
 }
+
+export const refreshOrderStatus = async (orderId: string ) => {
+  const { requestor } = apiSingleton;
+  return await requestor.POST<Model_Order>(`/orders/${orderId}/refresh-status`, {});
+}
