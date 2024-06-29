@@ -24,6 +24,12 @@ type MidtransParams struct {
 	QrisAcuirer string
 }
 
+type SignatureVerificationParam struct {
+	OrderID     string
+	StatusCode  string
+	GrossAmount string
+}
+
 type Midtrans struct {
 	tx         *gorm.DB
 	params     MidtransParams
@@ -74,11 +80,7 @@ func (m *Midtrans) makeRequest(method string, path string, body io.Reader) (resu
 	return result, nil
 }
 
-func (m *Midtrans) verifySignature(signature string, param struct {
-	OrderID     string
-	StatusCode  string
-	GrossAmount string
-},
+func (m *Midtrans) VerifySignature(signature string, param SignatureVerificationParam,
 ) bool {
 	hash := sha512.Sum512([]byte(param.OrderID + param.StatusCode + param.GrossAmount + m.serverkey))
 	hash_string := hex.EncodeToString(hash[:])
@@ -227,11 +229,7 @@ func (m *Midtrans) StatusTransaction(o *model.Order, out *map[string]any) error 
 		return errors.New("Failed to unmarshal response")
 	}
 
-	ok := m.verifySignature(result.SignatureKey, struct {
-		OrderID     string
-		StatusCode  string
-		GrossAmount string
-	}{
+	ok := m.VerifySignature(result.SignatureKey, SignatureVerificationParam{
 		OrderID:     o.ID,
 		StatusCode:  result.StatusCode,
 		GrossAmount: result.GrossAmount,

@@ -2,6 +2,7 @@ package main
 
 import (
 	"open-pos/controller"
+	controller_webhook "open-pos/controller/webhook"
 	_ "open-pos/docs"
 	utils "open-pos/utils"
 
@@ -87,6 +88,9 @@ func main() {
 	paymentmethods.GET("", utils.RegisterController(dbClient, controller.ListPaymentMethod))
 	paymentmethods.GET("/:code", utils.RegisterController(dbClient, controller.FindPaymentMethod))
 	paymentmethods.GET("/:code/fee", utils.RegisterController(dbClient, controller.GetPaymentFee))
+
+	webhook := e.Group("/webhook")
+	webhook.POST("/midtrans", utils.RegisterController(dbClient, controller_webhook.HandleMidtransNotification))
 
 	e.Logger.Fatal(e.Start(":8080"))
 }
