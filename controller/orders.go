@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"open-pos/enum"
 	"open-pos/model"
-	service "open-pos/service/payment-gateway"
+	"open-pos/service/payment-gateway"
 	"open-pos/utils"
 	"time"
 
@@ -113,7 +113,7 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 				return nil
 			}
 
-			paygate, err := service.NewPaymentGateway(order.PaymentMethod, tx)
+			paygate, err := payment_gateway.NewPaymentGateway(order.PaymentMethod, tx)
 			if err != nil {
 				return utils.ApiError{
 					Code:    http.StatusUnprocessableEntity,
@@ -402,7 +402,7 @@ func RefreshOrderStatus(dbClient *gorm.DB) echo.HandlerFunc {
 		}
 
 		err = dbClient.Transaction(func(tx *gorm.DB) error {
-			paygate, err := service.NewPaymentGateway(order.PaymentMethod, tx)
+			paygate, err := payment_gateway.NewPaymentGateway(order.PaymentMethod, tx)
 			if err != nil {
 				return utils.ApiError{
 					Code:    http.StatusUnprocessableEntity,
@@ -414,7 +414,7 @@ func RefreshOrderStatus(dbClient *gorm.DB) echo.HandlerFunc {
 			if err != nil {
 				return utils.ApiError{
 					Code:    http.StatusUnprocessableEntity,
-          Message: "an error occured: " + err.Error(),
+					Message: "an error occured: " + err.Error(),
 				}
 			}
 

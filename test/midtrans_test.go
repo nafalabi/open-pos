@@ -2,7 +2,7 @@ package test
 
 import (
 	"open-pos/model"
-	service "open-pos/service/payment-gateway"
+	"open-pos/service/payment-gateway"
 	"open-pos/utils"
 	"testing"
 
@@ -35,12 +35,12 @@ func Test_Charge_QRIS(t *testing.T) {
 	}
 	var output map[string]any
 
-	params := service.MidtransParams{
+	params := payment_gateway.MidtransParams{
 		PaymentType: "qris",
 		QrisAcuirer: "gopay",
 	}
-	midtrans := service.NewMidtrans(params, dbClient)
-	err := midtrans.ChargeTransaction(order, &output)
+	midtrans := payment_gateway.NewMidtrans(params, dbClient)
+	err := midtrans.ChargeTransaction(&order, &output)
 	assert.Nil(t, err, "Error happened")
 
 	paymentInfo, ok := output["info"].(model.PaymentInfo)

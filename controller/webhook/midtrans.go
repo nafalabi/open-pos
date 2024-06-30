@@ -3,7 +3,7 @@ package controller_webhook
 import (
 	"net/http"
 	"open-pos/model"
-	service "open-pos/service/payment-gateway"
+	"open-pos/service/payment-gateway"
 	"open-pos/utils"
 
 	"github.com/labstack/echo/v4"
@@ -40,13 +40,13 @@ func HandleMidtransNotification(dbClient *gorm.DB) echo.HandlerFunc {
 			}
 		}
 
-		param := service.MidtransParams{
+		param := payment_gateway.MidtransParams{
 			PaymentType: reqBody.PaymentType,
 			QrisAcuirer: reqBody.Acquirer,
 		}
-		midtrans := service.NewMidtrans(param, dbClient)
+		midtrans := payment_gateway.NewMidtrans(param, dbClient)
 
-		isAuthentic := midtrans.VerifySignature(reqBody.SignatureKey, service.SignatureVerificationParam{
+		isAuthentic := midtrans.VerifySignature(reqBody.SignatureKey, payment_gateway.SignatureVerificationParam{
 			OrderID:     reqBody.OrderID,
 			StatusCode:  reqBody.StatusCode,
 			GrossAmount: reqBody.GrossAmount,

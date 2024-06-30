@@ -1,4 +1,4 @@
-package service
+package payment_gateway
 
 import (
 	"bytes"
