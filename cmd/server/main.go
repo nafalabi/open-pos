@@ -4,6 +4,7 @@ import (
 	"open-pos/controller"
 	controller_webhook "open-pos/controller/webhook"
 	_ "open-pos/docs"
+	live_notifier "open-pos/service/live-notifier"
 	utils "open-pos/utils"
 
 	"github.com/joho/godotenv"
@@ -35,6 +36,9 @@ func main() {
 
 	jwtUtils := utils.NewJwt()
 	jwtMiddleware := jwtUtils.SetupMiddleware()
+
+	liveNotifier := live_notifier.New()
+	go liveNotifier.RunListener()
 
 	e.GET("/swagger/*", echoSwagger.EchoWrapHandler(func(conf *echoSwagger.Config) {
 		conf.PersistAuthorization = true
@@ -90,7 +94,11 @@ func main() {
 	paymentmethods.GET("/:code/fee", utils.RegisterController(dbClient, controller.GetPaymentFee))
 
 	webhook := e.Group("/webhook")
-	webhook.POST("/midtrans", utils.RegisterController(dbClient, controller_webhook.HandleMidtransNotification))
+	webhook.POST("/midtrans", controller_webhook.HandleMidtransNotification(dbClient, liveNotifier))
+
+	ln := e.Group("/live-notifier")
+	// ln.Use(jwtMiddleware)
+	ln.GET("", func(c echo.Context) error { return liveNotifier.HandleWebsocket(c) })
 
 	e.Logger.Fatal(e.Start(":8080"))
 }

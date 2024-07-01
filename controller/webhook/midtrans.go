@@ -3,6 +3,7 @@ package controller_webhook
 import (
 	"net/http"
 	"open-pos/model"
+	live_notifier "open-pos/service/live-notifier"
 	"open-pos/service/payment-gateway"
 	"open-pos/utils"
 
@@ -29,7 +30,7 @@ type MidtransNotificationParams struct {
 	TransactionType   string `json:"transaction_type"`
 }
 
-func HandleMidtransNotification(dbClient *gorm.DB) echo.HandlerFunc {
+func HandleMidtransNotification(dbClient *gorm.DB, ln *live_notifier.LiveNotifierHub) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		var reqBody MidtransNotificationParams
 		err := c.Bind(&reqBody)
@@ -82,6 +83,13 @@ func HandleMidtransNotification(dbClient *gorm.DB) echo.HandlerFunc {
 		if err != nil {
 			return err
 		}
+
+		message := live_notifier.Message{
+			Entity:   "order",
+			EntityID: &reqBody.OrderID,
+			Action:   live_notifier.ActionUpdated,
+		}
+		ln.Notify(message)
 
 		return c.JSON(200, map[string]any{
 			"message": "success",
