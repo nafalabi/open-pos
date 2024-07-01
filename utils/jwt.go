@@ -24,18 +24,18 @@ type JwtClaims struct {
 	jwt.RegisteredClaims
 }
 
-type Jwt struct {
+type JwtUtils struct {
 	AccessSecret  string
 	RefreshSecret string
 }
 
-func NewJwt() *Jwt {
-	jwt := &Jwt{}
+func NewJwt() *JwtUtils {
+	jwt := &JwtUtils{}
 	jwt.GetConfig()
 	return jwt
 }
 
-func (this *Jwt) GetConfig() {
+func (j *JwtUtils) GetConfig() {
 	accessSecret := os.Getenv("JWT_ACCESS_SECRET")
 	refreshSecret := os.Getenv("JWT_REFRESH_SECRET")
 
@@ -43,19 +43,19 @@ func (this *Jwt) GetConfig() {
 		panic("jwt secrets has not been configured")
 	}
 
-	this.AccessSecret = accessSecret
-	this.RefreshSecret = refreshSecret
+	j.AccessSecret = accessSecret
+	j.RefreshSecret = refreshSecret
 }
 
-func (this *Jwt) CreateJwtToken(user model.User) (JwtToken, error) {
+func (j *JwtUtils) CreateJwtToken(user model.User) (JwtToken, error) {
 	var jwtToken JwtToken
 
-	accessToken, err := this.CreateAccessToken(user)
+	accessToken, err := j.CreateAccessToken(user)
 	if err != nil {
 		return jwtToken, err
 	}
 
-	refreshToken, err := this.CreateRefreshToken(user)
+	refreshToken, err := j.CreateRefreshToken(user)
 	if err != nil {
 		return jwtToken, err
 	}
@@ -66,7 +66,7 @@ func (this *Jwt) CreateJwtToken(user model.User) (JwtToken, error) {
 	return jwtToken, nil
 }
 
-func (this *Jwt) CreateAccessToken(user model.User) (string, error) {
+func (j *JwtUtils) CreateAccessToken(user model.User) (string, error) {
 	var err error
 	claims := &JwtClaims{
 		UserId:    user.ID,
@@ -79,7 +79,7 @@ func (this *Jwt) CreateAccessToken(user model.User) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	secret := this.AccessSecret
+	secret := j.AccessSecret
 
 	accessToken, err := token.SignedString([]byte(secret))
 
@@ -87,18 +87,31 @@ func (this *Jwt) CreateAccessToken(user model.User) (string, error) {
 }
 
 // TODO: implement refresh token
-func (this *Jwt) CreateRefreshToken(user model.User) (string, error) {
+func (j *JwtUtils) CreateRefreshToken(user model.User) (string, error) {
 	return " ", nil
 }
 
-func (this *Jwt) SetupMiddleware() echo.MiddlewareFunc {
+func (j *JwtUtils) SetupMiddleware() echo.MiddlewareFunc {
 	config := echojwt.Config{
 		NewClaimsFunc: func(e echo.Context) jwt.Claims {
 			return new(JwtClaims)
 		},
-		SigningKey: []byte(this.AccessSecret),
+		SigningKey: []byte(j.AccessSecret),
 	}
 	return echojwt.WithConfig(config)
+}
+
+func (j *JwtUtils) VerifyToken(tokenStr string) bool {
+	token, err := jwt.ParseWithClaims(tokenStr, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(j.AccessSecret), nil
+	})
+	if err != nil {
+		return false
+	}
+
+	_, ok := token.Claims.(*JwtClaims)
+
+	return ok
 }
 
 func GetUserClaims(c echo.Context) JwtClaims {

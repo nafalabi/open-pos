@@ -97,7 +97,6 @@ func main() {
 	webhook.POST("/midtrans", controller_webhook.HandleMidtransNotification(dbClient, liveNotifier))
 
 	ln := e.Group("/live-notifier")
-	// ln.Use(jwtMiddleware)
 	ln.GET("", func(c echo.Context) error { return liveNotifier.HandleWebsocket(c) })
 
 	e.Logger.Fatal(e.Start(":8080"))

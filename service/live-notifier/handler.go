@@ -1,6 +1,9 @@
 package live_notifier
 
 import (
+	"net/http"
+	"open-pos/utils"
+
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 )
@@ -37,6 +40,18 @@ func New() *LiveNotifierHub {
 }
 
 func (ln *LiveNotifierHub) HandleWebsocket(c echo.Context) error {
+	token := c.QueryParam("token")
+
+	jwtUtils := utils.NewJwt()
+	ok := jwtUtils.VerifyToken(token)
+
+	if !ok {
+		return utils.ApiError{
+			Code:    http.StatusUnauthorized,
+			Message: "Unauthorized",
+		}
+	}
+
 	conn, err := ln.upgrader.Upgrade(c.Response(), c.Request(), nil)
 	if err != nil {
 		c.Logger().Error(err)
