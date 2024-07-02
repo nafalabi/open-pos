@@ -21,6 +21,11 @@ export default {
         target: "http://localhost:8080",
         changeOrigin: true,
       },
+      "/websocket": {
+        target: "ws://localhost:8080",
+        rewrite: (path) => path.replace(/^\/websocket/, ""),
+        ws: true,
+      },
     },
   },
 } as UserConfig;

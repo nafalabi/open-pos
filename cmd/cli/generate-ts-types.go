@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"open-pos/controller"
 	"open-pos/model"
+	live_notifier "open-pos/service/live-notifier"
 	"os"
 	"regexp"
 
@@ -37,6 +38,7 @@ var (
 		controller.OrderPayload{},
 		controller.OrderItemPayload{},
 		controller.PayOrderCashPayload{},
+		live_notifier.LiveMessage{},
 	}
 )
 

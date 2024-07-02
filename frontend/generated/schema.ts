@@ -47,3 +47,10 @@ export const PayOrderCashPayloadSchema = z.object({
   notes: z.string(),
 });
 export type PayOrderCashPayload = z.infer<typeof PayOrderCashPayloadSchema>;
+
+export const LiveMessageSchema = z.object({
+  entity: z.string(),
+  entity_id: z.string().nullable(),
+  action: z.string(),
+});
+export type LiveMessage = z.infer<typeof LiveMessageSchema>;

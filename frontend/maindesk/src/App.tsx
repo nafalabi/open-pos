@@ -5,6 +5,7 @@ import { RouterProvider } from "react-router-dom";
 import { router } from "./routes";
 import { AuthProvider } from "./guard/AuthProvider";
 import { GlobalAlertParent } from "./layout/global-alert";
+import { LiveNotifierProvider } from "./hooks/useLiveNotifier";
 
 export const queryClient = new QueryClient();
 
@@ -12,9 +13,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <RouterProvider router={router} />
-        <Toaster theme="light" richColors closeButton />
-        <GlobalAlertParent />
+        <LiveNotifierProvider>
+          <RouterProvider router={router} />
+          <Toaster theme="light" richColors closeButton />
+          <GlobalAlertParent />
+        </LiveNotifierProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

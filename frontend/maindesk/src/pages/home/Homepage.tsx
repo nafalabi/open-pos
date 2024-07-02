@@ -12,6 +12,8 @@ import { CartStoreState, useCartStore } from "./state/cart";
 import { Badge } from "@/shared/components/ui/badge";
 import { motion, useAnimationControls, type Transition } from "framer-motion";
 import { useEffect } from "react";
+import { useLiveNotifier } from "../../hooks/useLiveNotifier";
+import { useQueryClient } from "@tanstack/react-query";
 
 const selectCartCount = (state: CartStoreState) => {
   return state.products.length;
@@ -20,7 +22,21 @@ const selectCartCount = (state: CartStoreState) => {
 const Homepage = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const cartCount = useCartStore(selectCartCount);
+
+  useLiveNotifier(
+    "message",
+    (event) => {
+      const detail = event.detail;
+      if (detail.entity == "order") {
+        queryClient.invalidateQueries({
+          queryKey: ["orders"],
+        });
+      }
+    },
+    [queryClient],
+  );
 
   const controls = useAnimationControls();
   useEffect(() => {

@@ -89,6 +89,6 @@ func (ln *LiveNotifierHub) RunListener() {
 	}
 }
 
-func (ln *LiveNotifierHub) Notify(message Message) {
+func (ln *LiveNotifierHub) Notify(message LiveMessage) {
 	ln.broadcast <- message.ToByte()
 }

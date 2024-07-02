@@ -84,7 +84,7 @@ func HandleMidtransNotification(dbClient *gorm.DB, ln *live_notifier.LiveNotifie
 			return err
 		}
 
-		message := live_notifier.Message{
+		message := live_notifier.LiveMessage{
 			Entity:   "order",
 			EntityID: &reqBody.OrderID,
 			Action:   live_notifier.ActionUpdated,
