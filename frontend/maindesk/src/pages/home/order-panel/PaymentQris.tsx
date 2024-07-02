@@ -82,6 +82,7 @@ const PaymentQris = ({ order }: { order: Model_Order }) => {
         )}
       </div>
       <Button
+        size="sm"
         className="w-full h-8"
         disabled={checkingOrderStatus}
         onClick={doCheckOrderStatus}
