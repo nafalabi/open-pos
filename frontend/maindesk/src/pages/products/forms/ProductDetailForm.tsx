@@ -9,6 +9,8 @@ import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { UseFormReturn } from "react-hook-form";
 import { ProductForm } from "./form-schema";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/components/ui/tooltip";
+import { InfoCircledIcon } from "@radix-ui/react-icons";
 
 type ProductDetailFormProps = {
   form: UseFormReturn<ProductForm>;
@@ -42,13 +44,22 @@ const ProductDetailForm = ({ form }: ProductDetailFormProps) => {
             />
           </div>
           <div className="grid grid-cols-4 gap-3 items-center">
-            <Label htmlFor="name">Stock</Label>
+            <Label htmlFor="name" className="text-nowrap text-muted-foreground">
+              Stock{" "}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <InfoCircledIcon className="inline" />
+                </TooltipTrigger>
+                <TooltipContent>not implemented</TooltipContent>
+              </Tooltip>
+            </Label>
             <Input
               {...form.register("stock", {
                 valueAsNumber: true,
               })}
               type="number"
               className="w-full col-span-3"
+              disabled
             />
           </div>
         </div>

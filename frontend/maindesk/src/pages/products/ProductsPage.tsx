@@ -130,12 +130,13 @@ const generateColumns = (
     accessorKey: "price",
     cell: (info) => info.getValue(),
   },
-  {
-    id: "stock",
-    header: "Stock",
-    accessorKey: "stock",
-    cell: (info) => info.getValue(),
-  },
+  // NOTE: out of scope for now
+  // {
+  //   id: "stock",
+  //   header: "Stock",
+  //   accessorKey: "stock",
+  //   cell: (info) => info.getValue(),
+  // },
   {
     id: "action",
     header: "",
