@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutlet } from "react-router-dom";
 import Pagination from "../../layout/pagination";
 import useQueryParams from "../../hooks/useQueryParams";
 import { defaultPagination } from "../../api/types";
@@ -103,26 +103,19 @@ const generateColumns = (
         const id = info.getValue() as string;
 
         const handleView = () => {
-          navigate("/orders/view/" + id);
+          navigate("/orders/detail/" + id + (location.search || ""));
         };
 
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <DotsHorizontalIcon className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Options</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={handleView}>
-                <SquarePenIcon className="h-3.5 w-3.5 mr-1" />
-                View
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button
+            size="sm"
+            className="h-6"
+            variant="outline"
+            onClick={handleView}
+          >
+            <SearchIcon className="mr-1 h-4 w-4" />
+            View
+          </Button>
         );
       },
     },
@@ -130,6 +123,7 @@ const generateColumns = (
 };
 
 const OrdersPage = () => {
+  const outlet = useOutlet();
   const navigate = useNavigate();
   const { queryParams, setPage, setPageSize, setQueryParams } = useQueryParams({
     paramkeys: ["q"],
@@ -174,9 +168,11 @@ const OrdersPage = () => {
     });
   };
 
+  console.log("outlet", outlet);
+
   return (
-    <div className="grid flex-1 items-start gap-2 p-0 sm:px-0 sm:py-0 md:gap-2">
-      <Card>
+    <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
+      <Card className="w-full">
         <CardHeader>
           <div className="flex items-center">
             <div>
@@ -237,6 +233,11 @@ const OrdersPage = () => {
           />
         </CardFooter>
       </Card>
+      {outlet && (
+        <div className="min-w-[275px] lg:min-w-[350px] max-w-[350px] w-full md:w-auto sticky bottom-0 md:sticky md:top-4">
+          {outlet}
+        </div>
+      )}
     </div>
   );
 };

@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
             element: (
               <LazyLoader
                 fallback={<SpinnerBox />}
-                component={<DetailOrderPanel />}
+                component={<DetailOrderPanel returnlink="/home" />}
               />
             ),
           },
@@ -140,6 +140,17 @@ export const router = createBrowserRouter([
         element: (
           <LazyLoader fallback={<SpinnerBox />} component={<OrdersPage />} />
         ),
+        children: [
+          {
+            path: "detail/:id",
+            element: (
+              <LazyLoader
+                fallback={<SpinnerBox />}
+                component={<DetailOrderPanel returnlink="/orders" />}
+              />
+            ),
+          },
+        ],
       },
     ],
   },
