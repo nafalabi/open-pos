@@ -171,7 +171,7 @@ const OrdersPage = () => {
   console.log("outlet", outlet);
 
   return (
-    <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
+    <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full p-0 sm:px-0 sm:py-0">
       <Card className="w-full">
         <CardHeader>
           <div className="flex items-center">
