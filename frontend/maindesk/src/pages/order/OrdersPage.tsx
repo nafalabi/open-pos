@@ -1,9 +1,4 @@
-import {
-  QueryClient,
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { DataTable } from "../../layout/data-table";
 import { getOrders } from "../../api/orders";
 import { useMemo } from "react";
@@ -21,27 +16,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import {
-  FileIcon,
-  PlusCircleIcon,
-  SearchIcon,
-  SquarePenIcon,
-} from "lucide-react";
+import { FileIcon, PlusCircleIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { useNavigate, useOutlet } from "react-router-dom";
 import Pagination from "../../layout/pagination";
 import useQueryParams from "../../hooks/useQueryParams";
 import { defaultPagination } from "../../api/types";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 
 const generateColumns = (
   navigate: ReturnType<typeof useNavigate>,
@@ -50,12 +31,20 @@ const generateColumns = (
     {
       header: "No.",
       accessorKey: "order_number",
-      cell: (info) => info.getValue(),
+      cell: (info) => (
+        <div className="overflow-hidden text-ellipsis line-clamp-1">
+          {String(info.getValue())}
+        </div>
+      ),
     },
     {
       header: "Recipient",
       accessorKey: "recipient",
-      cell: (info) => info.getValue() || "-",
+      cell: (info) => (
+        <div className="overflow-hidden text-ellipsis line-clamp-1">
+          {String(info.getValue() || "-")}
+        </div>
+      ),
     },
     {
       header: "Status",
@@ -67,8 +56,11 @@ const generateColumns = (
     {
       header: "Date",
       accessorKey: "created_at",
-      cell: (info) =>
-        format(new Date(info.getValue() as string), "dd MMM yy, HH:mm"),
+      cell: (info) => (
+        <div className="overflow-hidden text-ellipsis line-clamp-1 min-w-[100px]">
+          {format(new Date(info.getValue() as string), "dd MMM yy, HH:mm")}
+        </div>
+      ),
     },
     {
       header: "Total",
@@ -84,7 +76,7 @@ const generateColumns = (
         const totalAmount = data.totalAmount;
         const itemsCount = data.itemsCount;
         return (
-          <div>
+          <div className="text-nowrap">
             <span>{currency(totalAmount)}</span>
             &nbsp;&middot;&nbsp;
             <span className="text-xs text-muted-foreground">
@@ -168,13 +160,11 @@ const OrdersPage = () => {
     });
   };
 
-  console.log("outlet", outlet);
-
   return (
     <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full p-0 sm:px-0 sm:py-0">
-      <Card className="w-full">
+      <Card className="w-full min-w-[275px]">
         <CardHeader>
-          <div className="flex items-center">
+          <div className="flex flex-wrap items-center gap-2">
             <div>
               <CardTitle>Orders</CardTitle>
               <CardDescription>
@@ -194,7 +184,7 @@ const OrdersPage = () => {
               </div>
               <Button size="sm" variant="outline" className="h-7 gap-1">
                 <FileIcon className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                <span className="sr-only lg:not-sr-only lg:whitespace-nowrap">
                   Export
                 </span>
               </Button>
@@ -204,7 +194,7 @@ const OrdersPage = () => {
                 onClick={() => navigate("/products/add")}
               >
                 <PlusCircleIcon className="h-3.5 w-3.5" />
-                <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                <span className="sr-only lg:not-sr-only lg:whitespace-nowrap">
                   Add Product
                 </span>
               </Button>
