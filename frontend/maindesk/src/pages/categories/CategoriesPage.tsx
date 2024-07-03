@@ -231,9 +231,9 @@ const CategoriesPage = () => {
 
   return (
     <div className="grid flex-1 items-start gap-2 p-0 sm:px-0 sm:py-0 md:gap-2">
-      <Card x-chunk="dashboard-06-chunk-0">
+      <Card className="w-full min-w-[275px]">
         <CardHeader>
-          <div className="flex items-center">
+          <div className="flex flex-wrap items-center gap-2">
             <div>
               <CardTitle>Categories</CardTitle>
               <CardDescription>
