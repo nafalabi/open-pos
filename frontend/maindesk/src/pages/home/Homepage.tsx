@@ -57,7 +57,7 @@ const Homepage = () => {
   }, [cartCount, controls]);
 
   return (
-    <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full md:ml-2">
+    <div className="flex flex-wrap items-start md:flex-nowrap gap-6 w-full">
       <div className="min-w-[275px] w-full">
         <LatestOrders />
         <MenuList />

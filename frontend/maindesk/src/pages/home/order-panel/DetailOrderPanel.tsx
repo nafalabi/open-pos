@@ -6,7 +6,7 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import { XIcon } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import PaymentCash from "./PaymentCash";
 import { useQueryOrderById } from "../query/useQueryOrderById";
 import { OrderStatus } from "@/generated/enums";
@@ -18,8 +18,9 @@ import NoteOrderCompleted from "./NoteOrderCompleted";
 import CancelOrder from "./CancelOrder";
 import { useQueryPaymentMethodDetail } from "../query/useQueryPaymentMethodDetail";
 
-const DetailOrderPanel = () => {
+const DetailOrderPanel = ({ returnlink }: { returnlink: string }) => {
   const navigate = useNavigate();
+  const { search } = useLocation();
 
   const orderId = useParams().id;
 
@@ -38,7 +39,7 @@ const DetailOrderPanel = () => {
             variant="ghost"
             size="sm"
             className="absolute top-4 right-3"
-            onClick={() => navigate("/home")}
+            onClick={() => navigate(returnlink + search)}
           >
             <XIcon className="h-4 w-4" />
           </Button>
