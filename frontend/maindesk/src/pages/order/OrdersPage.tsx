@@ -32,7 +32,7 @@ const generateColumns = (
       header: "No.",
       accessorKey: "order_number",
       cell: (info) => (
-        <div className="overflow-hidden text-ellipsis line-clamp-1">
+        <div className="overflow-hidden text-ellipsis line-clamp-1 font-medium">
           {String(info.getValue())}
         </div>
       ),
