@@ -5,14 +5,19 @@ import { PaginationParams } from "../api/types";
 type ParamsValue<TParamKeys extends readonly string[]> = {
   [key in TParamKeys[number]]: string | null;
 } & PaginationParams & {
-  sortkey: string | null;
-  sortdirection: "asc" | "desc" | null;
-};
+    sortkey: string | null;
+    sortdirection: "asc" | "desc" | null;
+  };
 
 const useQueryParams = <const TParamKeys extends ReadonlyArray<string>>({
   paramkeys,
+  defaults = {
+    pagesize: "10",
+    page: "1",
+  } as Partial<ParamsValue<TParamKeys>>,
 }: {
   paramkeys: TParamKeys;
+  defaults?: Partial<ParamsValue<TParamKeys>>;
 }) => {
   const [urlSearchParams, setUrlSearchParams] = useSearchParams();
 
@@ -22,18 +27,28 @@ const useQueryParams = <const TParamKeys extends ReadonlyArray<string>>({
       genericParams[key] = urlSearchParams.get(key);
     });
     const paginationParams = {
-      page: Number(urlSearchParams.get("page")) || String(1),
-      pagesize: Number(urlSearchParams.get("pagesize")) || String(10),
+      page: String(Number(urlSearchParams.get("page")) || ""),
+      pagesize: String(Number(urlSearchParams.get("pagesize")) || ""),
     };
     const sortingParams = {
       sortkey: urlSearchParams.get("sortkey"),
       sortdirection: urlSearchParams.get("sortdirection"),
     };
-    return {
+    const combined: { [key: string]: string | null } = {
       ...genericParams,
       ...paginationParams,
       ...sortingParams,
-    } as ParamsValue<TParamKeys>;
+    };
+
+    if (defaults) {
+      Object.entries(defaults).forEach(([key, value]) => {
+        if (!combined[key]) {
+          combined[key] = value;
+        }
+      });
+    }
+
+    return combined as ParamsValue<TParamKeys>;
   }, [urlSearchParams]);
 
   const setPage = useCallback(
