@@ -3,7 +3,7 @@ import { getPaymentInfo, refreshOrderStatus } from "@/maindesk/src/api/orders";
 import { Button } from "@/shared/components/ui/button";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { format, isAfter } from "date-fns";
-import { Loader2Icon } from "lucide-react";
+import { ImageOffIcon, Loader2Icon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -71,7 +71,8 @@ const PaymentQris = ({ order }: { order: Model_Order }) => {
         )}
 
         {isExpired ? (
-          <div className="h-auto w-full min-h-[220px] squared text-center content-center bg-gray-100 rounded-sm mt-4 text-gray-700">
+          <div className="h-auto w-full min-h-[220px] squared flex flex-col justify-center items-center text-sm border-[1px] border-input bg-gray-100 rounded-sm mt-4 text-gray-700">
+          <ImageOffIcon />
             QRIS is expired
           </div>
         ) : (
