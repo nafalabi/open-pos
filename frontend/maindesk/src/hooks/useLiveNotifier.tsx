@@ -5,7 +5,6 @@ import LiveNotifier, {
 } from "../websocket/live-notifier";
 
 const lnInstance = new LiveNotifier();
-lnInstance.connect()
 
 type LiveNotifierContextValue = {
   liveNotifier: LiveNotifier;
