@@ -76,6 +76,11 @@ definitions:
     required:
     - name
     type: object
+  controller.RefreshParams:
+    properties:
+      refresh_token:
+        type: string
+    type: object
   controller.UserPayload:
     properties:
       email:
@@ -122,6 +127,23 @@ paths:
       - application/json
       responses: {}
       summary: Login into the app
+      tags:
+      - Auth
+  /auth/refresh:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Refresh Params
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/controller.RefreshParams'
+      produces:
+      - application/json
+      responses: {}
+      summary: Refresh Token
       tags:
       - Auth
   /auth/userinfo:

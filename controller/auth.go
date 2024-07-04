@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"net/http"
 	"open-pos/model"
 	"open-pos/utils"
 
@@ -12,6 +13,10 @@ import (
 type LoginParams struct {
 	Email    string `json:"email" example:"admin@admin.com"`
 	Password string `json:"password" example:"admin"`
+}
+
+type RefreshParams struct {
+	RefreshToken string `json:"refresh_token"`
 }
 
 // @Summary	Login into the app
@@ -73,5 +78,57 @@ func UserInfo(dbClient *gorm.DB) echo.HandlerFunc {
 		}
 
 		return utils.SendSuccess(c, user)
+	}
+}
+
+// @Summary	Refresh Token
+// @Tags		Auth
+// @Accept		json
+// @Produce	json
+// @Param		body	body	RefreshParams	true	"Refresh Params"
+// @Router		/auth/refresh [post]
+func RefreshToken(dbClient *gorm.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		var reqBody RefreshParams
+
+		if err := utils.BindAndValidate(c, &reqBody); err != nil {
+			return utils.ApiError{
+				Message: "Invalid payload",
+			}
+		}
+
+		jwtUtils := utils.NewJwt()
+		token, err := jwtUtils.ParseToken(reqBody.RefreshToken, "refresh")
+		if err != nil {
+			return utils.ApiError{
+				Code:    http.StatusUnprocessableEntity,
+				Message: "Refresh token is not valid.",
+			}
+		}
+
+		claims, ok := token.Claims.(*utils.RefreshClaims)
+		if !ok {
+			return utils.ApiError{
+				Code:    http.StatusUnprocessableEntity,
+				Message: "Refresh token is not valid",
+			}
+		}
+
+		user := model.User{}
+		err = dbClient.Where("id = ?", claims.UserId).First(&user).Error
+		if err != nil {
+			return utils.ApiError{
+				Message: "User not found",
+			}
+		}
+
+		jwtToken, err := jwtUtils.CreateJwtToken(user)
+		if err != nil {
+			return utils.ApiError{
+				Message: "Failed to create token",
+			}
+		}
+
+		return utils.SendSuccess(c, jwtToken)
 	}
 }

@@ -11,16 +11,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-type JwtToken struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-}
-
-type JwtClaims struct {
+type AccessClaims struct {
 	UserId    string         `json:"user_id"`
 	Name      string         `json:"name"`
-	Email     string         `json:"email"`
 	UserLevel enum.UserLevel `json:"user_level"`
+	jwt.RegisteredClaims
+}
+
+type RefreshClaims struct {
+	UserId string `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
@@ -47,9 +46,12 @@ func (j *JwtUtils) GetConfig() {
 	j.RefreshSecret = refreshSecret
 }
 
-func (j *JwtUtils) CreateJwtToken(user model.User) (JwtToken, error) {
-	var jwtToken JwtToken
-
+func (j *JwtUtils) CreateJwtToken(user model.User) (
+	jwtToken struct {
+		AccessToken  string `json:"access_token"`
+		RefreshToken string `json:"refresh_token"`
+	}, err error,
+) {
 	accessToken, err := j.CreateAccessToken(user)
 	if err != nil {
 		return jwtToken, err
@@ -68,13 +70,13 @@ func (j *JwtUtils) CreateJwtToken(user model.User) (JwtToken, error) {
 
 func (j *JwtUtils) CreateAccessToken(user model.User) (string, error) {
 	var err error
-	claims := &JwtClaims{
+	claims := &AccessClaims{
 		UserId:    user.ID,
 		Name:      user.Name,
-		Email:     user.Email,
 		UserLevel: user.Level,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
 
@@ -86,36 +88,66 @@ func (j *JwtUtils) CreateAccessToken(user model.User) (string, error) {
 	return accessToken, err
 }
 
-// TODO: implement refresh token
 func (j *JwtUtils) CreateRefreshToken(user model.User) (string, error) {
-	return " ", nil
+	var err error
+	claims := &RefreshClaims{
+		UserId: user.ID,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 48)),
+		},
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secret := j.RefreshSecret
+
+	refreshToken, err := token.SignedString([]byte(secret))
+
+	return refreshToken, err
+}
+
+func (j *JwtUtils) ParseToken(tokenStr string, tokenType string) (*jwt.Token, error) {
+	var secret string
+	var claims jwt.Claims
+
+	switch tokenType {
+	case "access":
+		secret = j.AccessSecret
+		claims = &AccessClaims{}
+	case "refresh":
+		secret = j.RefreshSecret
+		claims = &RefreshClaims{}
+	}
+
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte(secret), nil
+	})
+
+	return token, err
+}
+
+func (j *JwtUtils) VerifyToken(tokenStr string) bool {
+	token, err := j.ParseToken(tokenStr, "access")
+	if err != nil {
+		return false
+	}
+
+	_, ok := token.Claims.(*AccessClaims)
+
+	return ok
 }
 
 func (j *JwtUtils) SetupMiddleware() echo.MiddlewareFunc {
 	config := echojwt.Config{
 		NewClaimsFunc: func(e echo.Context) jwt.Claims {
-			return new(JwtClaims)
+			return new(AccessClaims)
 		},
 		SigningKey: []byte(j.AccessSecret),
 	}
 	return echojwt.WithConfig(config)
 }
 
-func (j *JwtUtils) VerifyToken(tokenStr string) bool {
-	token, err := jwt.ParseWithClaims(tokenStr, &JwtClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return []byte(j.AccessSecret), nil
-	})
-	if err != nil {
-		return false
-	}
-
-	_, ok := token.Claims.(*JwtClaims)
-
-	return ok
-}
-
-func GetUserClaims(c echo.Context) JwtClaims {
+func GetUserClaims(c echo.Context) AccessClaims {
 	user := c.Get("user").(*jwt.Token)
-	claims := user.Claims.(*JwtClaims)
+	claims := user.Claims.(*AccessClaims)
 	return *claims
 }

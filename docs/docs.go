@@ -41,6 +41,32 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/auth/refresh": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Refresh Token",
+                "parameters": [
+                    {
+                        "description": "Refresh Params",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.RefreshParams"
+                        }
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/auth/userinfo": {
             "get": {
                 "security": [
@@ -1068,6 +1094,14 @@ const docTemplate = `{
                     "description": "Image       string   ` + "`" + `json:\"image\" validate:\"omitempty,uri\"` + "`" + ` // ts types converter cant support uri for now",
                     "type": "integer",
                     "minimum": 0
+                }
+            }
+        },
+        "controller.RefreshParams": {
+            "type": "object",
+            "properties": {
+                "refresh_token": {
+                    "type": "string"
                 }
             }
         },
