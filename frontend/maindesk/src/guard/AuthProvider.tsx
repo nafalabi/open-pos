@@ -1,20 +1,15 @@
 import { Model_User } from "@/generated/models";
-import {
-  createContext,
-  useState,
-  useEffect,
-  useContext,
-  useCallback,
-} from "react";
-import { getAuthToken, getUserInfo } from "../api/auth";
+import { createContext, useContext, useCallback } from "react";
+import { getUserInfo } from "../api/auth";
 import { apiSingleton } from "../api/api-singleton";
+import { useQuery } from "@tanstack/react-query";
 
 export type AuthState = {
-  userInfo?: Model_User;
+  userInfo?: Model_User | null;
   authToken?: string;
   isLogged: boolean;
   isLoading: boolean;
-  handleUpdateAuthToken: (newToken: string) => void;
+  handleUpdateAuthToken: (accessToken: string, refreshToken: string) => void;
   handleResetAuthToken: () => void;
 };
 
@@ -23,44 +18,36 @@ export const AuthContext = createContext({} as AuthState);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [userInfo, setUserInfo] = useState<AuthState["userInfo"]>();
-  const [authToken, setAuthToken] = useState<AuthState["authToken"]>();
-  const [isLoading, setIsLoading] = useState<AuthState["isLoading"]>(true);
-  const [isLogged, setIsLogged] = useState<AuthState["isLogged"]>(false);
+  const { authToken } = apiSingleton;
+
+  const { data: userInfo, isFetching: isLoading } = useQuery({
+    queryKey: ["userInfo", authToken],
+    queryFn: async () => {
+      if (!authToken) {
+        return null;
+      }
+      const [result, error] = await getUserInfo();
+      if (error) {
+        return null;
+      }
+      return result.data;
+    },
+  });
+
+  const isLogged = !!(userInfo && !isLoading);
 
   const handleResetAuthToken = useCallback(() => {
-    setAuthToken("");
-    apiSingleton.updateToken("");
+    apiSingleton.setToken("", "");
     location.replace("/login");
   }, []);
 
-  const handleUpdateAuthToken = useCallback((newToken: string) => {
-    setAuthToken(newToken);
-    apiSingleton.updateToken(newToken);
-    location.replace("/");
-  }, []);
-
-  useEffect(() => {
-    setIsLogged(!!authToken);
-    setIsLoading(true);
-    if (authToken) {
-      getUserInfo().then(([respData, error]) => {
-        if (error) {
-          handleResetAuthToken();
-          return;
-        }
-        if (respData) {
-          setUserInfo(respData.data);
-          setIsLoading(false);
-        }
-      });
-    }
-  }, [authToken, handleResetAuthToken]);
-
-  useEffect(() => {
-    const _authToken = getAuthToken();
-    setAuthToken(_authToken);
-  }, []);
+  const handleUpdateAuthToken = useCallback(
+    (accessToken: string, refreshToken: string) => {
+      apiSingleton.setToken(accessToken, refreshToken);
+      location.replace("/");
+    },
+    [],
+  );
 
   return (
     <AuthContext.Provider

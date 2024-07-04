@@ -1,7 +1,7 @@
 import { Model_User } from "@/generated/models";
-import { apiSingleton } from "./api-singleton";
+import { Requestor, apiSingleton } from "./api-singleton";
 
-type Tokens = {
+export type Tokens = {
   access_token: string;
   refresh_token: string;
 };
@@ -19,4 +19,9 @@ export const getUserInfo = async () => {
 export const doLogin = async (payload: { email: string; password: string }) => {
   const { requestor } = apiSingleton;
   return await requestor.POST<Tokens>("/auth/login", payload);
+};
+
+export const doRefreshToken = async (payload: { refresh_token: string }) => {
+  const requestor = new Requestor((...args) => window.fetch(...args));
+  return await requestor.POST<Tokens>("/auth/refresh", payload);
 };

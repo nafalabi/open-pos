@@ -1,15 +1,22 @@
 import { LOCALSTORAGE_PREFIX } from "../constant/common";
+import { debounce } from "../utils/function-utils";
+import { doRefreshToken } from "./auth";
 import { RequestorReturnType, ResponseData, ResponseError } from "./types";
 
 type FetchArgs = Parameters<typeof fetch>;
 
 const API_URL = window.location.protocol + "//" + window.location.host + "/api";
 const LOCALSTORAGE_AUTH_KEY = LOCALSTORAGE_PREFIX + "AUTH_TOKEN";
+const LOCALSTORAGE_REFRESH_KEY = LOCALSTORAGE_PREFIX + "REFRESH_TOKEN";
 
 export class ApiSingleton {
   authToken = "";
+  refreshToken = "";
   fetch = fetch;
   requestor = new Requestor(fetch);
+
+  isBussy: boolean = false;
+  cache?: Promise<boolean>;
 
   constructor() {
     this.loadToken();
@@ -18,13 +25,14 @@ export class ApiSingleton {
 
   loadToken() {
     this.authToken = localStorage.getItem(LOCALSTORAGE_AUTH_KEY) ?? "";
+    this.refreshToken = localStorage.getItem(LOCALSTORAGE_REFRESH_KEY) ?? "";
   }
 
   setup() {
-    this.fetch = (...args: FetchArgs) => {
+    this.fetch = async (...args: FetchArgs) => {
       const input = args[0];
       const init = args[1];
-      return fetch(input, {
+      const response = await fetch(input, {
         ...init,
         mode: "cors",
         headers: {
@@ -32,15 +40,46 @@ export class ApiSingleton {
           ...init?.headers,
         },
       });
+      if (response.status == 401) {
+        if (!this.cache) {
+          this.cache = this.handleRefreshToken();
+        }
+        const ok = await this.cache;
+        this.clearCache();
+        if (ok) {
+          return this.fetch(...args);
+        }
+      }
+      return response;
     };
     this.requestor = new Requestor(this.fetch);
   }
 
-  updateToken(authToken: string = "") {
+  setToken(authToken: string = "", refreshToken: string = "") {
     this.authToken = authToken;
     localStorage.setItem(LOCALSTORAGE_AUTH_KEY, authToken);
+    localStorage.setItem(LOCALSTORAGE_REFRESH_KEY, refreshToken);
 
     this.setup();
+  }
+
+  clearCache = debounce(() => {
+    delete this.cache;
+  }, 200);
+
+  async handleRefreshToken() {
+    const [result, error] = await doRefreshToken({
+      refresh_token: this.refreshToken,
+    });
+
+    if (error) {
+      this.setToken();
+      return false;
+    }
+
+    this.setToken(result.data.access_token, result.data.refresh_token);
+
+    return true;
   }
 }
 

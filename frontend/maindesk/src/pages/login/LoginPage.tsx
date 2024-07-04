@@ -34,12 +34,14 @@ export const LoginPage = () => {
       email: data.email,
       password: data.password,
     });
-    if (error)
+    if (error) {
       toast.error("Login failed", {
         description: error.message,
         dismissible: true,
       });
-    if (result) handleUpdateAuthToken(result.data.access_token);
+      return;
+    }
+    handleUpdateAuthToken(result.data.access_token, result.data.refresh_token);
   });
 
   return (
