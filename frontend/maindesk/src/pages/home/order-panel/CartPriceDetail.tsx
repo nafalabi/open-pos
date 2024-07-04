@@ -45,8 +45,8 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
       <Separator className="my-4" />
       <div className="grid gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-gray-900 font-bold">Recipient</span>
-          <span className="text-gray-900 font-bold">
+          <span className="text-gray-900 font-normal">Recipient</span>
+          <span className="text-gray-900 font-normal">
             <Input
               {...form.register("recipient")}
               className="min-w-[130px] w-[150px] h-[25px]"
@@ -54,8 +54,8 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
           </span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-gray-900 font-bold">Remarks</span>
-          <span className="text-gray-900 font-bold">
+          <span className="text-gray-900 font-normal">Remarks</span>
+          <span className="text-gray-900 font-normal">
             <Input
               {...form.register("remarks")}
               className="min-w-[130px] w-[150px] h-[25px]"
@@ -63,7 +63,7 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
           </span>
         </div>
         <div className="flex items-center justify-between gap-2">
-          <span className="text-gray-900 font-bold">Payment Method</span>
+          <span className="text-gray-900 font-normal">Payment Method</span>
           <Controller
             name="payment_method"
             control={form.control}
@@ -85,19 +85,19 @@ const CartPriceDetail = ({ form }: { form: UseFormReturn<OrderPayload> }) => {
           />
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-gray-900 font-bold">Subtotal</span>
-          <span className="text-gray-900 font-bold">{currency(subtotal)}</span>
+          <span className="text-gray-900 font-normal">Subtotal</span>
+          <span className="text-gray-900 font-normal">{currency(subtotal)}</span>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-gray-900 font-bold">Payment Fee</span>
-          <span className="text-gray-900 font-bold">
+          <span className="text-gray-900 font-normal">Payment Fee</span>
+          <span className="text-gray-900 font-normal">
             {isFetchingPaymentFee && (
               <Loader2Icon className="inline h-4 w-4 animate-spin border-foreground" />
             )}
             &nbsp;{currency(paymentFee ?? 0)}
           </span>
         </div>
-        <Separator className="my-4" />
+        <Separator className="my-1" />
         <div className="flex items-center justify-between">
           <span className="text-gray-900 font-bold">Total</span>
           <span className="text-gray-900 font-bold">{currency(total)}</span>
