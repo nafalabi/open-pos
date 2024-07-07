@@ -1,7 +1,7 @@
 package test
 
 import (
-	"open-pos/utils"
+	"open-pos/internal/internal/utils"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

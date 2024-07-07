@@ -1,8 +1,8 @@
 package utils
 
 import (
-	"open-pos/enum"
-	"open-pos/model"
+	"open-pos/internal/enum"
+	"open-pos/internal/model"
 	"os"
 	"time"
 

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"fmt"
-	"open-pos/utils"
+	"open-pos/internal/utils"
 	"strings"
 
 	"github.com/disintegration/imaging"

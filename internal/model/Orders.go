@@ -2,7 +2,7 @@ package model
 
 import (
 	"fmt"
-	"open-pos/enum"
+	"open-pos/internal/enum"
 	"strings"
 	"time"
 

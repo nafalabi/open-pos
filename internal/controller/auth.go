@@ -2,8 +2,8 @@ package controller
 
 import (
 	"net/http"
-	"open-pos/model"
-	"open-pos/utils"
+	"open-pos/internal/model"
+	"open-pos/internal/utils"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/crypto/bcrypt"

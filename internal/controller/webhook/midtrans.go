@@ -2,10 +2,10 @@ package controller_webhook
 
 import (
 	"net/http"
-	"open-pos/model"
-	live_notifier "open-pos/service/live-notifier"
-	"open-pos/service/payment-gateway"
-	"open-pos/utils"
+	"open-pos/internal/model"
+	live_notifier "open-pos/internal/service/live-notifier"
+	"open-pos/internal/service/payment-gateway"
+	"open-pos/internal/utils"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"

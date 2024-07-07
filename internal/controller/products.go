@@ -1,13 +1,13 @@
 package controller
 
 import (
-	"open-pos/utils"
+	"open-pos/internal/utils"
 
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 
-	model "open-pos/model"
+	model "open-pos/internal/model"
 )
 
 type ProductPayload struct {

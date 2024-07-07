@@ -2,10 +2,10 @@ package controller
 
 import (
 	"net/http"
-	"open-pos/enum"
-	"open-pos/model"
-	"open-pos/service/payment-gateway"
-	"open-pos/utils"
+	"open-pos/internal/enum"
+	"open-pos/internal/model"
+	"open-pos/internal/service/payment-gateway"
+	"open-pos/internal/utils"
 	"time"
 
 	"github.com/labstack/echo/v4"

@@ -1,6 +1,6 @@
 package model
 
-import "open-pos/enum"
+import "open-pos/internal/enum"
 
 type Transaction struct {
 	BaseModelWithTimestamp

@@ -1,7 +1,7 @@
 package utils
 
 import (
-	"open-pos/model"
+	"open-pos/internal/model"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

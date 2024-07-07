@@ -1,7 +1,7 @@
 package model
 
 import (
-	enum "open-pos/enum"
+	enum "open-pos/internal/enum"
 )
 
 type User struct {

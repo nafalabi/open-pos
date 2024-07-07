@@ -2,7 +2,7 @@ package live_notifier
 
 import (
 	"net/http"
-	"open-pos/utils"
+	"open-pos/internal/utils"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"

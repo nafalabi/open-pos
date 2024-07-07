@@ -1,11 +1,11 @@
 package main
 
 import (
-	"open-pos/controller"
-	controller_webhook "open-pos/controller/webhook"
+	"open-pos/internal/controller"
+	controller_webhook "open-pos/internal/controller/webhook"
 	_ "open-pos/docs"
-	live_notifier "open-pos/service/live-notifier"
-	utils "open-pos/utils"
+	live_notifier "open-pos/internal/service/live-notifier"
+	utils "open-pos/internal/utils"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"

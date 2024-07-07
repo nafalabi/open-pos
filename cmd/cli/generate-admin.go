@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-	"open-pos/controller"
-	"open-pos/enum"
-	"open-pos/model"
-	"open-pos/utils"
+	"open-pos/internal/controller"
+	"open-pos/internal/enum"
+	"open-pos/internal/model"
+	"open-pos/internal/utils"
 	"os"
 
 	"golang.org/x/term"

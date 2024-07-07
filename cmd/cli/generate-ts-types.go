@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"open-pos/controller"
-	"open-pos/model"
-	live_notifier "open-pos/service/live-notifier"
+	"open-pos/internal/controller"
+	"open-pos/internal/model"
+	live_notifier "open-pos/internal/service/live-notifier"
 	"os"
 	"regexp"
 

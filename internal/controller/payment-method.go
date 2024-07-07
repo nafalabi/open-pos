@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"open-pos/utils"
+	"open-pos/internal/utils"
 	"slices"
 	"strconv"
 

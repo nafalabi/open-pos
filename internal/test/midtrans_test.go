@@ -1,9 +1,9 @@
 package test
 
 import (
-	"open-pos/model"
-	"open-pos/service/payment-gateway"
-	"open-pos/utils"
+	"open-pos/internal/model"
+	"open-pos/internal/service/payment-gateway"
+	"open-pos/internal/utils"
 	"testing"
 
 	"github.com/google/uuid"

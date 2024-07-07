@@ -2,7 +2,7 @@ package payment_gateway
 
 import (
 	"errors"
-	"open-pos/model"
+	"open-pos/internal/model"
 
 	"gorm.io/gorm"
 )
