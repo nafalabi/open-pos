@@ -1,0 +1,10 @@
+.git
+dist
+node_modules
+Dockerfile
+.dockerignore
+app.db
+app.db-shm
+app.db-wal
+storage/images/*
+
