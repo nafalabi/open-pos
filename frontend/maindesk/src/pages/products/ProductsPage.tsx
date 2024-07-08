@@ -45,6 +45,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import GenericImage from "../../layout/generic-image";
+import { currency } from "../../utils/currency";
 
 const generateColumns = (
   queryClient: QueryClient,
@@ -128,7 +129,7 @@ const generateColumns = (
     id: "price",
     header: "Price",
     accessorKey: "price",
-    cell: (info) => info.getValue(),
+    cell: (info) => currency(Number(info.getValue())),
   },
   // NOTE: out of scope for now
   // {
