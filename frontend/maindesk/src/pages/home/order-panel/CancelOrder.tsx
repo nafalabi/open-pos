@@ -18,13 +18,12 @@ const schema = z.object({
 const CancelOrder = ({ order }: { order: Model_Order }) => {
   const queryClient = useQueryClient();
   const form = useForm({
-    defaultValues: order,
+    values: order,
     resolver: zodResolver(schema),
   });
 
   const handleSubmit = form.handleSubmit(
     async (values) => {
-      console.log("values", values);
       const [, error] = await cancelOrder(values.id);
       if (error) {
         toast.error("Failed to complete order", {
@@ -33,7 +32,7 @@ const CancelOrder = ({ order }: { order: Model_Order }) => {
         return;
       }
       queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast.success("Success completing an order");
+      toast.success("Success canceling an order");
     },
     (errors) => {
       Object.values(errors).forEach((err) => {

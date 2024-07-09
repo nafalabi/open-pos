@@ -23,13 +23,12 @@ const schema = z.object({
 const NoteOrderPaid = ({ order }: NoteOrderPaidProps) => {
   const queryClient = useQueryClient();
   const form = useForm({
-    defaultValues: order,
+    values: order,
     resolver: zodResolver(schema),
   });
 
   const handleSubmit = form.handleSubmit(
     async (values) => {
-      console.log("values", values);
       const [, error] = await completeOrder(values.id);
       if (error) {
         toast.error("Failed to complete order", {
