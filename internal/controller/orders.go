@@ -147,7 +147,8 @@ func CreateOrder(dbClient *gorm.DB) echo.HandlerFunc {
 // @Param		page		query	string	false	"page"
 // @Param		pagesize	query	string	false	"page size"
 // @Param		q			query	string	false	"search query"
-// @Param		date		query	string	false	"date search (YYYY-MM-DD)"
+// @Param		startdate	query	string	false	"date search (YYYY-MM-DD)"
+// @Param		enddate		query	string	false	"date search (YYYY-MM-DD)"
 // @Param		sortkey		query	string	false	"sort key"
 // @Param		sortdir		query	string	false	"sort direction (asc/desc)"
 // @Router		/orders [get]
@@ -156,7 +157,8 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 		limit, offset, page, pageSize := utils.GetPaginationParams(c)
 		isSorted, sortKey, sortDirection := utils.GetSortParams(c)
 		searchQuery := c.QueryParam("q")
-		dateText := c.QueryParam("date")
+		startDateText := c.QueryParam("startdate")
+		endDateText := c.QueryParam("enddate")
 
 		var orders []model.Order
 		var totalRecords int64
@@ -175,16 +177,33 @@ func ListOrder(dbClient *gorm.DB) echo.HandlerFunc {
 			query.Or("recipient like ?", "%"+searchQuery+"%")
 		}
 
-		if dateText != "" {
-			selectedDate, error := time.Parse("2006-01-02", dateText)
+		if startDateText != "" && endDateText != "" {
+			commonError := utils.ApiError{
+				Message: "invalid date filter",
+			}
+
+			startDate, error := time.Parse("2006-01-02", startDateText)
 			if error != nil {
+				return commonError
+			}
+
+			endDate, error := time.Parse("2006-01-02", endDateText)
+			if error != nil {
+				return commonError
+			}
+
+			startDate = startDate.Round(time.Hour * 24)
+			endDate = endDate.Round(time.Hour * 24)
+			endDate = endDate.Add(time.Hour * 24)
+
+			diffInDays := endDate.Sub(startDate).Hours() / 24
+			if diffInDays > 62 {
 				return utils.ApiError{
-					Message: "invalid date filter",
+					Message: "Can't select date range for more than 2 months",
 				}
 			}
-			startOfDay := selectedDate.Round(time.Hour * 24)
-			endOfDay := startOfDay.Add(time.Hour * 24)
-			query.Where("created_at BETWEEN ? AND ?", startOfDay, endOfDay)
+
+			query.Where("created_at BETWEEN ? AND ?", startDate, endDate)
 		}
 
 		query.Count(&totalRecords)
