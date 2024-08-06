@@ -34,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.LoginParams"
+                            "$ref": "#/definitions/internal_controller.LoginParams"
                         }
                     }
                 ],
@@ -60,7 +60,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.RefreshParams"
+                            "$ref": "#/definitions/internal_controller.RefreshParams"
                         }
                     }
                 ],
@@ -161,7 +161,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CategoryPayload"
+                            "$ref": "#/definitions/internal_controller.CategoryPayload"
                         }
                     }
                 ],
@@ -253,7 +253,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CategoryPayload"
+                            "$ref": "#/definitions/internal_controller.CategoryPayload"
                         }
                     }
                 ],
@@ -328,7 +328,13 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "date search (YYYY-MM-DD)",
-                        "name": "date",
+                        "name": "startdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "date search (YYYY-MM-DD)",
+                        "name": "enddate",
                         "in": "query"
                     },
                     {
@@ -369,7 +375,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.OrderPayload"
+                            "$ref": "#/definitions/internal_controller.OrderPayload"
                         }
                     }
                 ],
@@ -471,7 +477,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.PayOrderCashPayload"
+                            "$ref": "#/definitions/internal_controller.PayOrderCashPayload"
                         }
                     }
                 ],
@@ -729,7 +735,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.ProductPayload"
+                            "$ref": "#/definitions/internal_controller.ProductPayload"
                         }
                     }
                 ],
@@ -821,7 +827,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.ProductPayload"
+                            "$ref": "#/definitions/internal_controller.ProductPayload"
                         }
                     }
                 ],
@@ -884,7 +890,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.UserPayload"
+                            "$ref": "#/definitions/internal_controller.UserPayload"
                         }
                     }
                 ],
@@ -976,7 +982,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.UserPayload"
+                            "$ref": "#/definitions/internal_controller.UserPayload"
                         }
                     }
                 ],
@@ -985,7 +991,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "controller.CategoryPayload": {
+        "internal_controller.CategoryPayload": {
             "type": "object",
             "required": [
                 "name"
@@ -996,7 +1002,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.LoginParams": {
+        "internal_controller.LoginParams": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1009,7 +1015,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.OrderItemPayload": {
+        "internal_controller.OrderItemPayload": {
             "type": "object",
             "required": [
                 "product_id",
@@ -1025,7 +1031,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.OrderPayload": {
+        "internal_controller.OrderPayload": {
             "type": "object",
             "required": [
                 "items"
@@ -1034,7 +1040,7 @@ const docTemplate = `{
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/controller.OrderItemPayload"
+                        "$ref": "#/definitions/internal_controller.OrderItemPayload"
                     }
                 },
                 "payment_method": {
@@ -1048,7 +1054,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.PayOrderCashPayload": {
+        "internal_controller.PayOrderCashPayload": {
             "type": "object",
             "required": [
                 "input_amount"
@@ -1065,7 +1071,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.ProductPayload": {
+        "internal_controller.ProductPayload": {
             "type": "object",
             "required": [
                 "name"
@@ -1097,7 +1103,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.RefreshParams": {
+        "internal_controller.RefreshParams": {
             "type": "object",
             "properties": {
                 "refresh_token": {
@@ -1105,7 +1111,7 @@ const docTemplate = `{
                 }
             }
         },
-        "controller.UserPayload": {
+        "internal_controller.UserPayload": {
             "type": "object",
             "required": [
                 "name"
@@ -1115,7 +1121,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "level": {
-                    "$ref": "#/definitions/enum.UserLevel"
+                    "$ref": "#/definitions/open-pos_internal_enum.UserLevel"
                 },
                 "name": {
                     "type": "string"
@@ -1128,7 +1134,7 @@ const docTemplate = `{
                 }
             }
         },
-        "enum.UserLevel": {
+        "open-pos_internal_enum.UserLevel": {
             "type": "integer",
             "enum": [
                 0,

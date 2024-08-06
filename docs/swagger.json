@@ -25,7 +25,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.LoginParams"
+                            "$ref": "#/definitions/internal_controller.LoginParams"
                         }
                     }
                 ],
@@ -51,7 +51,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.RefreshParams"
+                            "$ref": "#/definitions/internal_controller.RefreshParams"
                         }
                     }
                 ],
@@ -152,7 +152,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CategoryPayload"
+                            "$ref": "#/definitions/internal_controller.CategoryPayload"
                         }
                     }
                 ],
@@ -244,7 +244,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.CategoryPayload"
+                            "$ref": "#/definitions/internal_controller.CategoryPayload"
                         }
                     }
                 ],
@@ -319,7 +319,13 @@
                     {
                         "type": "string",
                         "description": "date search (YYYY-MM-DD)",
-                        "name": "date",
+                        "name": "startdate",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "date search (YYYY-MM-DD)",
+                        "name": "enddate",
                         "in": "query"
                     },
                     {
@@ -360,7 +366,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.OrderPayload"
+                            "$ref": "#/definitions/internal_controller.OrderPayload"
                         }
                     }
                 ],
@@ -462,7 +468,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.PayOrderCashPayload"
+                            "$ref": "#/definitions/internal_controller.PayOrderCashPayload"
                         }
                     }
                 ],
@@ -720,7 +726,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.ProductPayload"
+                            "$ref": "#/definitions/internal_controller.ProductPayload"
                         }
                     }
                 ],
@@ -812,7 +818,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.ProductPayload"
+                            "$ref": "#/definitions/internal_controller.ProductPayload"
                         }
                     }
                 ],
@@ -875,7 +881,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.UserPayload"
+                            "$ref": "#/definitions/internal_controller.UserPayload"
                         }
                     }
                 ],
@@ -967,7 +973,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/controller.UserPayload"
+                            "$ref": "#/definitions/internal_controller.UserPayload"
                         }
                     }
                 ],
@@ -976,7 +982,7 @@
         }
     },
     "definitions": {
-        "controller.CategoryPayload": {
+        "internal_controller.CategoryPayload": {
             "type": "object",
             "required": [
                 "name"
@@ -987,7 +993,7 @@
                 }
             }
         },
-        "controller.LoginParams": {
+        "internal_controller.LoginParams": {
             "type": "object",
             "properties": {
                 "email": {
@@ -1000,7 +1006,7 @@
                 }
             }
         },
-        "controller.OrderItemPayload": {
+        "internal_controller.OrderItemPayload": {
             "type": "object",
             "required": [
                 "product_id",
@@ -1016,7 +1022,7 @@
                 }
             }
         },
-        "controller.OrderPayload": {
+        "internal_controller.OrderPayload": {
             "type": "object",
             "required": [
                 "items"
@@ -1025,7 +1031,7 @@
                 "items": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/controller.OrderItemPayload"
+                        "$ref": "#/definitions/internal_controller.OrderItemPayload"
                     }
                 },
                 "payment_method": {
@@ -1039,7 +1045,7 @@
                 }
             }
         },
-        "controller.PayOrderCashPayload": {
+        "internal_controller.PayOrderCashPayload": {
             "type": "object",
             "required": [
                 "input_amount"
@@ -1056,7 +1062,7 @@
                 }
             }
         },
-        "controller.ProductPayload": {
+        "internal_controller.ProductPayload": {
             "type": "object",
             "required": [
                 "name"
@@ -1088,7 +1094,7 @@
                 }
             }
         },
-        "controller.RefreshParams": {
+        "internal_controller.RefreshParams": {
             "type": "object",
             "properties": {
                 "refresh_token": {
@@ -1096,7 +1102,7 @@
                 }
             }
         },
-        "controller.UserPayload": {
+        "internal_controller.UserPayload": {
             "type": "object",
             "required": [
                 "name"
@@ -1106,7 +1112,7 @@
                     "type": "string"
                 },
                 "level": {
-                    "$ref": "#/definitions/enum.UserLevel"
+                    "$ref": "#/definitions/open-pos_internal_enum.UserLevel"
                 },
                 "name": {
                     "type": "string"
@@ -1119,7 +1125,7 @@
                 }
             }
         },
-        "enum.UserLevel": {
+        "open-pos_internal_enum.UserLevel": {
             "type": "integer",
             "enum": [
                 0,

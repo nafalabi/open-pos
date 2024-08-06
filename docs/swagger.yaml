@@ -1,13 +1,13 @@
 basePath: /
 definitions:
-  controller.CategoryPayload:
+  internal_controller.CategoryPayload:
     properties:
       name:
         type: string
     required:
     - name
     type: object
-  controller.LoginParams:
+  internal_controller.LoginParams:
     properties:
       email:
         example: admin@admin.com
@@ -16,7 +16,7 @@ definitions:
         example: admin
         type: string
     type: object
-  controller.OrderItemPayload:
+  internal_controller.OrderItemPayload:
     properties:
       product_id:
         type: string
@@ -27,11 +27,11 @@ definitions:
     - product_id
     - quantity
     type: object
-  controller.OrderPayload:
+  internal_controller.OrderPayload:
     properties:
       items:
         items:
-          $ref: '#/definitions/controller.OrderItemPayload'
+          $ref: '#/definitions/internal_controller.OrderItemPayload'
         type: array
       payment_method:
         type: string
@@ -42,7 +42,7 @@ definitions:
     required:
     - items
     type: object
-  controller.PayOrderCashPayload:
+  internal_controller.PayOrderCashPayload:
     properties:
       input_amount:
         type: number
@@ -53,7 +53,7 @@ definitions:
     required:
     - input_amount
     type: object
-  controller.ProductPayload:
+  internal_controller.ProductPayload:
     properties:
       categories:
         items:
@@ -76,17 +76,17 @@ definitions:
     required:
     - name
     type: object
-  controller.RefreshParams:
+  internal_controller.RefreshParams:
     properties:
       refresh_token:
         type: string
     type: object
-  controller.UserPayload:
+  internal_controller.UserPayload:
     properties:
       email:
         type: string
       level:
-        $ref: '#/definitions/enum.UserLevel'
+        $ref: '#/definitions/open-pos_internal_enum.UserLevel'
       name:
         type: string
       password:
@@ -96,7 +96,7 @@ definitions:
     required:
     - name
     type: object
-  enum.UserLevel:
+  open-pos_internal_enum.UserLevel:
     enum:
     - 0
     - 1
@@ -122,7 +122,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.LoginParams'
+          $ref: '#/definitions/internal_controller.LoginParams'
       produces:
       - application/json
       responses: {}
@@ -139,7 +139,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.RefreshParams'
+          $ref: '#/definitions/internal_controller.RefreshParams'
       produces:
       - application/json
       responses: {}
@@ -200,7 +200,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.CategoryPayload'
+          $ref: '#/definitions/internal_controller.CategoryPayload'
       produces:
       - application/json
       responses: {}
@@ -258,7 +258,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.CategoryPayload'
+          $ref: '#/definitions/internal_controller.CategoryPayload'
       produces:
       - application/json
       responses: {}
@@ -304,7 +304,11 @@ paths:
         type: string
       - description: date search (YYYY-MM-DD)
         in: query
-        name: date
+        name: startdate
+        type: string
+      - description: date search (YYYY-MM-DD)
+        in: query
+        name: enddate
         type: string
       - description: sort key
         in: query
@@ -331,7 +335,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.OrderPayload'
+          $ref: '#/definitions/internal_controller.OrderPayload'
       produces:
       - application/json
       responses: {}
@@ -395,7 +399,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.PayOrderCashPayload'
+          $ref: '#/definitions/internal_controller.PayOrderCashPayload'
       produces:
       - application/json
       responses: {}
@@ -556,7 +560,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.ProductPayload'
+          $ref: '#/definitions/internal_controller.ProductPayload'
       produces:
       - application/json
       responses: {}
@@ -614,7 +618,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.ProductPayload'
+          $ref: '#/definitions/internal_controller.ProductPayload'
       produces:
       - application/json
       responses: {}
@@ -653,7 +657,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.UserPayload'
+          $ref: '#/definitions/internal_controller.UserPayload'
       produces:
       - application/json
       responses: {}
@@ -711,7 +715,7 @@ paths:
         name: body
         required: true
         schema:
-          $ref: '#/definitions/controller.UserPayload'
+          $ref: '#/definitions/internal_controller.UserPayload'
       produces:
       - application/json
       responses: {}
