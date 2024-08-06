@@ -4,7 +4,7 @@ import { getOrders } from "../../api/orders";
 import { useMemo } from "react";
 import { Model_Order } from "@/generated/models";
 import { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
+import { differenceInDays, differenceInMonths, format, parse } from "date-fns";
 import OrderStatusBadge from "../home/components/OrderStatusBadge";
 import { OrderStatus } from "@/generated/enums";
 import { currency } from "../../utils/currency";
@@ -23,6 +23,9 @@ import { useNavigate, useOutlet } from "react-router-dom";
 import Pagination from "../../layout/pagination";
 import useQueryParams from "../../hooks/useQueryParams";
 import { defaultPagination } from "../../api/types";
+import { DateRangePicker } from "@/shared/components/custom/daterange-picker";
+import { DATE_RANGE_FORMAT } from "../../constant/common";
+import { toast } from "sonner";
 
 const generateColumns = (
   navigate: ReturnType<typeof useNavigate>,
@@ -114,13 +117,18 @@ const generateColumns = (
   ];
 };
 
+const defaultStartDate = format(Date.now(), DATE_RANGE_FORMAT);
+const defaultEndDate = format(Date.now(), DATE_RANGE_FORMAT);
+
 const OrdersPage = () => {
   const outlet = useOutlet();
   const navigate = useNavigate();
   const { queryParams, setPage, setPageSize, setQueryParams } = useQueryParams({
-    paramkeys: ["q"],
+    paramkeys: ["q", "startdate", "enddate"],
     defaults: {
       pagesize: "15",
+      startdate: null,
+      enddate: null,
     },
   });
 
@@ -136,6 +144,8 @@ const OrdersPage = () => {
         sortdir: queryParams.sortdirection ?? "desc",
         sortkey: queryParams.sortkey ?? "created_at",
         q: queryParams.q ?? "",
+        startdate: queryParams.startdate ?? defaultStartDate,
+        enddate: queryParams.enddate ?? defaultEndDate,
       });
       if (error) {
         return { data: [], paginationData: defaultPagination };
@@ -171,31 +181,57 @@ const OrdersPage = () => {
                 See all the orders and manage them here.
               </CardDescription>
             </div>
-            <div className="ml-auto flex items-center gap-2">
-              <div className="relative ml-auto flex-1 md:grow-0">
+            <div className="ml-auto flex flex-wrap xl:flex-nowrap items-center gap-2">
+              <DateRangePicker
+                className="w-[250px]"
+                value={{
+                  from: queryParams.startdate
+                    ? parse(
+                        queryParams.startdate,
+                        DATE_RANGE_FORMAT,
+                        new Date(),
+                      )
+                    : undefined,
+                  to: queryParams.enddate
+                    ? parse(queryParams.enddate, DATE_RANGE_FORMAT, new Date())
+                    : undefined,
+                }}
+                onChange={(val) => {
+                  if (
+                    val &&
+                    val.from &&
+                    val.to &&
+                    differenceInDays(val.to, val.from) > 62
+                  ) {
+                    toast.error("Can't select date range for more than 2 months")
+                    return;
+                  }
+                  const startdate = val?.from
+                    ? format(val.from, DATE_RANGE_FORMAT)
+                    : null;
+                  const enddate = val?.to
+                    ? format(val.to, DATE_RANGE_FORMAT)
+                    : null;
+                  setQueryParams({
+                    startdate,
+                    enddate,
+                  });
+                }}
+              />
+              <div className="relative flex-1 md:grow-0">
                 <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
                   placeholder="Search..."
                   defaultValue={queryParams.q ?? ""}
                   onChange={(e) => handleSearch(e.target.value)}
-                  className="w-full rounded-lg bg-background pl-8 md:w-[150px] lg:w-[200px]"
+                  className="w-full rounded-lg bg-background pl-8 min-w-[100px] md:w-[150px] lg:w-[200px]"
                 />
               </div>
               <Button size="sm" variant="outline" className="h-7 gap-1">
                 <FileIcon className="h-3.5 w-3.5" />
                 <span className="sr-only lg:not-sr-only lg:whitespace-nowrap">
                   Export
-                </span>
-              </Button>
-              <Button
-                size="sm"
-                className="h-7 gap-1"
-                onClick={() => navigate("/products/add")}
-              >
-                <PlusCircleIcon className="h-3.5 w-3.5" />
-                <span className="sr-only lg:not-sr-only lg:whitespace-nowrap">
-                  Add Product
                 </span>
               </Button>
             </div>

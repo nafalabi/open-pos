@@ -4,7 +4,9 @@ import { PaginationParams, SortParams } from "./types";
 import { OrderPayload, PayOrderCashPayload } from "@/generated/schema";
 
 export const getOrders = async (
-  payload: PaginationParams & SortParams & Partial<{ q: string; date: string }>
+  payload: PaginationParams &
+    SortParams &
+    Partial<{ q: string; startdate: string; enddate: string }>,
 ) => {
   const { requestor } = apiSingleton;
   return await requestor.GET<Model_Order[]>("/orders", payload);

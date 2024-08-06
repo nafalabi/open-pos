@@ -27,7 +27,8 @@ const LatestOrders = () => {
       const [result] = await getOrders({
         ...fetchParams,
         page: pageParam.toString(),
-        date: format(Date.now(), "yyyy-MM-dd"),
+        startdate: format(Date.now(), "yyyy-MM-dd"),
+        enddate: format(Date.now(), "yyyy-MM-dd"),
       });
       return {
         data: result?.data ?? [],
