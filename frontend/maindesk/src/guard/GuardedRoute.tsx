@@ -12,8 +12,9 @@ type GuardedRouteProps = {
 };
 
 const throttleConnect = throttle((ln: LiveNotifier) => {
-  ln.connect();
-}, 500);
+  const { disconnect } = ln.connect();
+  return throttle(disconnect, 2000);
+}, 2000);
 
 export const GuardedRoute = ({ children }: GuardedRouteProps) => {
   const { isLogged, isLoading } = useAuthState();
@@ -21,7 +22,11 @@ export const GuardedRoute = ({ children }: GuardedRouteProps) => {
   const { liveNotifier } = useContext(LiveNotifierContext);
 
   useEffect(() => {
-    if (isLogged) throttleConnect(liveNotifier);
+    let clearFunc = () => { };
+    if (isLogged) {
+      clearFunc = throttleConnect(liveNotifier) ?? clearFunc;
+    }
+    return clearFunc;
   }, [liveNotifier, isLogged]);
 
   if (!authToken) {

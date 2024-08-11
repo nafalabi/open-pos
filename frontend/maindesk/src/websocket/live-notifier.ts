@@ -35,7 +35,6 @@ class LiveNotifier {
   }
 
   connect() {
-    delete this.ws;
     this.connectionAttempt += 1;
 
     const { authToken } = apiSingleton;
@@ -52,10 +51,8 @@ class LiveNotifier {
       );
     };
 
-    ws.onclose = (event) => {
-      if (event.reason == "user_desire") {
-        return;
-      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    ws.onclose = (_event) => {
       if (this.connectionAttempt >= 3) {
         this.eventPublisher.dispatchEvent(
           new CustomEvent<Error>("error", {
@@ -76,11 +73,15 @@ class LiveNotifier {
     };
 
     this.ws = ws;
-  }
 
-  disconnect() {
-    this.connectionAttempt = 0;
-    this.ws?.close(1000, "user_desire");
+    return {
+      ws,
+      disconnect: () => {
+        this.connectionAttempt = 0;
+        ws.onclose = () => {}
+        ws.close(1000);
+      },
+    };
   }
 
   scheduleReconnect(timeMs: number) {
