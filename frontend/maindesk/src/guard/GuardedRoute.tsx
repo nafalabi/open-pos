@@ -33,7 +33,7 @@ export const GuardedRoute = ({ children }: GuardedRouteProps) => {
     return <Navigate to="/login" replace={true} />;
   }
 
-  if (isLoading) {
+  if (isLoading && !isLogged) {
     return <SpinnerBox />;
   }
 

@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     },
   });
 
-  const isLogged = !!(userInfo && !isLoading);
+  const isLogged = !!(userInfo);
 
   const handleResetAuthToken = useCallback(() => {
     apiSingleton.setToken("", "");
