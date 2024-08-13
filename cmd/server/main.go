@@ -1,9 +1,10 @@
 package main
 
 import (
-	"open-pos/internal/controller"
-	controller_webhook "open-pos/internal/controller/webhook"
 	_ "open-pos/docs"
+	"open-pos/internal/controller"
+	report_controller "open-pos/internal/controller/reports"
+	controller_webhook "open-pos/internal/controller/webhook"
 	live_notifier "open-pos/internal/service/live-notifier"
 	utils "open-pos/internal/utils"
 
@@ -93,6 +94,10 @@ func main() {
 	paymentmethods.GET("", utils.RegisterController(dbClient, controller.ListPaymentMethod))
 	paymentmethods.GET("/:code", utils.RegisterController(dbClient, controller.FindPaymentMethod))
 	paymentmethods.GET("/:code/fee", utils.RegisterController(dbClient, controller.GetPaymentFee))
+
+  reports := e.Group("/reports")
+  reports.Use(jwtMiddleware)
+  reports.GET("", utils.RegisterController(dbClient, report_controller.HandleReports))
 
 	webhook := e.Group("/webhook")
 	webhook.POST("/midtrans", controller_webhook.HandleMidtransNotification(dbClient, liveNotifier))
