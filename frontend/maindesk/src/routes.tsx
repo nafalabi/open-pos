@@ -30,6 +30,7 @@ const CategoriesPage = lazy(
   () => import("./pages/categories/CategoriesPage.tsx"),
 );
 const OrdersPage = lazy(() => import("./pages/order/OrdersPage.tsx"));
+const ReportsPage = lazy(() => import("./pages/reports/ReportsPage.tsx"))
 
 const Layout = ({ children }: ComponentProps<typeof BaseLayout>) => (
   <GuardedRoute>
@@ -151,6 +152,14 @@ export const router = createBrowserRouter([
             ),
           },
         ],
+      },
+      {
+        handle: { crumb: () => "Reports" },
+        id: "Reports",
+        path: "reports",
+        element: (
+          <LazyLoader fallback={<SpinnerBox />} component={<ReportsPage />} />
+        ),
       },
     ],
   },
