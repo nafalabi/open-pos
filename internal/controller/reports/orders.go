@@ -2,12 +2,14 @@ package report_controller
 
 import (
 	"bytes"
+	"open-pos/internal/model"
 	"open-pos/internal/utils"
 	"time"
 
 	"github.com/go-pdf/fpdf"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type orderReports struct {
@@ -88,16 +90,50 @@ func (o orderReports) rangedCSV(db *gorm.DB, c echo.Context) error {
 }
 
 func (o orderReports) rangedMeta(db *gorm.DB, c echo.Context) error {
-	// var orders []model.Order
-	//
-	// query := db.Model(&model.Order{})
-	// query = query.Order(clause.OrderByColumn{
-	// 	Column: clause.Column{Name: "created_at"},
-	// 	Desc:   true,
-	// })
-	// query.Where("created_at BETWEEN ? AND ?", o.Params.Datestart, o.Params.Dateend)
-	// query.Preload("Items").Find(&orders)
-	//
-	// return utils.SendSuccess(c, orders)
-  return utils.SendSuccess(c, true)
+	var orders []model.Order
+
+	query := db.Model(&model.Order{})
+	query = query.Order(clause.OrderByColumn{
+		Column: clause.Column{Name: "created_at"},
+		Desc:   true,
+	})
+	query.Where("created_at BETWEEN ? AND ?", o.Params.Datestart, o.Params.Dateend)
+	query.Preload("Items.Product").Find(&orders)
+
+	topProductMap := make(map[string]int)
+  uniqueCustMap := make(map[string]int)
+	var totalRevenue float64
+	totalOrders := len(orders)
+
+	for _, order := range orders {
+		for _, item := range order.Items {
+			product := item.Product
+			if product == nil {
+				continue
+			}
+			topProductMap[product.Name] += 1
+		}
+    totalRevenue += order.Total
+    uniqueCustMap[order.Recipient] += 1
+	}
+
+	var topProduct string
+	var maxProductCount int
+	for productName, productCount := range topProductMap {
+		if productCount <= maxProductCount {
+			continue
+		}
+		topProduct = productName
+		maxProductCount = productCount
+	}
+
+	result := map[string]any{
+		"total_orders":     totalOrders,
+		"unique_customers": len(uniqueCustMap),
+		"total_revenue":    totalRevenue,
+		"top_product":      topProduct,
+		"orders":           orders,
+	}
+
+	return utils.SendSuccess(c, result)
 }
