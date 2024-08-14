@@ -60,14 +60,9 @@ const menus: Menuitem[] = [
     link: "/products/categories",
   },
   {
-    name: "Customers",
-    icon: Users2,
-    link: "/customers",
-  },
-  {
-    name: "Analytics",
+    name: "Reports",
     icon: LineChart,
-    link: "/analytics",
+    link: "/reports",
   },
 ];
 
