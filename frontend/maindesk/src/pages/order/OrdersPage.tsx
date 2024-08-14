@@ -4,7 +4,7 @@ import { getOrders } from "../../api/orders";
 import { useMemo } from "react";
 import { Model_Order } from "@/generated/models";
 import { ColumnDef } from "@tanstack/react-table";
-import { differenceInDays, differenceInMonths, format, parse } from "date-fns";
+import { differenceInDays, format, parse } from "date-fns";
 import OrderStatusBadge from "../home/components/OrderStatusBadge";
 import { OrderStatus } from "@/generated/enums";
 import { currency } from "../../utils/currency";
@@ -16,7 +16,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import { FileIcon, PlusCircleIcon, SearchIcon } from "lucide-react";
+import { FileIcon, SearchIcon } from "lucide-react";
 import { Input } from "@/shared/components/ui/input";
 import { Button } from "@/shared/components/ui/button";
 import { useNavigate, useOutlet } from "react-router-dom";
